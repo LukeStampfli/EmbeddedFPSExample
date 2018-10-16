@@ -197,9 +197,9 @@ C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\Unit
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\UnityEditor.SpatialTracking.xml
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\UnityEngine.SpatialTracking.xml
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\UnityEditor.VR.xml
-C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\DarkRift.xml
-C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\DarkRift.Client.xml
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\DarkRift.Server.xml
+C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\DarkRift.Client.xml
+C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\DarkRift.xml
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\UnityEditor.iOS.Extensions.Xcode.xml
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\obj\Debug\Assembly-CSharp-Editor.csprojResolveAssemblyReference.cache
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\obj\Debug\Assembly-CSharp-Editor.dll

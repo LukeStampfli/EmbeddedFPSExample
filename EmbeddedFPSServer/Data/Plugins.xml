@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<plugins nextID="6">
+  <plugin id="0" name="HelpCommand" version="1.0.0" />
+  <plugin id="1" name="PluginController" version="1.0.0" />
+  <plugin id="2" name="Sniffer" version="1.0.0" />
+  <plugin id="3" name="DemoCommand" version="1.0.0" />
+  <plugin id="4" name="MessageCommand" version="1.0.0" />
+  <plugin id="5" name="MockCommand" version="1.0.0" />
+</plugins>

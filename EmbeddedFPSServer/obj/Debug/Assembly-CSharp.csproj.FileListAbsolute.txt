@@ -164,9 +164,9 @@ C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\Unit
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\UnityEngine.GoogleAudioSpatializer.xml
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\UnityEngine.HoloLens.xml
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\UnityEngine.SpatialTracking.xml
-C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\DarkRift.xml
-C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\DarkRift.Client.xml
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\DarkRift.Server.xml
+C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\DarkRift.Client.xml
+C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\DarkRift.xml
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\obj\Debug\Assembly-CSharp.dll
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\obj\Debug\Assembly-CSharp.pdb

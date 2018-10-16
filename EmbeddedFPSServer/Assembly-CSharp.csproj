@@ -77,11 +77,11 @@
     <Compile Include="Assets\DarkRift\DarkRift\Plugins\Server\UnityServerHelper.cs" />
     <Compile Include="Assets\DarkRift\DarkRift\Plugins\Server\XmlUnityServer.cs" />
     <Compile Include="Assets\Scripts\DarkriftSerializationExtensions.cs" />
-    <Compile Include="Assets\Scripts\GlobalManager.cs" />
-    <Compile Include="Assets\Scripts\LobbyManager.cs" />
-    <Compile Include="Assets\Scripts\LoginManager.cs" />
     <Compile Include="Assets\Scripts\Networking Data.cs" />
-    <Compile Include="Assets\Scripts\RoomListObject.cs" />
+    <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\Room.cs" />
+    <Compile Include="Assets\Scripts\RoomManager.cs" />
+    <Compile Include="Assets\Scripts\ServerManager.cs" />
     <None Include="Assets\DarkRift\DarkRift\Plugins\Server\DarkRift.Server.xml" />
     <None Include="Assets\DarkRift\2 DragDemo\ReadMe.txt" />
     <None Include="Assets\DarkRift\1 ChatDemo\ReadMe.txt" />
