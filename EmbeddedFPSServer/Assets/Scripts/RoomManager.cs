@@ -32,7 +32,7 @@ public class RoomManager : MonoBehaviour
 
     public void TryJoinRoom(IClient client, JoinRoomRequest data)
     {
-        Player p;
+        PlayerClient p;
         Room r;
         if (!ServerManager.Instance.Players.TryGetValue(client.ID, out p))
         {

@@ -13,8 +13,8 @@ public class ServerManager : MonoBehaviour
     public XmlUnityServer XmlServer { get; private set; }
     public DarkRiftServer Server;
 
-    public Dictionary<ushort, Player> Players = new Dictionary<ushort, Player>();
-    public Dictionary<string, Player> PlayersByName = new Dictionary<string, Player>();
+    public Dictionary<ushort, PlayerClient> Players = new Dictionary<ushort, PlayerClient>();
+    public Dictionary<string, PlayerClient> PlayersByName = new Dictionary<string, PlayerClient>();
 
     void Awake()
     {
@@ -44,7 +44,7 @@ public class ServerManager : MonoBehaviour
     private void OnClientDisconnect(object sender, ClientDisconnectedEventArgs e)
     {
         IClient client = e.Client;
-        Player p;
+        PlayerClient p;
         if (Players.TryGetValue(client.ID, out p))
         {
             p.OnClientDisconnect(sender, e);
@@ -87,6 +87,6 @@ public class ServerManager : MonoBehaviour
 
         //from now on the player will handle his messages
         client.MessageReceived -= OnMessage;
-        new Player(client, data);
+        new PlayerClient(client, data);
     }
 }
