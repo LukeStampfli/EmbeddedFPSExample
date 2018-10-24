@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     public GameObject PlayerPrefab;
     public uint CurrentServerTick;
+    public uint LastRecievedServerTick;
+
+    public Dictionary<ushort, ClientPlayer> Players = new Dictionary<ushort, ClientPlayer>();
 
     void Awake()
     {
@@ -29,6 +32,7 @@ public class GameManager : MonoBehaviour
     {
         CurrentServerTick++;
     }
+
     void OnDestroy()
     {
         GlobalManager.Instance.Client.MessageReceived -= OnMessage;
@@ -44,19 +48,59 @@ public class GameManager : MonoBehaviour
                 case Tags.GameStartDataResponse:
                     OnGameJoinAccept(m.Deserialize<GameStartData>());
                     break;
+                case Tags.GameUpdate:
+                    OnGameUpdate(m.Deserialize<GameUpdateData>());
+                    break;
             }
         }
 
     }
 
+    public void OnGameUpdate(GameUpdateData updateData)
+    {
+        LastRecievedServerTick = updateData.Frame;
+        foreach (PlayerSpawnData data in updateData.SpawnData)
+        {
+            if (data.Id != GlobalManager.Instance.PlayerId)
+            {
+                SpawnPlayer(data);
+            }
+        }
+
+        foreach (PlayerUpdateData data in updateData.UpdateData)
+        {
+            ClientPlayer p;
+            if (Players.TryGetValue(data.Id, out p))
+            {
+                p.RecieveUpdate(data);
+            }
+        }
+
+        foreach (PLayerHealthUpdateData data in updateData.HealthData)
+        {
+            ClientPlayer p;
+            if (Players.TryGetValue(data.PlayerId, out p))
+            {
+                p.SetHealth(data.Value);
+            }
+        }
+    }
+
     public void OnGameJoinAccept(GameStartData data)
     {
+        LastRecievedServerTick = data.OnJoinServerTick;
         CurrentServerTick = data.OnJoinServerTick;
         foreach (PlayerSpawnData ppd in data.Players)
         {
-            GameObject go = Instantiate(PlayerPrefab);
-            ClientPlayer player = go.GetComponent<ClientPlayer>();
-            player.Initialize(ppd.Id, ppd.Name);
+            SpawnPlayer(ppd);
         }
+    }
+
+    public void SpawnPlayer(PlayerSpawnData ppd)
+    {
+        GameObject go = Instantiate(PlayerPrefab);
+        ClientPlayer player = go.GetComponent<ClientPlayer>();
+        player.Initialize(ppd.Id, ppd.Name);
+        Players.Add(player.Id, player);
     }
 }

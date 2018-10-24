@@ -13,6 +13,7 @@ public class Room : MonoBehaviour
     public GameObject PlayerPrefab;
 
     public PlayerUpdateData[] updateDatas = new PlayerUpdateData[0];
+    public List<PLayerHealthUpdateData> healthUpdates = new List<PLayerHealthUpdateData>();
     private List<PlayerSpawnData> spawnDatas = new List<PlayerSpawnData>(4);
     private List<PlayerDespawnData> despawnDatas = new List<PlayerDespawnData>(4);
 
@@ -28,7 +29,7 @@ public class Room : MonoBehaviour
         }
 
         //send update message to all players
-        using (Message m = Message.Create((ushort) Tags.GameUpdate, new GameUpdateData(updateDatas, spawnDatas.ToArray(), despawnDatas.ToArray())))
+        using (Message m = Message.Create((ushort) Tags.GameUpdate, new GameUpdateData(ServerTick, updateDatas, spawnDatas.ToArray(), despawnDatas.ToArray(), healthUpdates.ToArray())))
         {
             foreach (ServerPlayer p in ServerPlayers)
             {
@@ -39,6 +40,7 @@ public class Room : MonoBehaviour
         //clear values
         spawnDatas.Clear();
         despawnDatas.Clear();
+        healthUpdates.Clear();
     }
 
 

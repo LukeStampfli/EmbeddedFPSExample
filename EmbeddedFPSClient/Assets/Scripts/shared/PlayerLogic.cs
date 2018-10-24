@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerLogic : MonoBehaviour
 {
-
     public CharacterController CharacterController;
     public float WalkSpeed;
     public float GravityConstant;
@@ -18,10 +17,12 @@ public class PlayerLogic : MonoBehaviour
         bool s = input.Keyinputs[2];
         bool d = input.Keyinputs[3];
         bool space = input.Keyinputs[4];
+        bool left = input.Keyinputs[5];
 
-        Quaternion nextrotation = currentUpdateData.LookDirection * input.LookDirectionDelta;
+        Vector3 nextrotation = currentUpdateData.LookDirection + input.LookDirectionDelta;
+        gravity = new Vector3(0,currentUpdateData.Gravity,0);
 
-        float rotation = nextrotation.eulerAngles.y;
+        float rotation = nextrotation.y;
 
         Vector3 movement = Vector3.zero;
         if (w)
@@ -41,32 +42,28 @@ public class PlayerLogic : MonoBehaviour
             movement += Vector3.right;
         }
 
-        movement = Quaternion.Euler(0, rotation, 0)*movement;
+        movement = Quaternion.Euler(0, rotation, 0) * movement;
         movement.Normalize();
         movement = movement * WalkSpeed;
 
         movement = movement * Time.fixedDeltaTime;
-
+        CharacterController.Move(new Vector3(0,-0.001f,0));
         if (CharacterController.isGrounded)
         {
-            //gravity = new Vector3(0, 0,0);
             if (space)
             {
-                gravity = new Vector3(0,JumpStrenght,0);
+                gravity = new Vector3(0, JumpStrenght, 0);
             }
         }
         else
         {
-            gravity -= new Vector3(0,GravityConstant,0);
+            gravity -= new Vector3(0, GravityConstant, 0);
         }
 
         movement = movement + gravity * Time.fixedDeltaTime;
-
-
         CharacterController.Move(movement);
 
-        return new PlayerUpdateData(transform.position, input.LookDirectionDelta);
+        return new PlayerUpdateData(currentUpdateData.Id,gravity.y, transform.position, nextrotation);
     }
-
 
 }

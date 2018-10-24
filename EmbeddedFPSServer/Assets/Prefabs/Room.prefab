@@ -144,3 +144,4 @@ MonoBehaviour:
   MaxSlots: 0
   PlayerPrefab: {fileID: 1437945308636912, guid: 5d3dbef70e3c2c747b796771c242a8d0,
     type: 2}
+  ServerTick: 0
