@@ -10,7 +10,10 @@ public class LobbyManager : MonoBehaviour
 
     public static LobbyManager Instance;
 
+    [Header("References")]
     public Transform RoomListContainerTransform;
+
+    [Header("Prefabs")]
     public GameObject RoomListPrefab;
 
 

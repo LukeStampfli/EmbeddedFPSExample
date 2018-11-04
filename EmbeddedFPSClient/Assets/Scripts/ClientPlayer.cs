@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using DarkRift;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,26 +25,32 @@ struct ReconciliationInfo
 [RequireComponent(typeof(PlayerMover))]
 public class ClientPlayer : MonoBehaviour
 {
+
+    [Header("Public Fields")]
     public ushort Id;
     public string Name;
     public bool IsOwn;
+    public int Health;
 
-    public PlayerMover Mover;
-    public PlayerLogic Logic;
-
+    [Header("Variables")]
     public float SensitivityX;
     public float SensitivityY;
 
-    public int Health;
-
+    [Header("References")]
+    public PlayerMover Mover;
+    public PlayerLogic Logic;
     public Text NameText;
     public Image HealthBarFill;
     public GameObject HealthBarObject;
 
+    [Header("Prefabs")]
     public GameObject ShotPrefab;
 
     private Queue<PlayerUpdateData> updateBuffer = new Queue<PlayerUpdateData>();
     private Queue<ReconciliationInfo> reconciliationBuffer;
+
+    private float yaw;
+    private float pitch;
 
     public void Initialize(ushort id, string name)
     {
@@ -57,7 +64,7 @@ public class ClientPlayer : MonoBehaviour
             Camera.main.transform.SetParent(transform);
             Camera.main.transform.localPosition = new Vector3(0,0,0);
             Camera.main.transform.localRotation = Quaternion.identity;
-            Mover.CurrentData = new PlayerUpdateData(Id,0, Vector3.zero, new Vector3(0,0,0));
+            Mover.CurrentData = new PlayerUpdateData(Id,0, Vector3.zero, Quaternion.identity);
             reconciliationBuffer = new Queue<ReconciliationInfo>();
         }
     }
@@ -115,6 +122,7 @@ public class ClientPlayer : MonoBehaviour
                         List<ReconciliationInfo> infos = reconciliationBuffer.ToList();
                         Mover.CurrentData = data;
                         transform.position = data.Position;
+                        transform.rotation = data.LookDirection;
                         for (int i = 0; i < infos.Count; i++)
                         {
                             PlayerUpdateData u = Logic.GetNextFrameData(infos[i].Input, Mover.CurrentData);
@@ -142,9 +150,12 @@ public class ClientPlayer : MonoBehaviour
                 Destroy(go,1f);
             }
 
-            Vector3 roteuler = new Vector3(Input.GetAxis("Mouse Y") * SensitivityY, Input.GetAxis("Mouse X") * SensitivityX,0);
+            yaw += Input.GetAxis("Mouse X") * SensitivityX;
+            pitch += Input.GetAxis("Mouse Y") * SensitivityY;
 
-            PlayerInputData inputData = new PlayerInputData(inputs, roteuler, GameManager.Instance.LastRecievedServerTick-1);
+            Quaternion rot = Quaternion.Euler(pitch, yaw,0);
+
+            PlayerInputData inputData = new PlayerInputData(inputs,rot, GameManager.Instance.LastRecievedServerTick-1);
 
 
             using (Message m = Message.Create((ushort)Tags.GamePlayerInput, inputData))

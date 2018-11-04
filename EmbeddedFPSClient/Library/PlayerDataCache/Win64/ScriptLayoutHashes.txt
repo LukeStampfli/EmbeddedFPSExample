@@ -118,7 +118,7 @@ da21fc3f8056b1f91c3dd09c7bf4f90a UnityEngine.Networking.dll:UnityEngine.Networki
 fc061f3ae8a876c0687e86378d4a447c UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformChild
 7ca56e063bd071986fff4f513cc4f477 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
 0a006f3734181ba8b26758f0866152c0 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
-7fc476b08c5bafe6d97b115ba31439d8 Assembly-CSharp.dll:.ClientPlayer
+954236d38375412355ef329896ef63d7 Assembly-CSharp.dll:.ClientPlayer
 382b8ef512fa8d6108723a01b57af65b UnityEngine.Analytics.dll:UnityEngine.Analytics.AnalyticsEventTracker
 d22c788799ee45d8676254eccf20e8b8 UnityEngine.Analytics.dll:UnityEngine.Analytics.AnalyticsTracker
 be71ade2720f4c5cd739fa44a1faad44 Assembly-CSharp.dll:.RoomListObject
@@ -176,7 +176,7 @@ dfd33ff9ae3ce8d7ca1f22b475ec2387 UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 aac9c55ae7ba4b95b852a7d9c191acd1 Unity.TextMeshPro.dll:TMPro.TextMeshProUGUI
 0a006f3734181ba8b26758f0866152c0 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 67e4842c55ba7f643bf80cd5669bc18f Assembly-CSharp.dll:.GlobalManager
-0c75d294acee6a7769691b973ab8a465 Assembly-CSharp.dll:.GameManager
+0d881ed4e8f93a20fbfc73df10987178 Assembly-CSharp.dll:.GameManager
 06987136c1a837d558b4428361cf3809 Assembly-CSharp.dll:DarkRift.Server.Unity.XmlUnityServer
 e04611b8715e6833d2bd7010fc6be10b Unity.TextMeshPro.dll:TMPro.TMP_StyleSheet
 4d1649a8d074aaf4875add9a2cbd9cf2 Assembly-CSharp.dll:.BlockPlayerSpawner

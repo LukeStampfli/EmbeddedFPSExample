@@ -1,17 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using DarkRift;
+﻿using DarkRift;
 using DarkRift.Server;
-using UnityEngine;
 
-public class PlayerClient
+[System.Serializable]
+public class ClientConnection
 {
     public string Name;
     public IClient Client;
     public Room Room;
     public ServerPlayer Player;
 
-    public PlayerClient(IClient client , LoginRequestData data)
+    public ClientConnection(IClient client , LoginRequestData data)
     {
         Client = client;
         Name = data.Name;

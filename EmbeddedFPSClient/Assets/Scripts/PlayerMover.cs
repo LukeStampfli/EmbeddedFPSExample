@@ -26,7 +26,7 @@ public class PlayerMover : MonoBehaviour
         float timeSinceLastInput = Time.time - lastInputTime;
         float t = timeSinceLastInput / Time.fixedDeltaTime;
         transform.position = Vector3.LerpUnclamped(previousData.Position, CurrentData.Position, t);
-        transform.rotation = Quaternion.SlerpUnclamped(Quaternion.Euler( previousData.LookDirection), Quaternion.Euler( CurrentData.LookDirection), t);
+        transform.rotation = Quaternion.SlerpUnclamped(previousData.LookDirection,CurrentData.LookDirection, t);
     }
 
 }

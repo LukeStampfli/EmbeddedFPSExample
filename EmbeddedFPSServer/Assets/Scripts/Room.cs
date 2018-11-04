@@ -1,23 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DarkRift;
-using DarkRift.Server;
 using UnityEngine;
 
 public class Room : MonoBehaviour
 {
+    [Header("Public Fields")]
     public string Name;
-    public List<PlayerClient> Players = new List<PlayerClient>();
     public List<ServerPlayer> ServerPlayers = new List<ServerPlayer>();
+    public List<ClientConnection> ClientConnections = new List<ClientConnection>();
     public byte MaxSlots;
+    public uint ServerTick;
+
+    [Header("Prefabs")]
     public GameObject PlayerPrefab;
 
-    public PlayerUpdateData[] updateDatas = new PlayerUpdateData[0];
-    public List<PLayerHealthUpdateData> healthUpdates = new List<PLayerHealthUpdateData>();
+    public PlayerUpdateData[] UpdateDatas = new PlayerUpdateData[0];
+    public List<PLayerHealthUpdateData> HealthUpdates = new List<PLayerHealthUpdateData>();
     private List<PlayerSpawnData> spawnDatas = new List<PlayerSpawnData>(4);
     private List<PlayerDespawnData> despawnDatas = new List<PlayerDespawnData>(4);
-
-    public uint ServerTick;
 
     void FixedUpdate()
     {
@@ -25,11 +25,15 @@ public class Room : MonoBehaviour
         //perform updates for all players in the room
         foreach (ServerPlayer player in ServerPlayers)
         {
+            player.PerformShootupdate();
+        }
+        foreach (ServerPlayer player in ServerPlayers)
+        {
             player.PerformUpdate();
         }
 
         //send update message to all players
-        using (Message m = Message.Create((ushort) Tags.GameUpdate, new GameUpdateData(ServerTick, updateDatas, spawnDatas.ToArray(), despawnDatas.ToArray(), healthUpdates.ToArray())))
+        using (Message m = Message.Create((ushort) Tags.GameUpdate, new GameUpdateData(ServerTick, UpdateDatas, spawnDatas.ToArray(), despawnDatas.ToArray(), HealthUpdates.ToArray())))
         {
             foreach (ServerPlayer p in ServerPlayers)
             {
@@ -40,7 +44,7 @@ public class Room : MonoBehaviour
         //clear values
         spawnDatas.Clear();
         despawnDatas.Clear();
-        healthUpdates.Clear();
+        HealthUpdates.Clear();
     }
 
 
@@ -50,38 +54,94 @@ public class Room : MonoBehaviour
         MaxSlots = maxslots;
     }
 
-    public void AddPlayerToRoom(PlayerClient playerClient)
+    public void AddPlayerToRoom(ClientConnection clientConnection)
     {
-        Players.Add(playerClient);
-        playerClient.Room = this;
+        ClientConnections.Add(clientConnection);
+        clientConnection.Room = this;
         using (Message message = Message.CreateEmpty((ushort)Tags.LobbyJoinRoomAccepted))
         {
-            playerClient.Client.SendMessage(message, SendMode.Reliable);
+            clientConnection.Client.SendMessage(message, SendMode.Reliable);
         }
     }
 
 
-    public void RemovePlayerFromRoom(PlayerClient playerClient)
+    public void RemovePlayerFromRoom(ClientConnection clientConnection)
     {
-        Players.Remove(playerClient);
-        playerClient.Room = null;
+        Destroy(clientConnection.Player.gameObject);
+        despawnDatas.Add(new PlayerDespawnData(clientConnection.Client.ID));
+        ClientConnections.Remove(clientConnection);
+        ServerPlayers.Remove(clientConnection.Player);
+        clientConnection.Room = null;
     }
 
-    public void JoinPlayerToGame(PlayerClient client)
+    public void JoinPlayerToGame(ClientConnection clientConnection)
     {
         GameObject go = Instantiate(PlayerPrefab, transform);
         ServerPlayer player = go.GetComponent<ServerPlayer>();
-        player.Initialize(Vector3.zero, client);
+        player.Initialize(Vector3.zero, clientConnection);
 
         spawnDatas.Add(player.GetPlayerSpawnData());
     }
 
     public void Close()
     {
-        foreach(PlayerClient p in Players)
+        foreach(ClientConnection p in ClientConnections)
         {
             RemovePlayerFromRoom(p);
         }
         Destroy(gameObject);
+    }
+
+    public void PerformShootRayCast(uint frame, ServerPlayer shooter)
+    {
+        int dif = (int) (ServerTick - 1 - frame);
+
+        //get the position of the ray
+        Vector3 firepoint;
+        Vector3 direction;
+
+        if (shooter.UpdateDataHistory.Count > dif)
+        {
+            firepoint = shooter.UpdateDataHistory[dif].Position;
+            direction = shooter.UpdateDataHistory[dif].LookDirection * Vector3.forward;
+        }
+        else
+        {
+            firepoint = shooter.CurrentUpdateData.Position;
+            direction = shooter.CurrentUpdateData.LookDirection * Vector3.forward;
+        }
+
+        firepoint += direction * 5f;
+        firepoint += transform.parent.localPosition;
+
+        //set all players back in time
+        foreach (ServerPlayer player in ServerPlayers)
+        {
+            if (player.UpdateDataHistory.Count > dif)
+            {
+                player.Logic.CharacterController.enabled = false;
+                player.transform.localPosition = player.UpdateDataHistory[dif].Position;
+            }
+        }
+
+
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(firepoint, direction,out hit, 200f))
+        {
+            if (hit.transform.CompareTag("Unit"))
+            {
+                hit.transform.GetComponent<ServerPlayer>().TakeDamage(5);
+            }
+        }
+
+
+        //set all players back
+        foreach (ServerPlayer player in ServerPlayers)
+        {
+            player.transform.localPosition = player.CurrentUpdateData.Position;
+            player.Logic.CharacterController.enabled = true;
+        }
     }
 }

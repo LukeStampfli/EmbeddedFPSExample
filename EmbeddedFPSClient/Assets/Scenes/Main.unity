@@ -874,6 +874,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IpAdress: 127.0.0.1
   Port: 4296
+  Client: {fileID: 1070212957}
   PlayerId: 0
 --- !u!1 &1460541580
 GameObject:

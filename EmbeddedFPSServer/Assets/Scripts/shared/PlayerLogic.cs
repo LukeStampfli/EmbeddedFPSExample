@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class PlayerLogic : MonoBehaviour
 {
+    [Header("References")]
     public CharacterController CharacterController;
+
+    [Header("Shared Variables")]
     public float WalkSpeed;
     public float GravityConstant;
-    public float JumpStrenght;
+    public float JumpStrength;
+
     private Vector3 gravity;
 
     public PlayerUpdateData GetNextFrameData(PlayerInputData input, PlayerUpdateData currentUpdateData)
@@ -19,10 +23,8 @@ public class PlayerLogic : MonoBehaviour
         bool space = input.Keyinputs[4];
         bool left = input.Keyinputs[5];
 
-        Vector3 nextrotation = currentUpdateData.LookDirection + input.LookDirectionDelta;
+        Vector3 rotation =  input.LookdDirection.eulerAngles;
         gravity = new Vector3(0,currentUpdateData.Gravity,0);
-
-        float rotation = nextrotation.y;
 
         Vector3 movement = Vector3.zero;
         if (w)
@@ -42,17 +44,19 @@ public class PlayerLogic : MonoBehaviour
             movement += Vector3.right;
         }
 
-        movement = Quaternion.Euler(0, rotation, 0) * movement;
+        movement = Quaternion.Euler(0, rotation.y, 0) * movement;
         movement.Normalize();
         movement = movement * WalkSpeed;
 
         movement = movement * Time.fixedDeltaTime;
+
+        // the following code fixes charactercontroller issues from unity
         CharacterController.Move(new Vector3(0,-0.001f,0));
         if (CharacterController.isGrounded)
         {
             if (space)
             {
-                gravity = new Vector3(0, JumpStrenght, 0);
+                gravity = new Vector3(0, JumpStrength, 0);
             }
         }
         else
@@ -63,7 +67,7 @@ public class PlayerLogic : MonoBehaviour
         movement = movement + gravity * Time.fixedDeltaTime;
         CharacterController.Move(movement);
 
-        return new PlayerUpdateData(currentUpdateData.Id,gravity.y, transform.position, nextrotation);
+        return new PlayerUpdateData(currentUpdateData.Id,gravity.y, transform.localPosition, input.LookdDirection);
     }
 
 }

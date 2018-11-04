@@ -6,13 +6,16 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
     public static GameManager Instance;
+
+    [Header("References")]
     public GameObject PlayerPrefab;
+
+    [Header("Public Fields")]
     public uint CurrentServerTick;
     public uint LastRecievedServerTick;
 
-    public Dictionary<ushort, ClientPlayer> Players = new Dictionary<ushort, ClientPlayer>();
+    private Dictionary<ushort, ClientPlayer> players = new Dictionary<ushort, ClientPlayer>();
 
     void Awake()
     {
@@ -67,10 +70,19 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        foreach (PlayerDespawnData data in updateData.DespawnData)
+        {
+            if (players.ContainsKey(data.Id))
+            {
+                Destroy(players[data.Id].gameObject);
+                players.Remove(data.Id);
+            }
+        }
+
         foreach (PlayerUpdateData data in updateData.UpdateData)
         {
             ClientPlayer p;
-            if (Players.TryGetValue(data.Id, out p))
+            if (players.TryGetValue(data.Id, out p))
             {
                 p.RecieveUpdate(data);
             }
@@ -79,7 +91,7 @@ public class GameManager : MonoBehaviour
         foreach (PLayerHealthUpdateData data in updateData.HealthData)
         {
             ClientPlayer p;
-            if (Players.TryGetValue(data.PlayerId, out p))
+            if (players.TryGetValue(data.PlayerId, out p))
             {
                 p.SetHealth(data.Value);
             }
@@ -101,6 +113,6 @@ public class GameManager : MonoBehaviour
         GameObject go = Instantiate(PlayerPrefab);
         ClientPlayer player = go.GetComponent<ClientPlayer>();
         player.Initialize(ppd.Id, ppd.Name);
-        Players.Add(player.Id, player);
+        players.Add(player.Id, player);
     }
 }

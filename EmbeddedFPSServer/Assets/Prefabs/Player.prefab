@@ -22,9 +22,10 @@ GameObject:
   - component: {fileID: 114134488158854934}
   - component: {fileID: 114918996116783438}
   - component: {fileID: 143826613404714802}
+  - component: {fileID: 136040492716638576}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -55,6 +56,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Logic: {fileID: 114918996116783438}
   Room: {fileID: 0}
+  Health: 0
 --- !u!114 &114918996116783438
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -67,9 +69,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CharacterController: {fileID: 143826613404714802}
-  WalkSpeed: 11
+  WalkSpeed: 8
   GravityConstant: 2
-  JumpStrenght: 15
+  JumpStrength: 11
+--- !u!136 &136040492716638576
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1437945308636912}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!143 &143826613404714802
 CharacterController:
   m_ObjectHideFlags: 1

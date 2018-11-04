@@ -290,11 +290,11 @@ MonoBehaviour:
   Id: 0
   Name: 
   IsOwn: 0
-  Mover: {fileID: 114920039374967156}
-  Logic: {fileID: 114887761896449856}
+  Health: 0
   SensitivityX: 5
   SensitivityY: -5
-  Health: 0
+  Mover: {fileID: 114920039374967156}
+  Logic: {fileID: 114887761896449856}
   NameText: {fileID: 114512959565655856}
   HealthBarFill: {fileID: 114053991253118654}
   HealthBarObject: {fileID: 1380838895579414}
@@ -344,9 +344,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CharacterController: {fileID: 143625176532247918}
-  WalkSpeed: 11
+  WalkSpeed: 8
   GravityConstant: 2
-  JumpStrenght: 15
+  JumpStrength: 11
 --- !u!114 &114920039374967156
 MonoBehaviour:
   m_ObjectHideFlags: 1

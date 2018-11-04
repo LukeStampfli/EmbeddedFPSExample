@@ -207,7 +207,7 @@ public struct PlayerDespawnData : IDarkRiftSerializable
 public struct PlayerUpdateData : IDarkRiftSerializable
 {
 
-    public PlayerUpdateData(ushort id, float gravity, Vector3 position, Vector3 lookDirection)
+    public PlayerUpdateData(ushort id, float gravity, Vector3 position, Quaternion lookDirection)
     {
         Id = id;
         Position = position;
@@ -218,14 +218,14 @@ public struct PlayerUpdateData : IDarkRiftSerializable
     public ushort Id;
     public Vector3 Position;
     public float Gravity;
-    public Vector3 LookDirection;
+    public Quaternion LookDirection;
 
     public void Deserialize(DeserializeEvent e)
     {
         Id = e.Reader.ReadUInt16();
         Gravity = e.Reader.ReadSingle();
         Position = e.Reader.ReadVector3();
-        LookDirection = e.Reader.ReadVector3();
+        LookDirection = e.Reader.ReadQuaternion();
     }
 
     public void Serialize(SerializeEvent e)
@@ -233,7 +233,7 @@ public struct PlayerUpdateData : IDarkRiftSerializable
         e.Writer.Write(Id);
         e.Writer.Write(Gravity);
         e.Writer.WriteVector3(Position);
-        e.Writer.WriteVector3(LookDirection);
+        e.Writer.WriteQuaternion(LookDirection);
     }
 }
 
@@ -301,15 +301,14 @@ public struct PLayerHealthUpdateData : IDarkRiftSerializable
 public struct PlayerInputData : IDarkRiftSerializable
 {
     public bool[] Keyinputs;
-    public Vector3 LookDirectionDelta;
+    public Quaternion LookdDirection;
 
-    //not always sent
-    public float Time;
+    public uint Time;
 
-    public PlayerInputData(bool[] keyInputs, Vector3 lookDirectionDelta, float time)
+    public PlayerInputData(bool[] keyInputs, Quaternion lookdirection, uint time)
     {
         Keyinputs = keyInputs;
-        LookDirectionDelta = lookDirectionDelta;
+        LookdDirection = lookdirection;
         Time = time;
     }
 
@@ -321,10 +320,10 @@ public struct PlayerInputData : IDarkRiftSerializable
             Keyinputs[i] = e.Reader.ReadBoolean();
         }
 
-        LookDirectionDelta = e.Reader.ReadVector3();
+        LookdDirection = e.Reader.ReadQuaternion();
         if (Keyinputs[5])
         {
-            Time = e.Reader.ReadSingle();
+            Time = e.Reader.ReadUInt32();
         }
 
     }
@@ -335,7 +334,7 @@ public struct PlayerInputData : IDarkRiftSerializable
         {
             e.Writer.Write(Keyinputs[i]);
         }
-        e.Writer.WriteVector3(LookDirectionDelta);
+        e.Writer.WriteQuaternion(LookdDirection);
         if (Keyinputs[5])
         {
             e.Writer.Write(Time);
