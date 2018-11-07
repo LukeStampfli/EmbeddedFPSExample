@@ -19,7 +19,7 @@ public class PlayerLogic : MonoBehaviour
         bool d = input.Keyinputs[3];
         bool space = input.Keyinputs[4];
 
-        Quaternion nextrotation = currentUpdateData.LookDirection * input.LookDirectionDelta;
+        Quaternion nextrotation = currentUpdateData.LookDirection * input.LookDirection;
 
         float rotation = nextrotation.eulerAngles.y;
 
@@ -65,7 +65,7 @@ public class PlayerLogic : MonoBehaviour
 
         CharacterController.Move(movement);
 
-        return new PlayerUpdateData(transform.position, input.LookDirectionDelta);
+        return new PlayerUpdateData(transform.position, input.LookDirection);
     }
 
 

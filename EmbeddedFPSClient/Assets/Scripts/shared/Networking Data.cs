@@ -1,6 +1,5 @@
 ﻿using DarkRift;
 using UnityEngine;
-using DarkriftSerializationExtensions;
 
 public enum Tags
 {
@@ -175,7 +174,7 @@ public struct PlayerSpawnData: IDarkRiftSerializable
     {
         Id = e.Reader.ReadUInt16();
         Name = e.Reader.ReadString();
-        Position = e.Reader.ReadVector3();
+        Position = new Vector3(e.Reader.ReadSingle(),e.Reader.ReadSingle(),e.Reader.ReadSingle());
         Rotation = e.Reader.ReadSingle();
     }
 
@@ -183,7 +182,11 @@ public struct PlayerSpawnData: IDarkRiftSerializable
     {
         e.Writer.Write(Id);
         e.Writer.Write(Name);
-        e.Writer.WriteVector3(Position);
+
+        e.Writer.Write(Position.x);
+        e.Writer.Write(Position.y);
+        e.Writer.Write(Position.z);
+
         e.Writer.Write(Rotation);
     }
 }
@@ -222,14 +225,20 @@ public struct PlayerUpdateData:IDarkRiftSerializable
 
     public void Deserialize(DeserializeEvent e)
     {
-        Position = e.Reader.ReadVector3();
-        LookDirection = e.Reader.ReadQuaternionCompressed();
+        Position = new Vector3(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
+        LookDirection = new Quaternion(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
     }
 
     public void Serialize(SerializeEvent e)
     {
-        e.Writer.WriteVector3(Position);
-        e.Writer.WriteQuaternionCompressed(LookDirection);
+        e.Writer.Write(Position.x);
+        e.Writer.Write(Position.y);
+        e.Writer.Write(Position.z);
+ 
+        e.Writer.Write(LookDirection.x);
+        e.Writer.Write(LookDirection.y);
+        e.Writer.Write(LookDirection.z);
+        e.Writer.Write(LookDirection.w);
     }
 }
 
@@ -262,24 +271,27 @@ public struct GameUpdateData : IDarkRiftSerializable
 
 public struct PlayerInputData : IDarkRiftSerializable
 {
-    public bool[] Keyinputs;
-    public Quaternion LookDirectionDelta;
+    public bool[] Keyinputs; //0 = w, 1 = a, 2 = s, 3 = d, 4 = space, 5 = leftKlick
+    public Quaternion LookDirection;
 
-    public PlayerInputData(bool[] keyInputs, Quaternion lookDirectionDelta)
+    public PlayerInputData(bool[] keyInputs, Quaternion lookDirection)
     {
         Keyinputs = keyInputs;
-        LookDirectionDelta = lookDirectionDelta;
+        LookDirection = lookDirection;
     }
 
     public void Deserialize(DeserializeEvent e)
     {
         Keyinputs = e.Reader.ReadBooleans();
-        LookDirectionDelta = e.Reader.ReadQuaternionCompressed();
+        LookDirection = new Quaternion(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
     }
 
     public void Serialize(SerializeEvent e)
     {
         e.Writer.Write(Keyinputs);
-        e.Writer.WriteQuaternionCompressed(LookDirectionDelta);
+        e.Writer.Write(LookDirection.x);
+        e.Writer.Write(LookDirection.y);
+        e.Writer.Write(LookDirection.z);
+        e.Writer.Write(LookDirection.w);
     }
 }
