@@ -22,7 +22,7 @@ struct ReconciliationInfo
 }
 
 [RequireComponent(typeof(PlayerLogic))]
-[RequireComponent(typeof(PlayerMover))]
+[RequireComponent(typeof(PlayerInterpolation))]
 public class ClientPlayer : MonoBehaviour
 {
 
@@ -37,7 +37,7 @@ public class ClientPlayer : MonoBehaviour
     public float SensitivityY;
 
     [Header("References")]
-    public PlayerMover Mover;
+    public PlayerInterpolation Interpolation;
     public PlayerLogic Logic;
     public Text NameText;
     public Image HealthBarFill;
@@ -64,7 +64,7 @@ public class ClientPlayer : MonoBehaviour
             Camera.main.transform.SetParent(transform);
             Camera.main.transform.localPosition = new Vector3(0,0,0);
             Camera.main.transform.localRotation = Quaternion.identity;
-            Mover.CurrentData = new PlayerUpdateData(Id,0, Vector3.zero, Quaternion.identity);
+            Interpolation.CurrentData = new PlayerUpdateData(Id,0, Vector3.zero, Quaternion.identity);
             reconciliationBuffer = new Queue<ReconciliationInfo>();
         }
     }
@@ -120,13 +120,13 @@ public class ClientPlayer : MonoBehaviour
                         Debug.Log("correcting position");
 
                         List<ReconciliationInfo> infos = reconciliationBuffer.ToList();
-                        Mover.CurrentData = data;
+                        Interpolation.CurrentData = data;
                         transform.position = data.Position;
                         transform.rotation = data.LookDirection;
                         for (int i = 0; i < infos.Count; i++)
                         {
-                            PlayerUpdateData u = Logic.GetNextFrameData(infos[i].Input, Mover.CurrentData);
-                            Mover.SetFramePosition(u);
+                            PlayerUpdateData u = Logic.GetNextFrameData(infos[i].Input, Interpolation.CurrentData);
+                            Interpolation.SetFramePosition(u);
                         }
                     }
                 }
@@ -145,7 +145,7 @@ public class ClientPlayer : MonoBehaviour
             if (inputs[5])
             {
                 GameObject go = Instantiate(ShotPrefab);
-                go.transform.position = Mover.CurrentData.Position;
+                go.transform.position = Interpolation.CurrentData.Position;
                 go.transform.rotation = transform.rotation;
                 Destroy(go,1f);
             }
@@ -157,15 +157,15 @@ public class ClientPlayer : MonoBehaviour
 
             PlayerInputData inputData = new PlayerInputData(inputs,rot, GameManager.Instance.LastRecievedServerTick-1);
 
+            transform.position = Interpolation.CurrentData.Position;
+            PlayerUpdateData updateData = Logic.GetNextFrameData(inputData,Interpolation.CurrentData);
+            Interpolation.SetFramePosition(updateData);
 
             using (Message m = Message.Create((ushort)Tags.GamePlayerInput, inputData))
             {
                 GlobalManager.Instance.Client.SendMessage(m, SendMode.Reliable);
             }
 
-            transform.position = Mover.CurrentData.Position;
-            PlayerUpdateData updateData = Logic.GetNextFrameData(inputData,Mover.CurrentData);
-            Mover.SetFramePosition(updateData);
             reconciliationBuffer.Enqueue(new ReconciliationInfo(GameManager.Instance.CurrentServerTick+3,updateData, inputData));
         }
         else
@@ -173,7 +173,7 @@ public class ClientPlayer : MonoBehaviour
             while (updateBuffer.Count > 1)
             {
                 PlayerUpdateData data = updateBuffer.Dequeue();
-                Mover.SetFramePosition(data);
+                Interpolation.SetFramePosition(data);
             }
         }
     }

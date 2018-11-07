@@ -49,6 +49,7 @@ public class PlayerLogic : MonoBehaviour
         movement = movement * WalkSpeed;
 
         movement = movement * Time.fixedDeltaTime;
+        movement = movement + gravity * Time.fixedDeltaTime;
 
         // the following code fixes charactercontroller issues from unity
         CharacterController.Move(new Vector3(0,-0.001f,0));
@@ -64,7 +65,6 @@ public class PlayerLogic : MonoBehaviour
             gravity -= new Vector3(0, GravityConstant, 0);
         }
 
-        movement = movement + gravity * Time.fixedDeltaTime;
         CharacterController.Move(movement);
 
         return new PlayerUpdateData(currentUpdateData.Id,gravity.y, transform.localPosition, input.LookDirection);
