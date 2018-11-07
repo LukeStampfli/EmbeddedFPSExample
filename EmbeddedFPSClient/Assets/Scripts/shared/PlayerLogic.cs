@@ -23,7 +23,7 @@ public class PlayerLogic : MonoBehaviour
         bool space = input.Keyinputs[4];
         bool left = input.Keyinputs[5];
 
-        Vector3 rotation =  input.LookdDirection.eulerAngles;
+        Vector3 rotation =  input.LookDirection.eulerAngles;
         gravity = new Vector3(0,currentUpdateData.Gravity,0);
 
         Vector3 movement = Vector3.zero;
@@ -49,6 +49,7 @@ public class PlayerLogic : MonoBehaviour
         movement = movement * WalkSpeed;
 
         movement = movement * Time.fixedDeltaTime;
+        movement = movement + gravity * Time.fixedDeltaTime;
 
         // the following code fixes charactercontroller issues from unity
         CharacterController.Move(new Vector3(0,-0.001f,0));
@@ -64,10 +65,9 @@ public class PlayerLogic : MonoBehaviour
             gravity -= new Vector3(0, GravityConstant, 0);
         }
 
-        movement = movement + gravity * Time.fixedDeltaTime;
         CharacterController.Move(movement);
 
-        return new PlayerUpdateData(currentUpdateData.Id,gravity.y, transform.localPosition, input.LookdDirection);
+        return new PlayerUpdateData(currentUpdateData.Id,gravity.y, transform.localPosition, input.LookDirection);
     }
 
 }

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerMover : MonoBehaviour
+public class PlayerInterpolation : MonoBehaviour
 {
+    [Header("Public Fields")]
     public PlayerUpdateData CurrentData;
-    private PlayerUpdateData previousData;
+    public PlayerUpdateData PreviousData;
+
     private float lastInputTime;
 
     public void SetFramePosition(PlayerUpdateData data)
@@ -16,7 +18,7 @@ public class PlayerMover : MonoBehaviour
 
     public void RefreshToPosition(PlayerUpdateData data, PlayerUpdateData prevData)
     {
-        previousData = prevData;
+        PreviousData = prevData;
         CurrentData = data;
         lastInputTime = Time.fixedTime;
     }
@@ -25,8 +27,8 @@ public class PlayerMover : MonoBehaviour
     {
         float timeSinceLastInput = Time.time - lastInputTime;
         float t = timeSinceLastInput / Time.fixedDeltaTime;
-        transform.position = Vector3.LerpUnclamped(previousData.Position, CurrentData.Position, t);
-        transform.rotation = Quaternion.SlerpUnclamped(previousData.LookDirection,CurrentData.LookDirection, t);
+        transform.position = Vector3.LerpUnclamped(PreviousData.Position, CurrentData.Position, t);
+        transform.rotation = Quaternion.SlerpUnclamped(PreviousData.LookDirection,CurrentData.LookDirection, t);
     }
 
 }
