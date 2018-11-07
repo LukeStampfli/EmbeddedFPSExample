@@ -23,14 +23,8 @@ public class PlayerLogic : MonoBehaviour
         bool space = input.Keyinputs[4];
         bool left = input.Keyinputs[5];
 
-<<<<<<< HEAD
-        Quaternion nextrotation = currentUpdateData.LookDirection * input.LookDirection;
-
-        float rotation = nextrotation.eulerAngles.y;
-=======
-        Vector3 rotation =  input.LookdDirection.eulerAngles;
+        Vector3 rotation =  input.LookDirection.eulerAngles;
         gravity = new Vector3(0,currentUpdateData.Gravity,0);
->>>>>>> 1ed7e4d4b265e0c62eebc144d34ebedc9d1da0ff
 
         Vector3 movement = Vector3.zero;
         if (w)
@@ -73,11 +67,7 @@ public class PlayerLogic : MonoBehaviour
         movement = movement + gravity * Time.fixedDeltaTime;
         CharacterController.Move(movement);
 
-<<<<<<< HEAD
-        return new PlayerUpdateData(transform.position, input.LookDirection);
-=======
-        return new PlayerUpdateData(currentUpdateData.Id,gravity.y, transform.localPosition, input.LookdDirection);
->>>>>>> 1ed7e4d4b265e0c62eebc144d34ebedc9d1da0ff
+        return new PlayerUpdateData(currentUpdateData.Id,gravity.y, transform.localPosition, input.LookDirection);
     }
 
 }

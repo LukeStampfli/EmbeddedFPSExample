@@ -172,28 +172,19 @@ public struct PlayerSpawnData : IDarkRiftSerializable
     {
         Id = e.Reader.ReadUInt16();
         Name = e.Reader.ReadString();
-<<<<<<< HEAD
+
         Position = new Vector3(e.Reader.ReadSingle(),e.Reader.ReadSingle(),e.Reader.ReadSingle());
-        Rotation = e.Reader.ReadSingle();
-=======
-        Position = e.Reader.ReadVector3();
->>>>>>> 1ed7e4d4b265e0c62eebc144d34ebedc9d1da0ff
+
     }
 
     public void Serialize(SerializeEvent e)
     {
         e.Writer.Write(Id);
         e.Writer.Write(Name);
-<<<<<<< HEAD
 
         e.Writer.Write(Position.x);
         e.Writer.Write(Position.y);
         e.Writer.Write(Position.z);
-
-        e.Writer.Write(Rotation);
-=======
-        e.Writer.WriteVector3(Position);
->>>>>>> 1ed7e4d4b265e0c62eebc144d34ebedc9d1da0ff
     }
 }
 
@@ -235,20 +226,15 @@ public struct PlayerUpdateData : IDarkRiftSerializable
 
     public void Deserialize(DeserializeEvent e)
     {
-<<<<<<< HEAD
         Position = new Vector3(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
-        LookDirection = new Quaternion(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
-=======
+        LookDirection = new Quaternion(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle(),
+            e.Reader.ReadSingle());
         Id = e.Reader.ReadUInt16();
         Gravity = e.Reader.ReadSingle();
-        Position = e.Reader.ReadVector3();
-        LookDirection = e.Reader.ReadQuaternion();
->>>>>>> 1ed7e4d4b265e0c62eebc144d34ebedc9d1da0ff
     }
 
     public void Serialize(SerializeEvent e)
     {
-<<<<<<< HEAD
         e.Writer.Write(Position.x);
         e.Writer.Write(Position.y);
         e.Writer.Write(Position.z);
@@ -257,12 +243,8 @@ public struct PlayerUpdateData : IDarkRiftSerializable
         e.Writer.Write(LookDirection.y);
         e.Writer.Write(LookDirection.z);
         e.Writer.Write(LookDirection.w);
-=======
         e.Writer.Write(Id);
         e.Writer.Write(Gravity);
-        e.Writer.WriteVector3(Position);
-        e.Writer.WriteQuaternion(LookDirection);
->>>>>>> 1ed7e4d4b265e0c62eebc144d34ebedc9d1da0ff
     }
 }
 
@@ -329,67 +311,40 @@ public struct PLayerHealthUpdateData : IDarkRiftSerializable
 
 public struct PlayerInputData : IDarkRiftSerializable
 {
-<<<<<<< HEAD
     public bool[] Keyinputs; //0 = w, 1 = a, 2 = s, 3 = d, 4 = space, 5 = leftKlick
     public Quaternion LookDirection;
-
-    public PlayerInputData(bool[] keyInputs, Quaternion lookDirection)
-    {
-        Keyinputs = keyInputs;
-        LookDirection = lookDirection;
-=======
-    public bool[] Keyinputs;
-    public Quaternion LookdDirection;
-
     public uint Time;
 
     public PlayerInputData(bool[] keyInputs, Quaternion lookdirection, uint time)
     {
         Keyinputs = keyInputs;
-        LookdDirection = lookdirection;
+        LookDirection = lookdirection;
         Time = time;
->>>>>>> 1ed7e4d4b265e0c62eebc144d34ebedc9d1da0ff
     }
 
     public void Deserialize(DeserializeEvent e)
     {
-<<<<<<< HEAD
         Keyinputs = e.Reader.ReadBooleans();
         LookDirection = new Quaternion(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
-=======
-        Keyinputs = new bool[6];
-        for (int i = 0; i < Keyinputs.Length; i++)
-        {
-            Keyinputs[i] = e.Reader.ReadBoolean();
-        }
 
-        LookdDirection = e.Reader.ReadQuaternion();
         if (Keyinputs[5])
         {
             Time = e.Reader.ReadUInt32();
         }
-
->>>>>>> 1ed7e4d4b265e0c62eebc144d34ebedc9d1da0ff
     }
 
     public void Serialize(SerializeEvent e)
     {
-<<<<<<< HEAD
+
         e.Writer.Write(Keyinputs);
         e.Writer.Write(LookDirection.x);
         e.Writer.Write(LookDirection.y);
         e.Writer.Write(LookDirection.z);
         e.Writer.Write(LookDirection.w);
-=======
-        for (int i = 0; i < 6; i++)
-        {
-            e.Writer.Write(Keyinputs[i]);
-        }
-        e.Writer.WriteQuaternion(LookdDirection);
+
         if (Keyinputs[5])
         {
             e.Writer.Write(Time);
         }
->>>>>>> 1ed7e4d4b265e0c62eebc144d34ebedc9d1da0ff
     }
 }
