@@ -3,7 +3,6 @@ using System.Net;
 using DarkRift;
 using DarkRift.Client.Unity;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(UnityClient))]
 public class GlobalManager : MonoBehaviour
@@ -19,7 +18,6 @@ public class GlobalManager : MonoBehaviour
 
     [Header("Public Fields")]
     public ushort PlayerId;
-
     public LobbyInfoData LastRecievedLobbyInfoData;
 
     void Awake()
@@ -49,12 +47,6 @@ public class GlobalManager : MonoBehaviour
         {
             Start();
         }
-    }
-
-    public void LoadLobbyScene(LobbyInfoData data)
-    {
-        LastRecievedLobbyInfoData = data;
-        SceneManager.LoadScene("Lobby");
     }
 
 }

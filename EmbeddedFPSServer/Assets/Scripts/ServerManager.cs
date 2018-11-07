@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Server;
 using DarkRift.Server.Unity;
@@ -67,9 +65,6 @@ public class ServerManager : MonoBehaviour
                 case Tags.LoginRequest:
                     OnclientLogin(client, m.Deserialize<LoginRequestData>());
                     break;
-                case Tags.LobbyJoinRoomRequest:
-                    RoomManager.Instance.TryJoinRoom(client, m.Deserialize<JoinRoomRequest>());
-                    break;
             }
         }
     }
@@ -85,8 +80,9 @@ public class ServerManager : MonoBehaviour
             return;
         }
 
-        //from now on the player will handle his messages
+        //In the future the ClientConnection will handle its messages
         client.MessageReceived -= OnMessage;
+
         new ClientConnection(client, data);
     }
 }

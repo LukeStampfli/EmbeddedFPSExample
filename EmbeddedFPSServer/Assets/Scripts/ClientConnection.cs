@@ -1,9 +1,11 @@
 ﻿using DarkRift;
 using DarkRift.Server;
+using UnityEngine;
 
 [System.Serializable]
 public class ClientConnection
 {
+    [Header("Public Fields")]
     public string Name;
     public IClient Client;
     public Room Room;

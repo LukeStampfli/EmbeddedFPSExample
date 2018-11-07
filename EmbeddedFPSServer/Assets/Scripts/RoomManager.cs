@@ -11,7 +11,6 @@ public class RoomManager : MonoBehaviour
     [Header("Prefabs")]
     public GameObject RoomPrefab;
 
-    private List<Room> roomList = new List<Room>();
     Dictionary<string, Room> rooms = new Dictionary<string, Room>();
     private float offset;
 
@@ -24,11 +23,13 @@ public class RoomManager : MonoBehaviour
 
     public RoomData[] GetRoomDataList()
     {
-        RoomData[] datas = new RoomData[roomList.Count];
-        for (int i = 0; i < roomList.Count; i++)
+        RoomData[] datas = new RoomData[rooms.Count];
+        int i = 0;
+        foreach (KeyValuePair<string, Room> kvp in rooms)
         {
-            Room r = roomList[i];
+            Room r = kvp.Value;
             datas[i] = new RoomData(r.Name, (byte) r.ClientConnections.Count, r.MaxSlots);
+            i++;
         }
 
         return datas;
@@ -75,14 +76,12 @@ public class RoomManager : MonoBehaviour
         Room r = go.GetComponent<Room>();
         r.Initialize(name, maxslots);
         rooms.Add(name, r);
-        roomList.Add(r);
     }
 
     public void RemoveRoom(string name)
     {
         Room r = rooms[name];
         r.Close();
-        roomList.Remove(r);
         rooms.Remove(name);
         
     }

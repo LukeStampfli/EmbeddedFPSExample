@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class RoomListObject : MonoBehaviour
@@ -19,6 +16,5 @@ public class RoomListObject : MonoBehaviour
         JoinButton.onClick.RemoveAllListeners();
         JoinButton.onClick.AddListener(delegate { LobbyManager.Instance.SendJoinRoomRequest(data.Name); });
     }
-
 }
 

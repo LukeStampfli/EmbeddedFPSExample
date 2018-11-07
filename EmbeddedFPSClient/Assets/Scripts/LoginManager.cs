@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Client;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LoginManager : MonoBehaviour
@@ -77,9 +78,9 @@ public class LoginManager : MonoBehaviour
     public void OnLoginAccept(LoginInfoData data)
     {
         GlobalManager.Instance.PlayerId = data.Id;
-        GlobalManager.Instance.LoadLobbyScene(data.Data);
+        GlobalManager.Instance.LastRecievedLobbyInfoData = data.Data;
+        SceneManager.LoadScene("Lobby");
     }
-
 
 }
 
