@@ -204,3 +204,4 @@ C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\Unit
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\obj\Debug\Assembly-CSharp-Editor.csprojResolveAssemblyReference.cache
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\obj\Debug\Assembly-CSharp-Editor.dll
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\obj\Debug\Assembly-CSharp-Editor.pdb
+C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSServer\Temp\bin\Debug\UnityEditor.Android.Extensions.dll

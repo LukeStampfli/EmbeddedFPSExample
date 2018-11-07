@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Server;
 using UnityEngine;
@@ -8,14 +7,19 @@ public class RoomManager : MonoBehaviour
 {
 
     public static RoomManager Instance;
-    public Dictionary<string, Room> Rooms = new Dictionary<string, Room>();
-    private List<Room> roomList = new List<Room>();
+
+    [Header("Prefabs")]
     public GameObject RoomPrefab;
+
+    private List<Room> roomList = new List<Room>();
+    Dictionary<string, Room> rooms = new Dictionary<string, Room>();
+    private float offset;
 
     void Awake()
     {
         Instance = this;
         CreateRoom("Main",25);
+        CreateRoom("Main 2", 15);
     }
 
     public RoomData[] GetRoomDataList()
@@ -24,7 +28,7 @@ public class RoomManager : MonoBehaviour
         for (int i = 0; i < roomList.Count; i++)
         {
             Room r = roomList[i];
-            datas[i] = new RoomData(r.Name, (byte) r.Players.Count, r.MaxSlots);
+            datas[i] = new RoomData(r.Name, (byte) r.ClientConnections.Count, r.MaxSlots);
         }
 
         return datas;
@@ -32,7 +36,7 @@ public class RoomManager : MonoBehaviour
 
     public void TryJoinRoom(IClient client, JoinRoomRequest data)
     {
-        PlayerClient p;
+        ClientConnection p;
         Room r;
         if (!ServerManager.Instance.Players.TryGetValue(client.ID, out p))
         {
@@ -43,7 +47,7 @@ public class RoomManager : MonoBehaviour
             return;
         }
 
-        if (!Rooms.TryGetValue(data.RoomName, out r))
+        if (!rooms.TryGetValue(data.RoomName, out r))
         {
             using (Message m = Message.Create((ushort)Tags.LobbyJoinRoomDenied, new LobbyInfoData(GetRoomDataList())))
             {
@@ -52,7 +56,7 @@ public class RoomManager : MonoBehaviour
             return;
         }
 
-        if (r.Players.Count >= r.MaxSlots)
+        if (r.ClientConnections.Count >= r.MaxSlots)
         {
             using (Message m = Message.Create((ushort)Tags.LobbyJoinRoomDenied, new LobbyInfoData(GetRoomDataList())))
             {
@@ -66,18 +70,21 @@ public class RoomManager : MonoBehaviour
     public void CreateRoom(string name, byte maxslots)
     {
         GameObject go = Instantiate(RoomPrefab, transform);
+        go.transform.position = new Vector3(offset,0,0);
+        offset += 300;
         Room r = go.GetComponent<Room>();
         r.Initialize(name, maxslots);
-        Rooms.Add(name, r);
+        rooms.Add(name, r);
         roomList.Add(r);
     }
 
     public void RemoveRoom(string name)
     {
-        Room r = Rooms[name];
+        Room r = rooms[name];
         r.Close();
         roomList.Remove(r);
-        Rooms.Remove(name);
+        rooms.Remove(name);
+        
     }
 
 }

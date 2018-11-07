@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class RoomListObject : MonoBehaviour
 {
 
+    [Header("References")]
     public Text NameText;
     public Text SlotText;
     public Button JoinButton;

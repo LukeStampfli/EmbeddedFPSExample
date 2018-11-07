@@ -8,13 +8,14 @@ using UnityEngine;
 
 public class ServerManager : MonoBehaviour
 {
-
     public static ServerManager Instance;
-    public XmlUnityServer XmlServer { get; private set; }
-    public DarkRiftServer Server;
 
-    public Dictionary<ushort, PlayerClient> Players = new Dictionary<ushort, PlayerClient>();
-    public Dictionary<string, PlayerClient> PlayersByName = new Dictionary<string, PlayerClient>();
+    [Header("References")]
+    public XmlUnityServer XmlServer;
+
+    public DarkRiftServer Server;
+    public Dictionary<ushort, ClientConnection> Players = new Dictionary<ushort, ClientConnection>();
+    public Dictionary<string, ClientConnection> PlayersByName = new Dictionary<string, ClientConnection>();
 
     void Awake()
     {
@@ -24,7 +25,6 @@ public class ServerManager : MonoBehaviour
             return;
         }
         Instance = this;
-        XmlServer = GetComponent<XmlUnityServer>();
         DontDestroyOnLoad(this);
     }
 
@@ -44,7 +44,7 @@ public class ServerManager : MonoBehaviour
     private void OnClientDisconnect(object sender, ClientDisconnectedEventArgs e)
     {
         IClient client = e.Client;
-        PlayerClient p;
+        ClientConnection p;
         if (Players.TryGetValue(client.ID, out p))
         {
             p.OnClientDisconnect(sender, e);
@@ -87,6 +87,6 @@ public class ServerManager : MonoBehaviour
 
         //from now on the player will handle his messages
         client.MessageReceived -= OnMessage;
-        new PlayerClient(client, data);
+        new ClientConnection(client, data);
     }
 }

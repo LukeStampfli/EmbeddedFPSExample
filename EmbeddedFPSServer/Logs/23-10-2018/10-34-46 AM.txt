@@ -1,0 +1,22 @@
+[Trace]   DarkRiftServer        System Details:
+                                	OS: Microsoft Windows NT 6.2.9200.0
+                                	CLS Version: 2.0.50727.1433
+                                	DarkRift: 2.2.0.0 - Free
+[Trace]   NetworkListener       Starting fallback listener.
+[Info]    DarkRiftServer        Server mounted, listening on port 4296.
+[Trace]   NetworkListener       Accepted TCP connection from 127.0.0.1:58084.
+[Trace]   NetworkListener       Accepted UDP connection from 127.0.0.1:59796.
+[Info]    ClientManager         New client [0] connected [127.0.0.1:58084|59796].
+[Info]    ClientManager         Client [0] disconnected.
+[Trace]   NetworkListener       Accepted TCP connection from 127.0.0.1:58094.
+[Trace]   NetworkListener       Accepted UDP connection from 127.0.0.1:57220.
+[Info]    ClientManager         New client [1] connected [127.0.0.1:58094|57220].
+[Info]    ClientManager         Client [1] disconnected.
+[Trace]   NetworkListener       Accepted TCP connection from 127.0.0.1:58109.
+[Trace]   NetworkListener       Accepted UDP connection from 127.0.0.1:64188.
+[Info]    ClientManager         New client [2] connected [127.0.0.1:58109|64188].
+[Info]    ClientManager         Client [2] disconnected.
+[Trace]   NetworkListener       Accepted TCP connection from 127.0.0.1:58146.
+[Trace]   NetworkListener       Accepted UDP connection from 127.0.0.1:54147.
+[Info]    ClientManager         New client [3] connected [127.0.0.1:58146|54147].
+[Info]    ClientManager         Client [3] disconnected.

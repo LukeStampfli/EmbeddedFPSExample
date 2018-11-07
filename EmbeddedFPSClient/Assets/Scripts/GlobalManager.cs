@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
 using DarkRift;
-using DarkRift.Client;
 using DarkRift.Client.Unity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,15 +8,18 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(UnityClient))]
 public class GlobalManager : MonoBehaviour
 {
+    public static GlobalManager Instance;
 
+    [Header("Variables")]
     public string IpAdress;
     public int Port;
 
-    public static GlobalManager Instance;
-    public UnityClient Client { get; private set; }
+    [Header("References")]
+    public UnityClient Client;
 
-    [Header("Global Variables")]
+    [Header("Public Fields")]
     public ushort PlayerId;
+
     public LobbyInfoData LastRecievedLobbyInfoData;
 
     void Awake()
@@ -30,7 +30,6 @@ public class GlobalManager : MonoBehaviour
             return;
         }
         Instance = this;
-        Client = GetComponent<UnityClient>();
         DontDestroyOnLoad(this);
     }
 

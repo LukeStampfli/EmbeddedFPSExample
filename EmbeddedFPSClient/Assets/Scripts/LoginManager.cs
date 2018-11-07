@@ -11,6 +11,7 @@ public class LoginManager : MonoBehaviour
 
     public static LoginManager Instance;
 
+    [Header("References")]
     public GameObject LoginWindow;
     public InputField NameInput;
     public Button SubmitLoginButton;
