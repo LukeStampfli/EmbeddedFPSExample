@@ -44,7 +44,7 @@ public class ClientPlayer : MonoBehaviour
     public GameObject ShotPrefab;
 
     private Queue<PlayerUpdateData> updateBuffer = new Queue<PlayerUpdateData>();
-    private Queue<ReconciliationInfo> reconciliationBuffer;
+    private Queue<ReconciliationInfo> reconciliationHistory;
 
     private float yaw;
     private float pitch;
@@ -62,7 +62,7 @@ public class ClientPlayer : MonoBehaviour
             Camera.main.transform.localPosition = new Vector3(0,0,0);
             Camera.main.transform.localRotation = Quaternion.identity;
             Interpolation.CurrentData = new PlayerUpdateData(Id,0, Vector3.zero, Quaternion.identity);
-            reconciliationBuffer = new Queue<ReconciliationInfo>();
+            reconciliationHistory = new Queue<ReconciliationInfo>();
         }
     }
 
@@ -99,9 +99,9 @@ public class ClientPlayer : MonoBehaviour
                 PlayerUpdateData data = updateBuffer.Dequeue();
                 while (true)
                 {
-                    if (reconciliationBuffer.Any() && reconciliationBuffer.Peek().Frame < GameManager.Instance.LastRecievedServerTick)
+                    if (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame < GameManager.Instance.LastRecievedServerTick)
                     {
-                        reconciliationBuffer.Dequeue();
+                        reconciliationHistory.Dequeue();
                     }
                     else
                     {
@@ -109,14 +109,14 @@ public class ClientPlayer : MonoBehaviour
                     }
                 }
 
-                if (reconciliationBuffer.Any() && reconciliationBuffer.Peek().Frame == GameManager.Instance.LastRecievedServerTick)
+                if (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame == GameManager.Instance.LastRecievedServerTick)
                 {
-                    ReconciliationInfo info = reconciliationBuffer.Dequeue();
+                    ReconciliationInfo info = reconciliationHistory.Dequeue();
                     if (Vector3.Distance(info.Data.Position, data.Position) > 0.05f)
                     {
                         Debug.Log("correcting position");
 
-                        List<ReconciliationInfo> infos = reconciliationBuffer.ToList();
+                        List<ReconciliationInfo> infos = reconciliationHistory.ToList();
                         Interpolation.CurrentData = data;
                         transform.position = data.Position;
                         transform.rotation = data.LookDirection;
@@ -163,21 +163,20 @@ public class ClientPlayer : MonoBehaviour
                 GlobalManager.Instance.Client.SendMessage(m, SendMode.Reliable);
             }
 
-            reconciliationBuffer.Enqueue(new ReconciliationInfo(GameManager.Instance.CurrentServerTick+3,updateData, inputData));
-        }
-        else
-        {
-            while (updateBuffer.Count > 1)
-            {
-                PlayerUpdateData data = updateBuffer.Dequeue();
-                Interpolation.SetFramePosition(data);
-            }
+            reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick+3,updateData, inputData));
         }
     }
 
-    public void RecieveUpdate(PlayerUpdateData data)
+    public void OnServerDataUpdate(PlayerUpdateData data)
     {
-        updateBuffer.Enqueue(data);
+        if (IsOwn)
+        {
+            
+        }
+        else
+        {
+            Interpolation.SetFramePosition(data);
+        }
     }
 }
 

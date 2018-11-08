@@ -12,10 +12,12 @@ public class GameManager : MonoBehaviour
     public GameObject PlayerPrefab;
 
     [Header("Public Fields")]
-    public uint CurrentServerTick;
+    public uint ClientTick;
     public uint LastRecievedServerTick;
 
     private Dictionary<ushort, ClientPlayer> players = new Dictionary<ushort, ClientPlayer>();
+
+    private Buffer<GameUpdateData> gameUpdateBuffer = new Buffer<GameUpdateData>(1, 1);
 
     void Awake()
     {
@@ -31,18 +33,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
-    {
-        CurrentServerTick++;
-    }
-
     void OnDestroy()
     {
         GlobalManager.Instance.Client.MessageReceived -= OnMessage;
     }
 
 
-    private void OnMessage(object sender, MessageReceivedEventArgs e)
+    void OnMessage(object sender, MessageReceivedEventArgs e)
     {
         using (Message m = e.GetMessage())
         {
@@ -59,7 +56,22 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void OnGameUpdate(GameUpdateData updateData)
+    void OnGameUpdate(GameUpdateData updateData)
+    {
+        gameUpdateBuffer.Add(updateData);
+    }
+
+    void FixedUpdate()
+    {
+        ClientTick++;
+        GameUpdateData[] datas = gameUpdateBuffer.Get();
+        foreach (GameUpdateData data in datas)
+        {
+            PerformGameUpdate(data);
+        }
+    }
+
+    void PerformGameUpdate(GameUpdateData updateData)
     {
         LastRecievedServerTick = updateData.Frame;
         foreach (PlayerSpawnData data in updateData.SpawnData)
@@ -84,7 +96,7 @@ public class GameManager : MonoBehaviour
             ClientPlayer p;
             if (players.TryGetValue(data.Id, out p))
             {
-                p.RecieveUpdate(data);
+                p.OnServerDataUpdate(data);
             }
         }
 
@@ -98,17 +110,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OnGameJoinAccept(GameStartData data)
+
+    void OnGameJoinAccept(GameStartData data)
     {
         LastRecievedServerTick = data.OnJoinServerTick;
-        CurrentServerTick = data.OnJoinServerTick;
+        ClientTick = data.OnJoinServerTick;
         foreach (PlayerSpawnData ppd in data.Players)
         {
             SpawnPlayer(ppd);
         }
     }
 
-    public void SpawnPlayer(PlayerSpawnData ppd)
+    void SpawnPlayer(PlayerSpawnData ppd)
     {
         GameObject go = Instantiate(PlayerPrefab);
         ClientPlayer player = go.GetComponent<ClientPlayer>();
