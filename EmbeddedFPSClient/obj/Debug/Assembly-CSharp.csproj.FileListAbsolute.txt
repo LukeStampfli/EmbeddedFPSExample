@@ -344,3 +344,5 @@ C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSClient\Temp\bin\Debug\Dark
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSClient\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSClient\obj\Debug\Assembly-CSharp.dll
 C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSClient\obj\Debug\Assembly-CSharp.pdb
+C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSClient\Temp\bin\Debug\UnityEditor.UI.dll
+C:\Users\luke\Documents\embeddedfpsexample\EmbeddedFPSClient\Temp\bin\Debug\UnityEditor.UI.xml

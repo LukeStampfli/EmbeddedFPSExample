@@ -293,7 +293,7 @@ MonoBehaviour:
   Health: 0
   SensitivityX: 5
   SensitivityY: -5
-  Mover: {fileID: 114920039374967156}
+  Interpolation: {fileID: 114920039374967156}
   Logic: {fileID: 114887761896449856}
   NameText: {fileID: 114512959565655856}
   HealthBarFill: {fileID: 114053991253118654}
