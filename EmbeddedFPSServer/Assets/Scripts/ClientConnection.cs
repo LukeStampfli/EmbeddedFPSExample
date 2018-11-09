@@ -42,7 +42,7 @@ public class ClientConnection
                     Room.JoinPlayerToGame(this);
                     break;
                 case Tags.GamePlayerInput:
-                    Player.Recieveinput(m.Deserialize<PlayerInputData>());
+                    Player.RecieveInput(m.Deserialize<PlayerInputData>());
                     break;
             }
         }

@@ -27,20 +27,26 @@ public class Room : MonoBehaviour
         {
             player.PerformShootupdate();
         }
+
+        int i = 0;
         foreach (ServerPlayer player in ServerPlayers)
         {
-            player.PerformUpdate();
+            player.PerformUpdate(i);
+            i++;
         }
 
         //send update message to all players
-        using (Message m = Message.Create((ushort) Tags.GameUpdate, new GameUpdateData(ServerTick, UpdateDatas, spawnDatas.ToArray(), despawnDatas.ToArray(), HealthUpdates.ToArray())))
+
+        PlayerSpawnData[] tpsd = spawnDatas.ToArray();
+        PlayerDespawnData[] tpdd = despawnDatas.ToArray();
+        foreach (ServerPlayer p in ServerPlayers)
         {
-            foreach (ServerPlayer p in ServerPlayers)
+            using (Message m = Message.Create((ushort)Tags.GameUpdate, new GameUpdateData(ServerTick, UpdateDatas, tpsd, tpdd, HealthUpdates.ToArray())))
             {
                 p.Client.SendMessage(m, SendMode.Reliable);
             }
         }
-
+     
         //clear values
         spawnDatas.Clear();
         despawnDatas.Clear();

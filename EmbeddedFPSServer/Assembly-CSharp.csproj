@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\RoomManager.cs" />
     <Compile Include="Assets\Scripts\ServerManager.cs" />
     <Compile Include="Assets\Scripts\ServerPlayer.cs" />
+    <Compile Include="Assets\Scripts\shared\Buffer.cs" />
     <Compile Include="Assets\Scripts\shared\Networking Data.cs" />
     <Compile Include="Assets\Scripts\shared\PlayerLogic.cs" />
     <None Include="Assets\DarkRift\DarkRift\Plugins\Server\DarkRift.Server.xml" />

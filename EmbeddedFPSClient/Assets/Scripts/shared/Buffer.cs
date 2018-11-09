@@ -49,8 +49,10 @@ public class Buffer<T>
         {
             val[i] = elements.Dequeue();
         }
-        return val;
 
+        return val;
     }
+
+
 }
 

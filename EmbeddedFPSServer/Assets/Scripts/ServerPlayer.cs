@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using DarkRift;
 using DarkRift.Server;
 using UnityEngine;
@@ -10,6 +10,7 @@ public class ServerPlayer : MonoBehaviour
     [Header("Public Fields")]
     public ClientConnection ClientConnection;
     public Room Room;
+    public uint InputTick;
     public int Health;
 
     [Header("References")]
@@ -18,12 +19,9 @@ public class ServerPlayer : MonoBehaviour
     public IClient Client;
     public PlayerUpdateData CurrentUpdateData;
 
-
-
-    private int indexInRoomList;
-    private int bufferWaitTime = 3;
-    private Queue<PlayerInputData>inputBuffer = new Queue<PlayerInputData>();
     public List<PlayerUpdateData> UpdateDataHistory = new List<PlayerUpdateData>();
+
+    private Buffer<PlayerInputData> inputBuffer = new Buffer<PlayerInputData>(1,1);
 
     public void Initialize(Vector3 position, ClientConnection clientConnection)
     {
@@ -32,9 +30,10 @@ public class ServerPlayer : MonoBehaviour
         Client = clientConnection.Client;
         ClientConnection.Player = this;
         Room.ServerPlayers.Add(this);
-        indexInRoomList = Room.ServerPlayers.Count - 1;
+
         Room.UpdateDatas = new PlayerUpdateData[Room.ServerPlayers.Count];
         CurrentUpdateData = new PlayerUpdateData(Client.ID,0, Vector3.zero, Quaternion.identity);
+        InputTick = Room.ServerTick;
         Health = 100;
 
         PlayerSpawnData[] datas = new PlayerSpawnData[Room.ServerPlayers.Count];
@@ -49,9 +48,9 @@ public class ServerPlayer : MonoBehaviour
         }
     }
 
-    public void Recieveinput(PlayerInputData input)
+    public void RecieveInput(PlayerInputData input)
     {
-        inputBuffer.Enqueue(input);
+        inputBuffer.Add(input);
     }
 
     public void TakeDamage(int value)
@@ -70,44 +69,26 @@ public class ServerPlayer : MonoBehaviour
 
     public void PerformShootupdate()
     {
-        if (inputBuffer.Any())
+        /*if (inputBuffer.Any())
         {
             PlayerInputData next = inputBuffer.Peek();
             if (next.Keyinputs[5])
             {
                 Room.PerformShootRayCast(next.Time, this);
             }
-        }
+        }*/
     }
 
-    public void PerformUpdate()
+    public void PerformUpdate(int index)
     {
-        if (bufferWaitTime > 0)
+        PlayerInputData[] inputs = inputBuffer.Get();
+
+        foreach (PlayerInputData i in inputs)
         {
-            bufferWaitTime--;
+            CurrentUpdateData = Logic.GetNextFrameData(i, CurrentUpdateData);
+            InputTick++;
         }
-        else
-        {
-            if (inputBuffer.Any())
-            {
-                while (inputBuffer.Count > 3 && bufferWaitTime < 0)
-                {
-                    bufferWaitTime++;
-                    inputBuffer.Dequeue();
-                }
-
-
-                PlayerUpdateData data = Logic.GetNextFrameData(inputBuffer.Dequeue(), CurrentUpdateData);
-                CurrentUpdateData = data;
-
-            }
-            else
-            {
-                bufferWaitTime--;
-            }
-
-        }
-
+    
         UpdateDataHistory.Add(CurrentUpdateData);
         if (UpdateDataHistory.Count > 10)
         {
@@ -116,7 +97,7 @@ public class ServerPlayer : MonoBehaviour
 
         transform.localPosition = CurrentUpdateData.Position;
         transform.localRotation = CurrentUpdateData.LookDirection;
-        Room.UpdateDatas[indexInRoomList] = CurrentUpdateData;
+        Room.UpdateDatas[index] = CurrentUpdateData;
     }
 
     public PlayerSpawnData GetPlayerSpawnData()

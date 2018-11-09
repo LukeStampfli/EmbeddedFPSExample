@@ -326,7 +326,6 @@ public struct PlayerInputData : IDarkRiftSerializable
     {
         Keyinputs = e.Reader.ReadBooleans();
         LookDirection = new Quaternion(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
-
         if (Keyinputs[5])
         {
             Time = e.Reader.ReadUInt32();
