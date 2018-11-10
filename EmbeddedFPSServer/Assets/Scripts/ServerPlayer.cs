@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DarkRift;
 using DarkRift.Server;
 using UnityEngine;
@@ -21,7 +22,9 @@ public class ServerPlayer : MonoBehaviour
 
     public List<PlayerUpdateData> UpdateDataHistory = new List<PlayerUpdateData>();
 
-    private Buffer<PlayerInputData> inputBuffer = new Buffer<PlayerInputData>(1,1);
+    private Buffer<PlayerInputData> inputBuffer = new Buffer<PlayerInputData>(1,2);
+
+    private PlayerInputData[] inputs;
 
     public void Initialize(Vector3 position, ClientConnection clientConnection)
     {
@@ -67,27 +70,41 @@ public class ServerPlayer : MonoBehaviour
     }
 
 
-    public void PerformShootupdate()
+    public void PerformuPreUpdate()
     {
-        /*if (inputBuffer.Any())
+        PlayerInputData[] inputs = inputBuffer.Get();
+        for (int i = 0; i < inputs.Length; i++)
         {
-            PlayerInputData next = inputBuffer.Peek();
-            if (next.Keyinputs[5])
+            if (inputs[i].Keyinputs[5])
             {
-                Room.PerformShootRayCast(next.Time, this);
+                Room.PerformShootRayCast(inputs[i].Time, this);
+                return;
             }
-        }*/
+        }
     }
 
     public void PerformUpdate(int index)
     {
-        PlayerInputData[] inputs = inputBuffer.Get();
 
-        foreach (PlayerInputData i in inputs)
+        if (inputs.Length > 0)
         {
-            CurrentUpdateData = Logic.GetNextFrameData(i, CurrentUpdateData);
+            PlayerInputData input = inputs.First();
             InputTick++;
+
+            for (int i = 1; i < inputs.Length; i++)
+            {
+                InputTick++;
+                for (int j = 0; j < input.Keyinputs.Length; j++)
+                {
+                    input.Keyinputs[j] = input.Keyinputs[j] || inputs[i].Keyinputs[j];
+                }
+                input.LookDirection = inputs[i].LookDirection;
+            }
+
+            CurrentUpdateData = Logic.GetNextFrameData(input, CurrentUpdateData);
         }
+     
+       
     
         UpdateDataHistory.Add(CurrentUpdateData);
         if (UpdateDataHistory.Count > 10)

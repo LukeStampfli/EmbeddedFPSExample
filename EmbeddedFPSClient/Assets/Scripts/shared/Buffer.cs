@@ -3,7 +3,7 @@
 public class Buffer<T>
 {
 
-    public int Size { get { return elements.Count; }}
+    public int Size { get { return elements.Count; } }
 
     private Queue<T> elements;
     private int bufferState;
@@ -14,7 +14,7 @@ public class Buffer<T>
     {
         elements = new Queue<T>();
         bufferState = -bufferSize;
-        this.maxElementsPerGet = maxElementsPerGet-1;
+        this.maxElementsPerGet = maxElementsPerGet - 1;
     }
 
 
@@ -37,22 +37,22 @@ public class Buffer<T>
             return new T[0];
         }
 
-        if (bufferState == 0) 
+        if (bufferState == 0)
         {
-            return new T[] {elements.Dequeue()};
+            return new T[] { elements.Dequeue() };
         }
 
-        int amountToGet = bufferState > maxElementsPerGet ? maxElementsPerGet : bufferState; 
+        int amountToGet = bufferState > maxElementsPerGet ? maxElementsPerGet : bufferState;
+        amountToGet = amountToGet > elements.Count - 1 ? elements.Count - 1 : amountToGet;
         bufferState = 0;
-        T[] val = new T[amountToGet+1];
+        T[] val = new T[amountToGet + 1];
         for (int i = amountToGet; i >= 0; i--)
         {
             val[i] = elements.Dequeue();
         }
 
         return val;
+
     }
-
-
 }
 

@@ -43,6 +43,7 @@ public class Buffer<T>
         }
 
         int amountToGet = bufferState > maxElementsPerGet ? maxElementsPerGet : bufferState;
+        amountToGet = amountToGet > elements.Count - 1 ? elements.Count - 1 : amountToGet;
         bufferState = 0;
         T[] val = new T[amountToGet + 1];
         for (int i = amountToGet; i >= 0; i--)

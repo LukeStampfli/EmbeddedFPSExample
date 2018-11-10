@@ -324,7 +324,11 @@ public struct PlayerInputData : IDarkRiftSerializable
 
     public void Deserialize(DeserializeEvent e)
     {
-        Keyinputs = e.Reader.ReadBooleans();
+        Keyinputs = new bool[6];
+        for (int q = 0; q < 6; q++)
+        {
+            Keyinputs[q] = e.Reader.ReadBoolean();
+        }
         LookDirection = new Quaternion(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
         if (Keyinputs[5])
         {
@@ -335,7 +339,10 @@ public struct PlayerInputData : IDarkRiftSerializable
     public void Serialize(SerializeEvent e)
     {
 
-        e.Writer.Write(Keyinputs);
+        for (int q = 0; q < 6; q++)
+        {
+            e.Writer.Write(Keyinputs[q]);
+        }
         e.Writer.Write(LookDirection.x);
         e.Writer.Write(LookDirection.y);
         e.Writer.Write(LookDirection.z);

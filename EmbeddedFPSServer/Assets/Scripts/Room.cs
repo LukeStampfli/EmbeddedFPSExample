@@ -25,7 +25,7 @@ public class Room : MonoBehaviour
         //perform updates for all players in the room
         foreach (ServerPlayer player in ServerPlayers)
         {
-            player.PerformShootupdate();
+            player.PerformuPreUpdate();
         }
 
         int i = 0;
@@ -41,7 +41,7 @@ public class Room : MonoBehaviour
         PlayerDespawnData[] tpdd = despawnDatas.ToArray();
         foreach (ServerPlayer p in ServerPlayers)
         {
-            using (Message m = Message.Create((ushort)Tags.GameUpdate, new GameUpdateData(ServerTick, UpdateDatas, tpsd, tpdd, HealthUpdates.ToArray())))
+            using (Message m = Message.Create((ushort)Tags.GameUpdate, new GameUpdateData(p.InputTick, UpdateDatas, tpsd, tpdd, HealthUpdates.ToArray())))
             {
                 p.Client.SendMessage(m, SendMode.Reliable);
             }

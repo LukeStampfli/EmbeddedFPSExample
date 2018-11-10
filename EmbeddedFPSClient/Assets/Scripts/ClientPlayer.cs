@@ -44,7 +44,7 @@ public class ClientPlayer : MonoBehaviour
     public GameObject ShotPrefab;
 
     private Queue<PlayerUpdateData> updateBuffer = new Queue<PlayerUpdateData>();
-    private Queue<ReconciliationInfo> reconciliationHistory;
+    private Queue<ReconciliationInfo> reconciliationHistory = new Queue<ReconciliationInfo>();
 
     private float yaw;
     private float pitch;
@@ -62,7 +62,6 @@ public class ClientPlayer : MonoBehaviour
             Camera.main.transform.localPosition = new Vector3(0,0,0);
             Camera.main.transform.localRotation = Quaternion.identity;
             Interpolation.CurrentData = new PlayerUpdateData(Id,0, Vector3.zero, Quaternion.identity);
-            reconciliationHistory = new Queue<ReconciliationInfo>();
         }
     }
 
@@ -89,48 +88,7 @@ public class ClientPlayer : MonoBehaviour
     {
         if (IsOwn)
         {
-            while (updateBuffer.Count > 1)
-            {
-                updateBuffer.Dequeue();
-            }
-
-            if (updateBuffer.Count == 1)
-            {
-                PlayerUpdateData data = updateBuffer.Dequeue();
-                while (true)
-                {
-                    if (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame < GameManager.Instance.LastRecievedServerTick)
-                    {
-                        reconciliationHistory.Dequeue();
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                if (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame == GameManager.Instance.LastRecievedServerTick)
-                {
-                    ReconciliationInfo info = reconciliationHistory.Dequeue();
-                    if (Vector3.Distance(info.Data.Position, data.Position) > 0.05f)
-                    {
-                        Debug.Log("correcting position");
-
-                        List<ReconciliationInfo> infos = reconciliationHistory.ToList();
-                        Interpolation.CurrentData = data;
-                        transform.position = data.Position;
-                        transform.rotation = data.LookDirection;
-                        for (int i = 0; i < infos.Count; i++)
-                        {
-                            PlayerUpdateData u = Logic.GetNextFrameData(infos[i].Input, Interpolation.CurrentData);
-                            Interpolation.SetFramePosition(u);
-                        }
-                    }
-                }
-            }
-
-
-
+           
             bool[]inputs = new bool[6];
             inputs[0] = Input.GetKey(KeyCode.W);
             inputs[1] = Input.GetKey(KeyCode.A);
@@ -163,7 +121,7 @@ public class ClientPlayer : MonoBehaviour
                 GlobalManager.Instance.Client.SendMessage(m, SendMode.Reliable);
             }
 
-            reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick+3,updateData, inputData));
+            reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick,updateData, inputData));
         }
     }
 
@@ -171,7 +129,28 @@ public class ClientPlayer : MonoBehaviour
     {
         if (IsOwn)
         {
-            
+            while (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame < GameManager.Instance.LastRecievedServerTick)
+            {
+                reconciliationHistory.Dequeue();
+            }
+
+            if (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame == GameManager.Instance.LastRecievedServerTick)
+            {
+                ReconciliationInfo info = reconciliationHistory.Dequeue();
+                if (Vector3.Distance(info.Data.Position, data.Position) > 0.05f)
+                {
+
+                    List<ReconciliationInfo> infos = reconciliationHistory.ToList();
+                    Interpolation.CurrentData = data;
+                    transform.position = data.Position;
+                    transform.rotation = data.LookDirection;
+                    for (int i = 0; i < infos.Count; i++)
+                    {
+                        PlayerUpdateData u = Logic.GetNextFrameData(infos[i].Input, Interpolation.CurrentData);
+                        Interpolation.SetFramePosition(u);
+                    }
+                }
+            }
         }
         else
         {
