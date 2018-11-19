@@ -72,7 +72,7 @@ public class ServerPlayer : MonoBehaviour
 
     public void PerformuPreUpdate()
     {
-        PlayerInputData[] inputs = inputBuffer.Get();
+        inputs = inputBuffer.Get();
         for (int i = 0; i < inputs.Length; i++)
         {
             if (inputs[i].Keyinputs[5])

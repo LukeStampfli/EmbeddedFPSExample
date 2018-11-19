@@ -292,7 +292,16 @@ Now we just have to interpolate in Update:
 
 Well interpolation is very simple in it's raw form. we set the as the time since our last input and divide it by fixedDeltaTime. Then we lerp between the last 2 values. We use LerpUnclamped because we don't want players to stop moving when they don't get an input for a while(we will use this interpolation scripts for enemies too).
 
-Add the PlayerInterpolation to the Player and open the ClientPlayer script.
+Add the PlayerInterpolation to the Player and open the ClientPlayer script and add the following Variables to it:
+```csharp
+    [Header("Public Fields")]
+    public ushort Id;
+    public string Name;
+    public bool IsOwn;
+```
+
+Id will be the id of the player on the server and IsOwn will be true for our own player but not for enemies.
+
 Add a new variable to the References(I mean below the References header)
 ```csharp
     public PlayerInterpolation Interpolation;

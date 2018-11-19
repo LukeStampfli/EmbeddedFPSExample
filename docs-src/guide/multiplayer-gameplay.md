@@ -213,17 +213,6 @@ Next we want to send a message to the server in Start() and we want to receive m
     }
 ```
 
-Before we finish the SpawnPlayer function we have to change our ClientPlayer script a bit to make it multiplayer compatible. 
-Add the following Variables to it:
-```csharp
-    [Header("Public Fields")]
-    public ushort Id;
-    public string Name;
-    public bool IsOwn;
-```
-
-Id will be the id of the player on the server and IsOwn will be true for our own player but not for enemies.
-
 **Delete the Start() function from the clientPlayer**
 and add:
 
