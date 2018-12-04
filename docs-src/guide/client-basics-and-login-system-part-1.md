@@ -89,6 +89,11 @@ We will only use a username and no password or account management in our login s
 
 Now open the LoginManager and again create a static reference to itself and some references to the login elements
 ```csharp
+    using System;
+    using DarkRift;
+    using DarkRift.Client;
+    using UnityEngine;
+    using UnityEngine.UI;
     public static LoginManager Instance;
 
     [Header("References")]
