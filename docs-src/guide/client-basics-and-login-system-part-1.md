@@ -17,6 +17,7 @@ using System.Net;
 using DarkRift;
 using DarkRift.Client.Unity;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(UnityClient))]
 public class GlobalManager : MonoBehaviour
