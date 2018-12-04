@@ -54,6 +54,9 @@ Some scripts will be used by the client and the server, having a way to synchron
 - type: ```mklink /J "Client shared folder" "server shared folder"```\
 (Replace "Client/Server shared folder" with just the path, don't write the "")
 
+::: tip 
+When you enter the the command above and it returns with a error try deleting the shared folder in the server folder before running the command and write the "" for both paths
+::: 
 ### Mac OS X
 - open the terminal
 - type: ```ln -s "Client shared folder" "server shared folder"```\
