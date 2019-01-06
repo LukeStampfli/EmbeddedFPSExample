@@ -333,21 +333,25 @@ Luckily the TCP protcol delivers reliable and sorted messages(on the cost of per
 Since this is a problem that each game has to face there exists a solution to it already. It's called a buffer or dejitter buffer. A buffer stores the elements it receives for a short time in a list and allows us to pull an element out each frame. Create a new Buffer script in Scripts/shared and fill it with the following code:
 ```csharp
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class Buffer<T>
 {
-    public int Size { get { return elements.Count; }}
+
+    public int Size { get { return elements.Count; } }
 
     private Queue<T> elements;
-    private int bufferState;
-    private int maxElementsPerGet;
+    private int bufferSize;
+    private int counter;
+    private int correctionTollerance;
 
 
-    public Buffer(int bufferSize, int maxElementsPerGet)
+    public Buffer(int bufferSize, int correctionTollerance)
     {
+        this.bufferSize = bufferSize;
+        this.correctionTollerance = correctionTollerance;
         elements = new Queue<T>();
-        bufferState = -bufferSize;
-        this.maxElementsPerGet = maxElementsPerGet-1;
     }
 
 
@@ -358,33 +362,51 @@ public class Buffer<T>
 
     public T[] Get()
     {
-        if (bufferState < 0)
+        int size = elements.Count - 1;
+
+        if (size == bufferSize)
         {
-            bufferState++;
-            return new T[0];
+            counter = 0;
         }
 
-        if (elements.Count == 0)
+        if (size > bufferSize)
         {
-            bufferState++;
-            return new T[0];
+            if (counter < 0)
+            {
+                counter = 0;
+            }
+            counter++;
+            if (counter > correctionTollerance)
+            {
+                int amount = elements.Count - bufferSize;
+                T[] temp = new T[amount];
+                for (int i = 0; i < amount; i++)
+                {
+                    temp[i] = elements.Dequeue();
+                }
+
+                return temp;
+            }
         }
 
-        if (bufferState == 0) 
+        if (size < bufferSize)
         {
-            return new T[] {elements.Dequeue()};
+            if (counter > 0)
+            {
+                counter = 0;
+            }
+            counter--;
+            if (-counter > correctionTollerance)
+            {
+                return new T[0];
+            }
         }
 
-        int amountToGet = bufferState > maxElementsPerGet ? maxElementsPerGet : bufferState; 
-        amountToGet = amountToGet > elements.Count - 1 ? elements.Count - 1 : amountToGet;
-        bufferState -= amountToGet;
-        T[] val = new T[amountToGet+1];
-        for (int i = amountToGet; i >= 0; i--)
+        if (elements.Any())
         {
-            val[i] = elements.Dequeue();
+            return new T[] { elements.Dequeue() };
         }
-        return val;
-
+        return new T[0];
     }
 }
 ```
