@@ -1,9 +1,0 @@
-[Trace]   DarkRiftServer        System Details:
-                                	OS: Microsoft Windows NT 6.2.9200.0
-                                	CLS Version: 2.0.50727.1433
-                                	DarkRift: 2.2.0.0 - Free
-[Trace]   NetworkListener       Starting fallback listener.
-[Info]    DarkRiftServer        Server mounted, listening on port 4296.
-[Trace]   NetworkListener       Accepted TCP connection from 127.0.0.1:65053.
-[Trace]   NetworkListener       Accepted UDP connection from 127.0.0.1:59046.
-[Info]    ClientManager         New client [0] connected [127.0.0.1:65053|59046].

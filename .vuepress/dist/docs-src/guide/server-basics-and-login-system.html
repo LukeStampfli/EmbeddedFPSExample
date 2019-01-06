@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Server Basics and Login System</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/assets/css/0.styles.9d53ebe0.css" as="style"><link rel="preload" href="/assets/js/app.c9d37527.js" as="script"><link rel="preload" href="/assets/js/15.b73c1666.js" as="script"><link rel="prefetch" href="/assets/js/10.32a353f3.js"><link rel="prefetch" href="/assets/js/11.933c19ec.js"><link rel="prefetch" href="/assets/js/12.a02f11f0.js"><link rel="prefetch" href="/assets/js/13.40ac11ba.js"><link rel="prefetch" href="/assets/js/14.a916c891.js"><link rel="prefetch" href="/assets/js/16.852cf2a8.js"><link rel="prefetch" href="/assets/js/17.dfac54fd.js"><link rel="prefetch" href="/assets/js/2.e2bca5e2.js"><link rel="prefetch" href="/assets/js/3.ca04f91d.js"><link rel="prefetch" href="/assets/js/4.4c29f191.js"><link rel="prefetch" href="/assets/js/5.d9fa2263.js"><link rel="prefetch" href="/assets/js/6.b7b36f4e.js"><link rel="prefetch" href="/assets/js/7.d6545fd4.js"><link rel="prefetch" href="/assets/js/8.819f337e.js"><link rel="prefetch" href="/assets/js/9.226f770f.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.9d53ebe0.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"></a> <div class="links" style="max-width:nullpx;"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <div class="sidebar"><!---->  <!----> </div> <div class="page"> <div class="content"><h1 id="server-basics-and-login-system"><a href="#server-basics-and-login-system" aria-hidden="true" class="header-anchor">#</a> Server Basics and Login System</h1> <p>On the server we:</p> <ul><li>Create a GameObject called Server in the Main scene.</li> <li>Create a ServerManager script in Scripts.</li> <li>Add a XmlUnityServer component to the Server gameobject.</li> <li>Add the ServerManager to the server gameobject.</li></ul> <p>In the ServerManager script add the following code:</p> <div class="language-csharp extra-class"><pre class="language-csharp"><code> <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">ServerManager</span> Instance<span class="token punctuation">;</span>
+
+    <span class="token punctuation">[</span><span class="token class-name">Header</span><span class="token punctuation">(</span><span class="token string">&quot;References&quot;</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+    <span class="token keyword">public</span> <span class="token class-name">XmlUnityServer</span> XmlServer<span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">DarkRiftServer</span> Server<span class="token punctuation">;</span>
+
+    <span class="token keyword">void</span> <span class="token function">Awake</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>Instance <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
+        <span class="token punctuation">{</span>
+            <span class="token function">Destroy</span><span class="token punctuation">(</span>gameObject<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        Instance <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">;</span>
+        <span class="token function">DontDestroyOnLoad</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+</code></pre></div><p>pretty similar to the GlobalManager of the client.</p> <p>(and you will need the following directives at the top of the file)</p> <div class="language-csharp extra-class"><pre class="language-csharp"><code><span class="token keyword">using</span> System<span class="token punctuation">.</span>Collections<span class="token punctuation">.</span>Generic<span class="token punctuation">;</span>
+<span class="token keyword">using</span> DarkRift<span class="token punctuation">;</span>
+<span class="token keyword">using</span> DarkRift<span class="token punctuation">.</span>Server<span class="token punctuation">;</span>
+<span class="token keyword">using</span> DarkRift<span class="token punctuation">.</span>Server<span class="token punctuation">.</span>Unity<span class="token punctuation">;</span>
+<span class="token keyword">using</span> UnityEngine<span class="token punctuation">;</span>
+</code></pre></div><p>Your scene should look now like this:<br> <img src="https://i.imgur.com/5qcXtSz.png" alt></p> <p>As a next step will add functionality to the ServerManager to receive messages from clients. To do that we have to subscribe to events of the Darkrift Server.</p> <div class="language-csharp extra-class"><pre class="language-csharp"><code><span class="token keyword">void</span> <span class="token function">Start</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        Server <span class="token operator">=</span> XmlServer<span class="token punctuation">.</span>Server<span class="token punctuation">;</span>
+        Server<span class="token punctuation">.</span>ClientManager<span class="token punctuation">.</span>ClientConnected <span class="token operator">+</span><span class="token operator">=</span> OnClientConnect<span class="token punctuation">;</span>
+        Server<span class="token punctuation">.</span>ClientManager<span class="token punctuation">.</span>ClientDisconnected <span class="token operator">+</span><span class="token operator">=</span> OnClientDisconnect<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">void</span> <span class="token function">OnDestroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        Server<span class="token punctuation">.</span>ClientManager<span class="token punctuation">.</span>ClientConnected <span class="token operator">-</span><span class="token operator">=</span> OnClientConnect<span class="token punctuation">;</span>
+        Server<span class="token punctuation">.</span>ClientManager<span class="token punctuation">.</span>ClientDisconnected <span class="token operator">-</span><span class="token operator">=</span> OnClientDisconnect<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">OnClientDisconnect</span><span class="token punctuation">(</span><span class="token keyword">object</span> sender<span class="token punctuation">,</span> <span class="token class-name">ClientDisconnectedEventArgs</span> e<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        e<span class="token punctuation">.</span>Client<span class="token punctuation">.</span>MessageReceived <span class="token operator">-</span><span class="token operator">=</span> OnMessage<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">OnClientConnect</span><span class="token punctuation">(</span><span class="token keyword">object</span> sender<span class="token punctuation">,</span> <span class="token class-name">ClientConnectedEventArgs</span> e<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        e<span class="token punctuation">.</span>Client<span class="token punctuation">.</span>MessageReceived <span class="token operator">+</span><span class="token operator">=</span> OnMessage<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">OnMessage</span><span class="token punctuation">(</span><span class="token keyword">object</span> sender<span class="token punctuation">,</span> <span class="token class-name">MessageReceivedEventArgs</span> e<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+    <span class="token punctuation">}</span>
+</code></pre></div><p>The code first subscribes to the ClientConnected and ClientDisconnected events. These events get called when clients connect and disconnect. We also subscribe to the IClient.MessageRecieved event when a client connects so that we receive messages from all clients in OnMessage(). This lets us process our LoginRequests from the clients by adding code in the OnMessage function:</p> <div class="language-csharp extra-class"><pre class="language-csharp"><code>  <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">OnMessage</span><span class="token punctuation">(</span><span class="token keyword">object</span> sender<span class="token punctuation">,</span> <span class="token class-name">MessageReceivedEventArgs</span> e<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token class-name">IClient</span> client <span class="token operator">=</span> <span class="token punctuation">(</span>IClient<span class="token punctuation">)</span> sender<span class="token punctuation">;</span>
+        <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name">Message</span> m <span class="token operator">=</span> e<span class="token punctuation">.</span><span class="token function">GetMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token punctuation">{</span>
+            <span class="token keyword">switch</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>Tags<span class="token punctuation">)</span> m<span class="token punctuation">.</span>Tag<span class="token punctuation">)</span>
+            <span class="token punctuation">{</span>
+                <span class="token keyword">case</span> Tags<span class="token punctuation">.</span>LoginRequest<span class="token punctuation">:</span>
+                    <span class="token function">OnclientLogin</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> m<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">Deserialize</span><span class="token punctuation">&lt;</span><span class="token class-name">LoginRequestData</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+</code></pre></div><p>This code just gets the Client which sent the message and the message itself from the MessageReceived event and then uses a switch to run a function depending on the Tag of the message, it should be pretty much self explaining.</p> <p>We also have to create the function that gets called:</p> <div class="language-csharp extra-class"><pre class="language-csharp"><code>    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">OnclientLogin</span><span class="token punctuation">(</span><span class="token class-name">IClient</span> client<span class="token punctuation">,</span> <span class="token class-name">LoginRequestData</span> data<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token comment">//check if player is already logged in (name already chosen in our case) and if not create a new object to represent a logged in client.</span>
+    <span class="token punctuation">}</span>
+</code></pre></div><div class="danger custom-block"><p class="custom-block-title">WARNING</p> <p>Usually you would create a LoginManager on the server which talks to a backend to verify the login request and then you generate a session token, but we will keep it simple here and just check that no duplicate users are logged in(Each player has a unique name).</p></div> <p>Now we have to create an object to represent a logged in player, so create a new script &quot;ClientConnection&quot; in the Scripts folder. And change its code to this:</p> <div class="language-csharp extra-class"><pre class="language-csharp"><code><span class="token keyword">using</span> DarkRift<span class="token punctuation">;</span>
+<span class="token keyword">using</span> DarkRift<span class="token punctuation">.</span>Server<span class="token punctuation">;</span>
+
+<span class="token punctuation">[</span><span class="token class-name">System<span class="token punctuation">.</span>Serializable</span><span class="token punctuation">]</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ClientConnection</span>
+<span class="token punctuation">{</span>
+
+    <span class="token punctuation">[</span><span class="token class-name">Header</span><span class="token punctuation">(</span><span class="token string">&quot;Public Fields&quot;</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+    <span class="token keyword">public</span> <span class="token keyword">string</span> Name<span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token class-name">IClient</span> Client<span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token function">ClientConnection</span><span class="token punctuation">(</span><span class="token class-name">IClient</span> client <span class="token punctuation">,</span> <span class="token class-name">LoginRequestData</span> data<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        Client <span class="token operator">=</span> client<span class="token punctuation">;</span>
+        Name <span class="token operator">=</span> data<span class="token punctuation">.</span>Name<span class="token punctuation">;</span>
+
+        ServerManager<span class="token punctuation">.</span>Instance<span class="token punctuation">.</span>Players<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span>client<span class="token punctuation">.</span>ID<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        ServerManager<span class="token punctuation">.</span>Instance<span class="token punctuation">.</span>PlayersByName<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span>Name<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+     
+    <span class="token punctuation">}</span>
+</code></pre></div><p>And add Dictionaries in the ServerManager to store the logged in players:</p> <div class="language-csharp extra-class"><pre class="language-csharp"><code>    <span class="token keyword">public</span> Dictionary<span class="token operator">&lt;</span><span class="token keyword">ushort</span><span class="token punctuation">,</span> ClientConnection<span class="token operator">&gt;</span> Players <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token generic-method"><span class="token function">Dictionary</span><span class="token punctuation">&lt;</span><span class="token keyword">ushort</span><span class="token punctuation">,</span> <span class="token class-name">ClientConnection</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span> Dictionary<span class="token operator">&lt;</span><span class="token keyword">string</span><span class="token punctuation">,</span> ClientConnection<span class="token operator">&gt;</span> PlayersByName <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token generic-method"><span class="token function">Dictionary</span><span class="token punctuation">&lt;</span><span class="token keyword">string</span><span class="token punctuation">,</span> <span class="token class-name">ClientConnection</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>Now we can also fill in the OnclientLogin function in the ServerManager:</p> <div class="language-csharp extra-class"><pre class="language-csharp"><code> <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">OnclientLogin</span><span class="token punctuation">(</span><span class="token class-name">IClient</span> client<span class="token punctuation">,</span> <span class="token class-name">LoginRequestData</span> data<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>PlayersByName<span class="token punctuation">.</span><span class="token function">ContainsKey</span><span class="token punctuation">(</span>data<span class="token punctuation">.</span>Name<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token punctuation">{</span>
+            <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name">Message</span> m <span class="token operator">=</span> Message<span class="token punctuation">.</span><span class="token function">CreateEmpty</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">ushort</span><span class="token punctuation">)</span>Tags<span class="token punctuation">.</span>LoginRequestDenied<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">{</span>
+                client<span class="token punctuation">.</span><span class="token function">SendMessage</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span> SendMode<span class="token punctuation">.</span>Reliable<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">return</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">//In the future the ClientConnection will handle its messages</span>
+        client<span class="token punctuation">.</span>MessageReceived <span class="token operator">-</span><span class="token operator">=</span> OnMessage<span class="token punctuation">;</span>
+
+        <span class="token keyword">new</span> <span class="token class-name">ClientConnection</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+</code></pre></div><p>The function will first check if the name is already in use and if it is, it sends back a LoginRequestDenied data.
+If the name hasn't been used yet we create a new ClientConnection and unsubscribe from client.MessageRecieved, because in the future we can use the ClientConnection to handle messages from that client.</p> <p>Finally we have to send an LoginRequestAccepted message when the client has logged in successfully. This message should also contain additional information. In our case we want to let the client know his personal id on the server and information about the lobby and game rooms. (We will create a room system in the next section)</p> <p>So open the Networking Data <strong>in the Client Project (Remember the junction only works in 1 direction)</strong> and add:</p> <div class="language-csharp extra-class"><pre class="language-csharp"><code><span class="token keyword">public</span> <span class="token keyword">struct</span> LoginInfoData <span class="token punctuation">:</span> IDarkRiftSerializable
+<span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token keyword">ushort</span> Id<span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token class-name">LobbyInfoData</span> Data<span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token function">LoginInfoData</span><span class="token punctuation">(</span><span class="token keyword">ushort</span> id<span class="token punctuation">,</span> <span class="token class-name">LobbyInfoData</span> data<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        Id <span class="token operator">=</span> id<span class="token punctuation">;</span>
+        Data <span class="token operator">=</span> data<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">Deserialize</span><span class="token punctuation">(</span><span class="token class-name">DeserializeEvent</span> e<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        Id <span class="token operator">=</span> e<span class="token punctuation">.</span>Reader<span class="token punctuation">.</span><span class="token function">ReadUInt16</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        Data <span class="token operator">=</span> e<span class="token punctuation">.</span>Reader<span class="token punctuation">.</span><span class="token generic-method"><span class="token function">ReadSerializable</span><span class="token punctuation">&lt;</span><span class="token class-name">LobbyInfoData</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">Serialize</span><span class="token punctuation">(</span><span class="token class-name">SerializeEvent</span> e<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        e<span class="token punctuation">.</span>Writer<span class="token punctuation">.</span><span class="token function">Write</span><span class="token punctuation">(</span>Id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        e<span class="token punctuation">.</span>Writer<span class="token punctuation">.</span><span class="token function">Write</span><span class="token punctuation">(</span>Data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">public</span> <span class="token keyword">struct</span> LobbyInfoData <span class="token punctuation">:</span> IDarkRiftSerializable
+<span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token function">LobbyInfoData</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">Deserialize</span><span class="token punctuation">(</span><span class="token class-name">DeserializeEvent</span> e<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">Serialize</span><span class="token punctuation">(</span><span class="token class-name">SerializeEvent</span> e<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>LoginInfoData is the information that the client will receive after logging in and it includes LobbyInfoData which contains information about the lobby(currently empty).</p> <p>now lets send that message at the end of the constructor of the ClientConnection script, it should look like this:</p> <div class="language-csharp extra-class"><pre class="language-csharp"><code>    <span class="token keyword">public</span> <span class="token function">ClientConnection</span><span class="token punctuation">(</span><span class="token class-name">IClient</span> client <span class="token punctuation">,</span> <span class="token class-name">LoginRequestData</span> data<span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        Client <span class="token operator">=</span> client<span class="token punctuation">;</span>
+        Name <span class="token operator">=</span> data<span class="token punctuation">.</span>Name<span class="token punctuation">;</span>
+
+        ServerManager<span class="token punctuation">.</span>Instance<span class="token punctuation">.</span>Players<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span>client<span class="token punctuation">.</span>ID<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        ServerManager<span class="token punctuation">.</span>Instance<span class="token punctuation">.</span>PlayersByName<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span>Name<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+       
+        <span class="token keyword">using</span> <span class="token punctuation">(</span><span class="token class-name">Message</span> m <span class="token operator">=</span> Message<span class="token punctuation">.</span><span class="token function">Create</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">ushort</span><span class="token punctuation">)</span>Tags<span class="token punctuation">.</span>LoginRequestAccepted<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">LoginInfoData</span><span class="token punctuation">(</span>client<span class="token punctuation">.</span>ID<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">LobbyInfoData</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token punctuation">{</span>
+            client<span class="token punctuation">.</span><span class="token function">SendMessage</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span> SendMode<span class="token punctuation">.</span>Reliable<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+</code></pre></div><p>The scripts should now look like this:</p> <ul><li><a href="https://pastebin.com/V4eKfd3Q" target="_blank" rel="noopener noreferrer">ServerManager<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li> <li><a href="https://pastebin.com/yRxZ49u4" target="_blank" rel="noopener noreferrer">ClientConnection<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li> <li><a href="https://pastebin.com/2vvSRGVB" target="_blank" rel="noopener noreferrer">Networking Data<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li></ul> <p>In the next section we will create a room system and add information about rooms to the LobbyInfoData.</p></div> <div class="page-edit"><!----> <!----></div> <!----> </div> <!----></div></div>
+    <script src="/assets/js/app.c9d37527.js" defer></script><script src="/assets/js/15.b73c1666.js" defer></script>
+  </body>
+</html>

@@ -33,7 +33,7 @@ In the end standalone and embedded servers are pretty similar. We will go for an
 ## Setup the client
 - Create a new Unity project (I called mine EmbeddedFPSClient).
 - In Edit -> Project Settings -> Player -> Other settings, make sure that Scripting Runtime Version is set to .Net 4.x equivalent.
-- In Edit -> Project Settings -> Time set Fixed Timestep to 0.025 and Maximum Allowed Timestep to 0.025
+- In Edit -> Project Settings -> Time set Fixed Timestep to 0.025 and Maximum Allowed Timestep to 100
 - Head to the Asset Store and download the newest version of Darkrift 2.
 - Create a basic folder structure (create a "Prefabs", "Scenes" and "Scripts" folder)
 - Create a Scene "Main" in the scenes folder
@@ -47,7 +47,7 @@ I usually use a shared .dll file in a seperate project and not folder junction. 
 :::
 
 Some scripts will be used by the client and the server, having a way to synchronize them saves time. There are many good ways to do that. For the sake of simplicity we will use a folder junction. A folder junction synchronizes all files inside a folder to another folder. 
-- Create a "shared" folder inside the Scripts folder of the client and the server project.
+- Create a "shared" folder inside the Scripts folder of the client project.
 
 ### Windows:
 - open the cmd.exe
