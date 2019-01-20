@@ -32,22 +32,6 @@ public struct PlayerInputData : IDarkRiftSerializable
         e.Writer.Write(LookDirection.w);
     }
 }
-```
-**There is a bug at the moment in Darkrift 2.3 which results in ReadBools always reading an empty array. It will be fixed in 2.3.1 So if you are using 2.3 use the following to read and write bools for now**
-```csharp
-//write
- for (int q = 0; q < 6; q++)
-        {
-            e.Writer.Write(Keyinputs[q]);
-        }
-//read
-    Keyinputs = new bool[6];
-        for (int q = 0; q < 6; q++)
-        {
-            Keyinputs[q] = e.Reader.ReadBoolean();
-        }
-```
-
 :::warning
 There are far better ways to write booleans or quaternions which i'm not going to explain here. You can take a look at a [script of mine](https://github.com/LestaAllmaron/DarkriftSerializationExtensions/blob/master/DarkriftSerializationExtensions/DarkriftSerializationExtensions/SerializationExtensions.cs) to see examples on how to write bools or quaternions.
 :::

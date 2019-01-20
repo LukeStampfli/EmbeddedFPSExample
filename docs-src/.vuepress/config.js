@@ -17,6 +17,7 @@ module.exports = {
                 'multiplayer-gameplay',
                 'reconciliation',
                 'health-shooting-lag-Compensation',
+				'networking-discussion',
             ]
         }
     }

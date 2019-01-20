@@ -11,7 +11,7 @@ The client will be a unity game with a normal unity project. For the server we h
 
 
 ::: tip
- If you use a standalone server you can also create the server and the client in the same project. But you will have to make sure that the client build includes no server code and vice versa which makes it a bit complicated.
+ If you use an embedded server you can also create the server and the client in the same project. But you will have to make sure that the client build includes no server code and vice versa which makes it a bit complicated.
 :::
 
 ### Reasons to go for an embedded server
