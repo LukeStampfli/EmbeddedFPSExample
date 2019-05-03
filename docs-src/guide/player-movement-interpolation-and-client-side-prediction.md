@@ -2,9 +2,9 @@
 
 We will have to create a function to move the player based on an input. That function should run on the client and the server, so that the client can predict his movement.
 
-Lets first define what our player input will be and create a struct to represent it. We will also make it a IDarkriftSerializable so that we can send it to the server later. For our FPS we will need to monitor the following key inputs: W,A,S,D,Space,LeftClick we will store them in a bool[] (true means key is down false means key is up). But we additionally need the look direction of the player because his walk and shoot directions depend on it. (We will store the exact look direction and not just the delta).
+Let's first define what our player input will be and create a struct to represent it. We will also make it a IDarkriftSerializable so that we can send it to the server later. For our FPS we will need to monitor the following key inputs: W,A,S,D,Space,LeftClick we will store them in a bool[] (true means key is down false means key is up). But we additionally need the look direction of the player because his walk and shoot directions depend on it. (We will store the exact look direction and not just the delta).
 
-So lets create a struct in the Networking Data script:
+So let's create a struct in the Networking Data script:
 ```csharp
 public struct PlayerInputData : IDarkRiftSerializable
 {
@@ -91,7 +91,7 @@ Now we are ready to create our player.
 - Add The ClientPlayer and the PlayerLogic script to the Player gameobject.
 - Create a Sphere as a child of the Player(this will be our visual representation)
 
-Now lets start by writing the PlayerLogic which is a shared script between the client and the server. We will use the player logic script to calculate the next position of the player based on an input.
+Now let's start by writing the PlayerLogic which is a shared script between the client and the server. We will use the player logic script to calculate the next position of the player based on an input.
 
 first of all add some variables
 ```csharp
@@ -199,7 +199,7 @@ So open the ClientPlayer script and add the following:
     private PlayerUpdateData data
 ```
 The sensitivity, yaw and pitch will be used to rotate the camera based on the mouse movements.
-First lets attach the camera to our player. (we do that by script because we later want to attach the camera to our own player).
+First let's attach the camera to our player. (we do that by script because we later want to attach the camera to our own player).
 ```csharp
 void Start(){
     Camera.main.transform.SetParent(transform);
@@ -233,7 +233,7 @@ Now we can create a simple logic to read inputs and perform movement in FixedUpd
     }
 ```
 
-This is already enough to move our player, we don't have to set the position after calculating it since we also move the character controller when we calculate the next frame. Go into Unity asign the reference to the PlayerLogic and set WalkSpeed = 8, GravityConstant = 2, JumpStrength = 11 and in the ClientPlayer script set SensivityX to 5 and SensivityY to -5. 
+This is already enough to move our player, we don't have to set the position after calculating it since we also move the character controller when we calculate the next frame. Go into Unity assign the reference to the PlayerLogic and set WalkSpeed = 8, GravityConstant = 2, JumpStrength = 11 and in the ClientPlayer script set SensivityX to 5 and SensivityY to -5. 
 
  You can press play now and run around with your character. But you may realize that there is something wrong. The movement might feel jittered. The reason for that is that we just sample inputs at our fixed rate (50 times per second as default), this means on certain frames we might get multiple movement updates and on other frames 0, we wan't our movement to be smooth, so we have to smooth it out. This is done with interpolation which we will implement next.
 
@@ -241,7 +241,7 @@ Create a new PlayerInterpolation script in the Scripts folder and open it.
 
 Basic interpolation works like this, we store 2 values and use a time depended variable t to lerp between the two values. In our case we want to always interpolate on the last two PlayerUpdateDatas from our player. (Note that we add a little bit of input delay to our movement by doing this, to be precise Time.fixedDeltaTime delay. There are other options without a delay (extrapolating) but they usually have a lot of downsides). 
 
-Lets start by defining some variables again:
+Let's start by defining some variables again:
 ```csharp
     [Header("Public Fields")]
     public PlayerUpdateData CurrentData;
@@ -286,19 +286,19 @@ Add the PlayerInterpolation to the Player and open the ClientPlayer script and a
 
 Id will be the id of the player on the server and IsOwn will be true for our own player but not for enemies.
 
-Add a new variable to the References(I mean below the References header)
+Add a new variable to the References (I mean below the References header)
 ```csharp
     public PlayerInterpolation Interpolation;
 ```
-and remove the following (We store our PlayerUpdateData now in the Interpolation)
+and remove the following: (We store our PlayerUpdateData now in the Interpolation class)
 ```csharp
     private PlayerUpdateData data;
 ```
-also change the line in the Start function
+also replace this line in the Start function
 ```csharp
     data = new PlayerUpdateData(Id,0, Vector3.zero, Quaternion.identity);
 ```
-to:
+with:
 ```csharp
     Interpolation.CurrentData = new PlayerUpdateData(Id,0, Vector3.zero, Quaternion.identity);
 ```

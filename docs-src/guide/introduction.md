@@ -13,7 +13,7 @@ This tutorial will cover the following subjects:
 Note that this is a basic tutorial so a lot of networking systems will be present in a simplified or inefficient way.
 
 ::: warning
-I will use the warning or a danger box in front of the explanations of things that are done in an inefficient or incorrect manner for the sake of simplicity
+I will use the warning or the danger box in front of the explanations of things that are done in an inefficient or incorrect manner for the sake of simplicity
 :::
 
 ::: tip 

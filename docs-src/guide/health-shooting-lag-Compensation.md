@@ -118,7 +118,7 @@ And change the GameUpdateData a bit. Add the following below the other arrays:
     public PLayerHealthUpdateData[] HealthData;
 ```
 
-Also pass an HealthUpdateDataArray into the constructor. It should look like this now:
+Also pass a HealthUpdateDataArray into the constructor. It should look like this now:
 ```csharp
 public GameUpdateData(uint frame, PlayerUpdateData[] updateData, PlayerSpawnData[] spawns, PlayerDespawnData[] despawns, PLayerHealthUpdateData[] healthDatas)
     {
@@ -130,7 +130,7 @@ public GameUpdateData(uint frame, PlayerUpdateData[] updateData, PlayerSpawnData
     }
 ```
 
-In the serialize function add at the end:
+In the serialize function at the end, add this:
 ```csharp
     e.Writer.Write(HealthData);
 ```
@@ -288,7 +288,7 @@ We will go implement the missing PerformShootRayCast in the Room:
     }
 ```
 
-This looks complicated at the first glance but it isn't. First we calculate for how many frames we have to lag compensate( the -1 because we ticked up already in this tick). Then we set all players back to that point of time by using the history buffers, next we create a ray and check if he hit a "Unit" and if we do we deal damage to that player. Finally we set all players back.
+This looks complicated at first glance but it isn't. First we calculate for how many frames we have to lag compensate( the -1 because we ticked up already in this tick). Then we set all players back to that point of time by using the history buffers, next we create a ray and check if he hit a "Unit" and if we do we deal damage to that player. Finally we set all players back.
 
 The only thing left to do now is to create the "Unit" tag and add it to the player prefab and also to add a capsule collider to the player prefab.
 

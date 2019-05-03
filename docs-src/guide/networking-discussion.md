@@ -28,12 +28,12 @@ The architecture is very easy to scale because the servers running the rooms don
 Seamless world servers are usually used in open world MMORPGs. Creating a working seamless world server system needs a lot of knowledge so I won't cover it in detail. But the basic idea is usually to slice your map into areas and have players connected to their current area and nearby areas and if the player passes a border authority is also passed to another server.
 
 ### Which Architecture to choose:
-Direct P2P: Local Lan-Party games
-Relay Server: COOP/casual games
-Nat Punchthrough: COOP/Casual games where saving money on servers is important and with an advanced networking programmer in the team.
-Client-Server: Prototypes or Lan-Party games
-Room-based Client-Server: Almost all games: MOBAs, MMORPGs, Shooters....
-Seamless World Server: Huge open world games with thousands of players on the same map.
+-Direct P2P: Local Lan-Party games
+-Relay Server: COOP/casual games
+-Nat Punchthrough: COOP/Casual games where saving money on servers is important and with an advanced networking programmer in the team.
+-Client-Server: Prototypes or Lan-Party games
+-Room-based Client-Server: Almost all games: MOBAs, MMORPGs, Shooters....
+-Seamless World Server: Huge open world games with thousands of players on the same map.
 
 ## General Game Networking Concepts
 

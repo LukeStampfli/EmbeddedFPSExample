@@ -1,5 +1,5 @@
 # Server Basics and Login System
-On the server we:
+On the server we need to:
 - Create a GameObject called Server in the Main scene.
 - Create a ServerManager script in Scripts.
 - Add a XmlUnityServer component to the Server gameobject.
@@ -88,7 +88,7 @@ The code first subscribes to the ClientConnected and ClientDisconnected events. 
         }
     }
 ```
-This code just gets the Client which sent the message and the message itself from the MessageReceived event and then uses a switch to run a function depending on the Tag of the message, it should be pretty much self explaining.
+This code just gets the Client which sent the message and the message itself from the MessageReceived event and then uses a switch to run a function depending on the Tag of the message, it should be quite self-explanatory.
 
 
 We also have to create the function that gets called:
@@ -100,7 +100,7 @@ We also have to create the function that gets called:
 ```
 
 ::: danger 
-Usually you would create a LoginManager on the server which talks to a backend to verify the login request and then you generate a session token, but we will keep it simple here and just check that no duplicate users are logged in(Each player has a unique name).
+Usually you would create a LoginManager on the server which talks to a backend to verify the login request and then you would generate a session token, but we will keep it simple here and just check that no duplicate users are logged in(Each player has a unique name).
 :::
 
 Now we have to create an object to represent a logged in player, so create a new script "ClientConnection" in the Scripts folder. And change its code to this:
@@ -199,9 +199,9 @@ public struct LobbyInfoData : IDarkRiftSerializable
 }
 ```
 
-LoginInfoData is the information that the client will receive after logging in and it includes LobbyInfoData which contains information about the lobby(currently empty).
+LoginInfoData is the information that the client will receive after logging in and it includes LobbyInfoData which contains information about the lobby (currently empty).
 
-now lets send that message at the end of the constructor of the ClientConnection script, it should look like this:
+now let's send that message at the end of the constructor of the ClientConnection script, it should look like this:
 ```csharp
     public ClientConnection(IClient client , LoginRequestData data)
     {

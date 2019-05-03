@@ -2,7 +2,7 @@
  
 We will start by implementing functionality to connect to a server and send a simple login request. Let's create a script that connects our client to a server.
 
-- In the client project create a "GlobalManager" script in the Scripts folder.
+- In the client project create a "GlobalManager" script in the Scripts folder
 - In the main scene create an empty Gameobject and name it "GlobalScripts"
 - Add a UnityClient component to that gameobject (you need to search for just "client" when adding the component)
 - Set the values of the UnityClient like this:\
@@ -41,7 +41,7 @@ public class GlobalManager : MonoBehaviour
 This allows us to access GlobalManager from any script by calling GlobalManager.Instance, it will also keep the gameobject, where GlobalManager is attached to, loaded when we swap it. We also make sure that we don't create 2 GlobalManagers somehow.
 
 The next step is creating a connection to a server. There are two ways of connecting to a Darkrift server. ConnectInBackGround() and Connect().
-- Connect() will connect to the server and freeze everything until it's connected or failed the connect. You can run code immediately after to check if the connection worked (it runs synchronously).
+- Connect() will connect to the server and freeze everything until it's connected or failed the connect. You can run code immediately after, to check if the connection worked (it runs synchronously).
 - ConnectInBackGround() connects asynchronously to the server so your code will continue to run and players won't experience a screen freeze. It will invoke a void function of your choice with an exeception parameter as soon as it connected or when the connection failed.
 
 We will use ConnectInBackGround because we don't want our clients to freeze for a few seconds after starting up. (In a real application you would also want to display an animated connection screen for the users)
@@ -158,7 +158,7 @@ This allows us to use Tags.LoginRequest  as a tag which is easy to remember.
 We created 3 tags. LoginRequest is the tag for a message that a client sends to the server when he wants to login.
 LoginRequestAccepted and LoginRequestDenied are answers from the server.
 
-But we have to send additional data to the server to login. In our case we just send a username but in most cases you additionally also send a password.
+But we have to send additional data to the server to login. In our case we just send a username but in most cases you would additionally also send a password.
 
 ::: tip
 Never send passwords without encryption, you have to use an encryption library to send messages with important information.
@@ -243,7 +243,7 @@ So lets add a function to the LoginManager to send a message:
         }
     }
 ```
-This function will deactivate the login window and then send a message to the server with the tag LoginRequest (= 0) and data in the form of a LoginRequestData which contains the name entered in the input field. The (ushort) in front of Tags.LoginRequest is used to tell C# to convert LoginRequest back in an actual number.\
+This function will deactivate the login window and then send a message to the server with the tag LoginRequest (= 0) and data in the form of a LoginRequestData which contains the name entered in the input field. The (ushort) in front of Tags.LoginRequest tells C# to convert LoginRequest back into an actual number.\
 
 Finally lets subscribe our login button to that function. To do that add the following in the Start() function:
 

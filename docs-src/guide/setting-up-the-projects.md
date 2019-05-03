@@ -23,7 +23,7 @@ The client will be a unity game with a normal unity project. For the server we h
 - Less overhead then an embedded server (slightly increased performance)
 - Easier to manage references and use external libraries (NuGet packages, C# 7 support...)
 - Easier to containerize and deploy for production
-- You can still use some unity functions by referencing the UnityEngine.dll.
+- You can still use some Unity functions by referencing the UnityEngine.dll.
 
 In the end standalone and embedded servers are pretty similar. We will go for an embedded server in this tutorial because we want to use the Unity collision detection and because I usually write standalone applications and want to try something different.
 

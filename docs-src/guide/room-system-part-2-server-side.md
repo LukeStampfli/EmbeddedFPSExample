@@ -1,9 +1,9 @@
 # Room System part 2 (Server-side)
 
 In this section will add the functionality to join rooms.
-We start by chaning the ClientConnection script a bit:
+We start by modifying the ClientConnection script a bit:
 
-To the other public fields, we add:
+Next to the other public fields, we add:
 ```csharp
     public Room Room;
 ```
@@ -37,7 +37,7 @@ And create a function to call if the player disconnects:
     }
 ```
 
-Now we add a way to add/reomve a client to our rooms to our Room script and we will also add a Close function to close the room:
+Now we add a way to add/remove a client to our rooms to our Room script and we will also add a Close function to close the room:
 ```csharp
     public void AddPlayerToRoom(ClientConnection clientConnection)
     {
@@ -66,7 +66,7 @@ Now we add a way to add/reomve a client to our rooms to our Room script and we w
     }
 ```
 
-But we don't know to which room we should add the player so we have to ask the RoomManager first:
+But we don't know which room we should add the player to, so we have to ask the RoomManager first:
 ```csharp
     public void TryJoinRoom(IClient client, JoinRoomRequest data)
     {
@@ -102,7 +102,7 @@ But we don't know to which room we should add the player so we have to ask the R
     }
 ```
 
-We all change the RemoveRoom function because we can Close rooms now to:
+We also change the RemoveRoom function because we can Close rooms now:
 ```csharp
     public void RemoveRoom(string name)
     {
@@ -113,7 +113,7 @@ We all change the RemoveRoom function because we can Close rooms now to:
     }
 ```
 
-We do a few checks here to test if the player is logged in, the room exists and if the room has space and if everything is alright we add the player to the room else we send a JoinRoomDenied message back with a refreshed list of RoomDatas.
+We do a few checks here to test if the player is logged in, the room exists and if the room has space. And if everything is alright, we add the player to the room. Else we send a JoinRoomDenied message back with a refreshed list of RoomDatas.
 
 Lets call TryJoinRoom from the ClientConnection script if we get a LobbyJoinRoomRequest:
 ```csharp
@@ -146,4 +146,4 @@ Your scripts should look like this:
 - [Room](https://pastebin.com/MHPGRAbj)
 - [RoomManager](https://pastebin.com/j9eXBM5h)
 
-Now we have a working room system. so we can finally work at the actual gameplay :smiley: 
+Now we have a working room system. So we can finally work at the actual gameplay :smiley: 

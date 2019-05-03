@@ -31,7 +31,7 @@ public class Room : MonoBehaviour
     }
 }
 ```
-Should be pretty self explaining just a simple class that holds a list of Clientconnections.
+This should be quite self-explanatory, just a simple class that holds a list of Clientconnections.
 
 We will also need a Manager to manage all rooms. So create a "RoomManager" script in the scripts folder.
 Our RoomManager will look like this:
@@ -128,7 +128,7 @@ public struct RoomData : IDarkRiftSerializable
 }
 ```
 
-Players will recieve for each room a name and information about the slots.
+Players will receive one of these for each room. It contains its name and the number of slots available and used.
 
 Now change the lobby info the include RoomDatas:
 
@@ -154,7 +154,7 @@ public struct LobbyInfoData : IDarkRiftSerializable
 }
 ```
 
-Now we just need a way to fetch the Roomdata[] we will do that in the RoomManager.
+Now we just need a way to fetch the Roomdata[] array. We will do this in the RoomManager class.
 Add the following function to the RoomManager:
 
 ```csharp

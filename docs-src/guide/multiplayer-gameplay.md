@@ -8,11 +8,11 @@ Before we start spawning players on our server we first have to lay out a simple
 - From that point of the server will send information every frame to the client. The following information types exist:
     - PlayerSpawnData (Whenever a new player joined we send that information to all connected clients)
     - PlayerUpdateData (We have already implemented this one)
-    - PlayerDespawnData( Opposite of PlayerSpawnData, tells the client to delete a player)
-- The client sends also inputs every frame to the server(We have already done that)
+    - PlayerDespawnData (Opposite of PlayerSpawnData, tells the client to delete a player)
+- The client also sends inputs every frame to the server (We have already done that)
 
 
-So lets add these to our Networking Data script:
+So let's add these to our Networking Data script:
 ```csharp
 public struct PlayerSpawnData : IDarkRiftSerializable
 {
@@ -297,7 +297,7 @@ Now there is still the OnGameUpdate function left. this function is called whene
 
 ### Buffers for Game Networking
 
-Lets assume we have a server and a client both running at 50 frames per second so they run a Tick every 20 ms. The server will send a message every Tick and the client will receive a message and perform some actions. On a time line this would look like this:
+Let's assume we have a server and a client both running at 50 frames per second so they run a Tick every 20 ms. The server will send a message every Tick and the client will receive a message and perform some actions. On a time line this would look like this:
 
 (messages have a constant delay of 15 ms)
 - 0 ms: Server sends message 0 to client, client received no messages so waits
@@ -420,7 +420,7 @@ So how does it work. First the constructor takes 2 parameters. bufferSize is the
 
 For Instance if we take a buffer with size, 3 a player would have 75 ms more delay but he could still play fine without jitter even if his ping spikes between 30 ms and 130 ms (130-30 < 75*20). Now we have to decide on a bufferSize for our game. We will go for 1 (add a delay of 25 ms but allow the ping to vary up to 50 ms.)
 
-Lets add a buffer to our GameManager:
+Let's add a buffer to our GameManager:
 ```
     private Buffer<GameUpdateData> gameUpdateBuffer = new Buffer<GameUpdateData>(1, 2);
 ```
@@ -504,7 +504,7 @@ Finally add Lists to store the room state:
     private List<PlayerDespawnData> despawnDatas = new List<PlayerDespawnData>(4);
 ```
 
-Now lets create a function to react on a GameJoinRequest from a client:
+Now let's create a function to react on a GameJoinRequest from a client:
 ```csharp
    public void JoinPlayerToGame(ClientConnection clientConnection)
     {
@@ -564,7 +564,7 @@ Then open the ServerPlayer script and add the following:
 ```
 
 
-The Initialize function we created does first assign a lot of references for later use and then generates a GameStartData out of the information from our Room and sends it back as GameStartDataResponse. After that point the client will be an official player on the server and can be seen and attacked by enemies.
+The Initialize function we created, firstly assigns a lot of references for later use and then generates a GameStartData out of the information from our Room and sends it back as GameStartDataResponse. After that point the client will be an official player on the server and can be seen and attacked by enemies.
 
 So let's add a bit of logic to the ServerPlayer:
 ```csharp
@@ -654,7 +654,7 @@ The last thing that is left to do is actually calling functions when we receive 
 
 Finally assign all the references of the player prefab in the editor. Now our multiplayer game is playable, you can test it out by building and starting 2 clients and running around. You will see that the players get synchronized to each other and that they can collide with each other.
 
-There is a small thing that we have to fix. The RemovePlayerFromRoom function in our room doesn't remove players from the game yet when we reconnect. So open the Room script and replace the function with:
+There is a small thing that we have to fix. The RemovePlayerFromRoom function in our room doesn't remove players from the game yet when we reconnect. So open the Room script and replace the function with this:
 ```csharp
     public void RemovePlayerFromRoom(ClientConnection clientConnection)
     {

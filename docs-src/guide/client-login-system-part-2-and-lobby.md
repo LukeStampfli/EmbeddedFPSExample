@@ -54,7 +54,7 @@ So Add to the GlobalManager:
     public LobbyInfoData LastRecievedLobbyInfoData;
 ```
 
-and then change to OnLoginAccept() function in the LoginManager to:
+and then modify the OnLoginAccept() function in the LoginManager to:
 ```csharp
     public void OnLoginAccept(LoginInfoData data)
     {
@@ -95,7 +95,7 @@ public class RoomListObject : MonoBehaviour
     }
 }
 ```
-Should be self explaining the Set function is used to apply a RoomData to it.
+Should be self explanatory. The Set() function is used to apply a RoomData to it.
 We will also have to create a prefab for the script:
 - Create a UI Image as a child of the Content of Scroll View and name it RoomListPrefab.
 - Add 2 texts and a button to it, 1 text will be the name the other the slots and the button will be used to join the room.
@@ -177,7 +177,7 @@ public class LobbyManager : MonoBehaviour
 
 ```
 
-This might look overwhelming at the first glance but its very simple.
+This might look overwhelming at first glance but its very simple.
 The script has a reference to a RoomListContainerTransform which is the transform of the Content and a reference to the RoomListPrefab. (you should go drag them into their respective fields).
 It also subscribes like the LoginManager to the server to recieve messages.
 
@@ -185,7 +185,7 @@ The last thing it does is the RefreshRooms() function. I'm not going to explain 
 
 At this point you can try to run the project. Run the server first and then the client and check it you can log in and if it displays 2 rooms "Main" and "Main 2" in the lobby.
 
-If everyting works fine you can continue, if not try to look if any errors occurred somewhere. If you are totally stuck you can always contact me on Discord (@Allmaron#6641) or ask in the [Offical Darkrift Discord](https://discordapp.com/invite/cz2FQ6k)
+If everyting works fine you can continue. If not, try to look if any errors occurred somewhere. If you are totally stuck you can always contact me on Discord (@Allmaron#6641) or ask in the [Offical Darkrift Discord](https://discordapp.com/invite/cz2FQ6k)
 
 The next step is to allow the player to join a Room. We will need to create new request messages for that.
 First add the following new Tags in the NetworkingData.Tags enum:
@@ -259,9 +259,9 @@ And change the OnMessage function to:
 
 Ok so what does this do?
 We have a function SendJoinRoomRequest to ask the server to join a room with a given Name.
-The server can respond with a Accepted or a Denied answer. The denied request will contain new RoomDatas so that the rooms and available slots get refreshed and the accepted will just load the "Game" scene because it means we connected successfully.
+The server can respond with an Accepted or a Denied resposne. The Denied request will contain new RoomDatas so that the rooms and available slots get refreshed and the accepted will just load the "Game" scene because it means we connected successfully.
 
-Now we just need a way to call SendJoinRoomReques(). We will subscribe the function to the buttons in the list of rooms.
+Now we just need a way to call SendJoinRoomRequest(). We will subscribe the function to the buttons in the list of rooms.
 To do that open the RoomListObject script and at the end of the Set function the following lines:
 ```csharp
 JoinButton.onClick.RemoveAllListeners();
@@ -275,4 +275,4 @@ Your scripts should look like this:
 - [LobbyManager](https://pastebin.com/MZpWAuqX)
 - [Networking Data](https://pastebin.com/HYXKwysi)
 
-The lobby and login system is now fully completed on the client, we will swap now to the server to finish the system there too.
+The lobby and login system is now fully completed on the client. Now, we will swap now to the server to finish the system there too.
