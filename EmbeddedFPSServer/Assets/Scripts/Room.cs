@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using DarkRift;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Room : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class Room : MonoBehaviour
     public List<ClientConnection> ClientConnections = new List<ClientConnection>();
     public byte MaxSlots;
     public uint ServerTick;
+
+    private Scene scene;
+    private PhysicsScene physicsScene;
 
     [Header("Prefabs")]
     public GameObject PlayerPrefab;
@@ -58,6 +62,12 @@ public class Room : MonoBehaviour
     {
         Name = name;
         MaxSlots = maxslots;
+
+        CreateSceneParameters csp = new CreateSceneParameters(LocalPhysicsMode.Physics2D);
+        scene = SceneManager.CreateScene("Room_" + name, csp);
+        physicsScene = scene.GetPhysicsScene();
+
+        SceneManager.MoveGameObjectToScene(gameObject, scene);
     }
 
     public void AddPlayerToRoom(ClientConnection clientConnection)
@@ -117,8 +127,7 @@ public class Room : MonoBehaviour
             direction = shooter.CurrentUpdateData.LookDirection * Vector3.forward;
         }
 
-        firepoint += direction * 5f;
-        firepoint += transform.parent.localPosition;
+        firepoint += direction * 3f;
 
         //set all players back in time
         foreach (ServerPlayer player in ServerPlayers)
@@ -134,7 +143,7 @@ public class Room : MonoBehaviour
 
         RaycastHit hit;
 
-        if (Physics.Raycast(firepoint, direction,out hit, 200f))
+        if (physicsScene.Raycast(firepoint, direction,out hit, 200f))
         {
             if (hit.transform.CompareTag("Unit"))
             {

@@ -516,7 +516,7 @@ Now let's create a function to react on a GameJoinRequest from a client:
     }
 ```
 
-This will create a player and initialize it, but we still have to write that initialize function but first we will also add a ServerPlayer field to our ClientConnection. Open the ClientConnection script and add to the Public Fields:
+This will create a player and initialize it. Also note that we instatiate it as a child of the room which will put it automatically into the scene of this room which means it will be in the physics system which belongs to this room. We still have to write that initialize function but first we will also add a ServerPlayer field to our ClientConnection. Open the ClientConnection script and add to the Public Fields:
 ```csharp
     public ServerPlayer Player;
 ```

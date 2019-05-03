@@ -1,6 +1,7 @@
 
 # Setting up the projects
 
+
 ## Project Structure with Darkrift
 Before we start our project we should take a minute to think about our project structure.
 We will create a classic FPS game in this tutorial with a server and a client application. The server application will have full control (authoritative server) over the game, so cheating will be impossible.
@@ -31,6 +32,9 @@ In the end standalone and embedded servers are pretty similar. We will go for an
 - Create a repository or folder for the unity projects, name it something like EmbeddedFPSExample
 
 ## Setup the client
+::: danger
+This project uses new physics features which were introduced in Unity 2018.3 so you have to use 2018.3 or a newer version of Unity.
+:::
 - Create a new Unity project (I called mine EmbeddedFPSClient).
 - In Edit -> Project Settings -> Player -> Other settings, make sure that Scripting Runtime Version is set to .Net 4.x equivalent.
 - In Edit -> Project Settings -> Time set Fixed Timestep to 0.025 and Maximum Allowed Timestep to 100

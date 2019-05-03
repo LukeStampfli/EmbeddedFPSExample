@@ -4,11 +4,9 @@ We will create a very basic room system for our FPS game. It will work like this
 - Players can join and leave game rooms.
 - Players can create a room with a name and an amount slots.( not in the tutorial but you can add it :smiley:)
 
-Our Room system will spawn a map and objects for each room. Because unity can't really handle multiple rooms we will create them in the same scene but move them far away from each other.
+Since 2018.3 Unity can ghandle multiple physics scenes which makes it much easier to run multiple rooms on a single server. Before 2018.3 this option didn't exist. One option to do it was to just move each room far away from the others by spawning each room at an icrementing offset but that had some performance disbenefits.
 
-::: danger 
-Usually you would have separate applications for rooms if you use embedded servers( With standalone you can just have multiple classes), the solution of moving rooms far away from each other is terrible and only used because the tutorial would go out of scope.
-:::
+Our Room system will spawn a map and objects for each room and then create a separate physics scene for that room.
 
 Let's start by creating a "Room" script in the Scripts folder and filling it with:
 
@@ -23,15 +21,24 @@ public class Room : MonoBehaviour
     public string Name;
     public List<ClientConnection> ClientConnections = new List<ClientConnection>();
     public byte MaxSlots;
+	
+    private Scene scene;
+    private PhysicsScene physicsScene;
 
     public void Initialize(string name, byte maxslots)
     {
         Name = name;
         MaxSlots = maxslots;
+
+        CreateSceneParameters csp = new CreateSceneParameters(LocalPhysicsMode.Physics2D);
+        scene = SceneManager.CreateScene("Room_" + name, csp);
+        physicsScene = scene.GetPhysicsScene();
+
+        SceneManager.MoveGameObjectToScene(gameObject, scene);
     }
 }
 ```
-This should be quite self-explanatory, just a simple class that holds a list of Clientconnections.
+At the moment this is just a class to hold ClientConnections. In addition we create a new scene in the Inititialize() function and move the gameobject to which the Room is attached to into that new scene. Finally we cache the physicsScene for later use.
 
 We will also need a Manager to manage all rooms. So create a "RoomManager" script in the scripts folder.
 Our RoomManager will look like this:
@@ -50,7 +57,6 @@ public class RoomManager : MonoBehaviour
     public GameObject RoomPrefab;
 
     Dictionary<string, Room> rooms = new Dictionary<string, Room>();
-    private float offset;
 
     void Awake()
     {
@@ -61,9 +67,7 @@ public class RoomManager : MonoBehaviour
 
     public void CreateRoom(string name, byte maxslots)
     {
-        GameObject go = Instantiate(RoomPrefab, transform);
-        go.transform.position = new Vector3(offset,0,0);
-        offset += 300;
+        GameObject go = Instantiate(RoomPrefab);
         Room r = go.GetComponent<Room>();
         r.Initialize(name, maxslots);
         rooms.Add(name, r);
@@ -76,10 +80,9 @@ public class RoomManager : MonoBehaviour
     }
 }
 ```
-It's a bit more complicated. First of all we have a reference to a room prefab which we instantiate to spawn a new room and a dictionary to find rooms by name.
-There is a private variable offset, we will use that variable to spawn each new room away from all other rooms.
+In this script we have a reference to a room prefab which we instantiate to spawn a new room and a dictionary to find rooms by name.
 
-The CreateRoom() function creates a room. It instantiates a copy of the prefab and places it at the offset position and then increases the offset for the next room. It then also initializes the room component that we created earlier with a name and a maxSlot value and adds the room to the dictionary.
+The CreateRoom() function creates a room. It instantiates a copy of the prefab. It initializes the room component that we created earlier with a name and a maxSlot value and adds the room to the dictionary.
 
 The RemoveRoom() function removes a room from the list but does not delete it yet we will do that later.
 
@@ -193,8 +196,8 @@ to:
 ```
 
 Your scripts should look like this:
-- [Room](https://pastebin.com/3ehtQQak)
-- [RoomManager](https://pastebin.com/337tS3vU)
+- [Room](https://pastebin.com/znpzuPX4)
+- [RoomManager](https://pastebin.com/eUBeMCYz)
 - [Networking Data](https://pastebin.com/USTdSuLK)
 - [ClientConnection](https://pastebin.com/FCH3UCyu)
 

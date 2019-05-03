@@ -2,6 +2,7 @@
 using DarkRift;
 using DarkRift.Server;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RoomManager : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class RoomManager : MonoBehaviour
     public GameObject RoomPrefab;
 
     Dictionary<string, Room> rooms = new Dictionary<string, Room>();
-    private float offset;
+    //private float offset;
 
     void Awake()
     {
@@ -70,9 +71,7 @@ public class RoomManager : MonoBehaviour
 
     public void CreateRoom(string name, byte maxslots)
     {
-        GameObject go = Instantiate(RoomPrefab, transform);
-        go.transform.position = new Vector3(offset,0,0);
-        offset += 300;
+        GameObject go = Instantiate(RoomPrefab);
         Room r = go.GetComponent<Room>();
         r.Initialize(name, maxslots);
         rooms.Add(name, r);

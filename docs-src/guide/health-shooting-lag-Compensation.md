@@ -234,7 +234,7 @@ Now add a new function for inputs and shooting:
 
 We will go implement the missing PerformShootRayCast in the Room:
 ```csharp
-    public void PerformShootRayCast(uint frame, ServerPlayer shooter)
+      public void PerformShootRayCast(uint frame, ServerPlayer shooter)
     {
         int dif = (int) (ServerTick - 1 - frame);
 
@@ -253,8 +253,7 @@ We will go implement the missing PerformShootRayCast in the Room:
             direction = shooter.CurrentUpdateData.LookDirection * Vector3.forward;
         }
 
-        firepoint += direction * 5f;
-        firepoint += transform.parent.localPosition;
+        firepoint += direction * 3f;
 
         //set all players back in time
         foreach (ServerPlayer player in ServerPlayers)
@@ -270,7 +269,7 @@ We will go implement the missing PerformShootRayCast in the Room:
 
         RaycastHit hit;
 
-        if (Physics.Raycast(firepoint, direction,out hit, 200f))
+        if (physicsScene.Raycast(firepoint, direction,out hit, 200f))
         {
             if (hit.transform.CompareTag("Unit"))
             {
@@ -288,7 +287,7 @@ We will go implement the missing PerformShootRayCast in the Room:
     }
 ```
 
-This looks complicated at first glance but it isn't. First we calculate for how many frames we have to lag compensate( the -1 because we ticked up already in this tick). Then we set all players back to that point of time by using the history buffers, next we create a ray and check if he hit a "Unit" and if we do we deal damage to that player. Finally we set all players back.
+This looks complicated at first glance but it isn't. First we calculate for how many frames we have to lag compensate( the -1 because we ticked up already in this tick). Then we set all players back to that point of time by using the history buffers, next we create a ray and check if he hit a "Unit" and if we do we deal damage to that player. Finally we set all players back. Note that we use physicsScene.Raycast(). We do so because our room has its own physicsScene and using just Physics.Raycast() would cast that ray on the default scene.
 
 The only thing left to do now is to create the "Unit" tag and add it to the player prefab and also to add a capsule collider to the player prefab.
 
