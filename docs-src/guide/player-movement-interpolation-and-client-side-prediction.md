@@ -31,7 +31,7 @@ public struct PlayerInputData : IDarkRiftSerializable
         e.Writer.Write(LookDirection.z);
         e.Writer.Write(LookDirection.w);
     }
-}
+```
 :::warning
 There are far better ways to write booleans or quaternions which i'm not going to explain here. You can take a look at a [script of mine](https://github.com/LestaAllmaron/DarkriftSerializationExtensions/blob/master/DarkriftSerializationExtensions/DarkriftSerializationExtensions/SerializationExtensions.cs) to see examples on how to write bools or quaternions.
 :::
@@ -84,7 +84,7 @@ Now we are ready to create our player.
 
 - Create a ClientPlayer script in the Scripts folder
 - Create a PlayerLogic script in the **Scripts/shared** folder
-- Open the Game Scene
+- Create a new "Game" scene and open it.
 - Create a new plane and scale it up to (5,5,5)
 - Create a new empty gameobject name it "Player".
 - Add a CharacterController to the player and set it's height to 0
@@ -186,6 +186,11 @@ Now we can calculate the next position of any player depending on our input. We 
 
 So open the ClientPlayer script and add the following:
 ```csharp
+    [Header("Public Fields")]
+    public ushort Id;
+    public string Name;
+    public bool IsOwn;
+
     [Header("Variables")]
     public float SensitivityX;
     public float SensitivityY;
@@ -198,6 +203,8 @@ So open the ClientPlayer script and add the following:
     
     private PlayerUpdateData data
 ```
+
+Id will be the id of the player on the server and IsOwn will be true for our own player but not for enemies.
 The sensitivity, yaw and pitch will be used to rotate the camera based on the mouse movements.
 First let's attach the camera to our player. (we do that by script because we later want to attach the camera to our own player).
 ```csharp
@@ -276,17 +283,7 @@ Now we just have to interpolate in Update:
 
 Well interpolation is very simple in it's raw form. we set the as the time since our last input and divide it by fixedDeltaTime. Then we lerp between the last 2 values. We use LerpUnclamped because we don't want players to stop moving when they don't get an input for a while(we will use this interpolation scripts for enemies too).
 
-Add the PlayerInterpolation to the Player and open the ClientPlayer script and add the following Variables to it:
-```csharp
-    [Header("Public Fields")]
-    public ushort Id;
-    public string Name;
-    public bool IsOwn;
-```
-
-Id will be the id of the player on the server and IsOwn will be true for our own player but not for enemies.
-
-Add a new variable to the References (I mean below the References header)
+Add the PlayerInterpolation to the Player and open the ClientPlayer script and add a new variable to the References (I mean below the References header)
 ```csharp
     public PlayerInterpolation Interpolation;
 ```

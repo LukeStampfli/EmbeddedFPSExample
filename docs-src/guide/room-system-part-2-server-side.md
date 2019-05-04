@@ -37,7 +37,21 @@ And create a function to call if the player disconnects:
     }
 ```
 
-Now we add a way to add/remove a client to our rooms to our Room script and we will also add a Close function to close the room:
+Open the ServerManager and replace the OnClientDisconnect() function with this new version which calls the function in the ClientConnection:
+```csharp
+    private void OnClientDisconnect(object sender, ClientDisconnectedEventArgs e)
+    {
+        IClient client = e.Client;
+        ClientConnection p;
+        if (Players.TryGetValue(client.ID, out p))
+        {
+            p.OnClientDisconnect(sender, e);
+        }
+        e.Client.MessageReceived -= OnMessage;
+    }
+```
+
+Now we add a way to add/remove a client to our Room script and we will also add a Close function to close the room:
 ```csharp
     public void AddPlayerToRoom(ClientConnection clientConnection)
     {
