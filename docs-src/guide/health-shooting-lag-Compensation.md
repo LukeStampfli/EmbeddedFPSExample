@@ -50,7 +50,7 @@ Open the Game scene and drag the player prefab into it.
 - In the Rect Transform of the TextObject set Pos Y to 22 and in the Text component set the Font Size to 18 and Font Style to bold.
 - Go to the Player and set the NameText variable to the TextObject, Health Bar Fill to the Fill and HealthBarObject to the Root.
 
-Now we have a working health bar that hovers over our player and displays the current health state. It should look like this now:
+Now we have a working health bar that hovers over our player and displays the current health state. It should look like this now:\
 ![](https://imgur.com/a/ZhfjZwW)\
 Make sure to apply the changes to the Player prefab and then delete it from the scene.
 
