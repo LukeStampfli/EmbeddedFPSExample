@@ -1,7 +1,7 @@
 # Health, Shooting, Lag Compensation
 
 Before we start to implement health and shooting we will add a simple health bar to our player to display it.
-Open the PlayerClient script and add the following variables to the References:
+Open the ClientPlayer script and add the following variables to the References:
 ```csharp
     public Text NameText;
     public Image HealthBarFill;
@@ -40,17 +40,20 @@ And in the Initialize function after Name = name; add:
 ```
 
 Open the Game scene and drag the player prefab into it.
-- Right click on the player and add a UI canvas.
-- Set the canvas to scale with screen size and set the reference resolution to 1920x1080 and name it "HealthBar"
-- Right click the HealthBar and add an empty gameobject
-- Set the Position Y property of it to 50
-- Right click the gameobject and add an image(as a new gameobject), set source image to UISprite, image type to simple and the height in the transform to 20
-- Right click the image and add another image(as a new gameobject), name it "Fill". set it's source image to UISprite and it's height to 20 and set the Image Type to filled and Fill Method to Horizontal and Fill Origin to Left.
-- Right click the empty gameobject (child of HealthBar) and add a UI/Text (as a new gameobject).
-- Set the y position of the text to 22 and the font size to 18 and bold.
-- Go to the Player and set NameText to the text object, Health Bar Fill to the Fill object and HealthBarObject to the empty gameobject.
+- Right click on the player(in the Hierarchy) and choose UI - canvas. This creates a new gameobject with a UI canvas attached as a child of the player.
+- Set the canvas scaler to scale with screen size and set the reference resolution to 1920x1080 and name the gameobject "HealthBar"
+- Right click the HealthBar and choose Create Empty. This creates an empty gameobject. Rename it to "Root".
+- Set the Rect Transform Pos Y property of the Root to 50.
+- Right click the Root and choose UI - image to create a new child with an image attached. Name it "Border". Set the Source Image of the Image component to UISprite, Image Type to simple and in the Rect Transform set the height to 20.
+- Right click the Border and choose UI - image again. name it "Fill". set it's source image to UISprite and set the Image Type to filled and Fill Method to Horizontal and Fill Origin to Left. Finally also set it's height to 20 in the Rect Transform.
+- Right click the Root and choose UI/Text to add a child object with a text attached to it. Name it "TextObject".
+- In the Rect Transform of the TextObject set Pos Y to 22 and in the Text component set the Font Size to 18 and Font Style to bold.
+- Go to the Player and set the NameText variable to the TextObject, Health Bar Fill to the Fill and HealthBarObject to the Root.
 
-Now we have a working health bar that hovers over our player and displays the current health state.
+Now we have a working health bar that hovers over our player and displays the current health state. It should look like this now:
+![](https://imgur.com/a/ZhfjZwW)\
+Make sure to apply the changes to the Player prefab and then delete it from the scene.
+
 
 Before we start with the actual shooting let's create something to display our shots.
 

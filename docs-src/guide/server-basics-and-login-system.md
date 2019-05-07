@@ -185,10 +185,6 @@ public struct LoginInfoData : IDarkRiftSerializable
 
 public struct LobbyInfoData : IDarkRiftSerializable
 {
-    public LobbyInfoData()
-    {
-    }
-
     public void Deserialize(DeserializeEvent e)
     {
     }

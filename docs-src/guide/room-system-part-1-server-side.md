@@ -75,8 +75,7 @@ public class RoomManager : MonoBehaviour
 
     public void RemoveRoom(string name)
     {
-        Room r = rooms[name];
-        roomList.Remove(r); 
+        rooms.Remove(name); 
     }
 }
 ```

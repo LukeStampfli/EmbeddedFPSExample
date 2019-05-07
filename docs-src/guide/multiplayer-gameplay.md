@@ -632,7 +632,7 @@ Now can write the main game routine in the Room script:
             {
                 p.Client.SendMessage(m, SendMode.Reliable);
             }
-        }}
+        }
 
         //clear values
         spawnDatas.Clear();
