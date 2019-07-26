@@ -197,7 +197,7 @@ Next we want to send a message to the server in Start() and we want to receive m
     void OnGameJoinAccept(GameStartData data)
     {
         LastRecievedServerTick = data.OnJoinServerTick;
-        CurrentServerTick = data.OnJoinServerTick;
+        ClientTick = data.OnJoinServerTick;
         foreach (PlayerSpawnData ppd in data.Players)
         {
             SpawnPlayer(ppd);
