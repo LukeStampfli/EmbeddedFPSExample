@@ -13,4 +13,4 @@ This tutorial will cover the following subjects:
 - Client prediction, reconciliation, interpolation, authoritative movement.
 - Lag compensation (shooting in an FPS game)
 
-You can follow the tutorial here: https://lestaallmaron.github.io/EmbeddedFPSExample/
+You can follow the tutorial here: https://lukestampfli.github.io/EmbeddedFPSExample/guide/introduction.html/
