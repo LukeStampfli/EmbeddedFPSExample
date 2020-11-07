@@ -943,8 +943,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aafe427c4ee465d4a80321d4128fa98e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ipAdress: 
-  port: 0
+  ipAdress: 127.0.0.1
+  port: 4296
+  loginManager: {fileID: 1825882792}
   PlayerId: 0
 --- !u!1 &1460541580
 GameObject:
@@ -1143,6 +1144,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c492352a25d6f514f9bc0188f848bec8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LoginWindow: {fileID: 1460541580}
-  NameInput: {fileID: 410648228}
-  SubmitLoginButton: {fileID: 438375413}
+  loginWindow: {fileID: 1460541580}
+  nameInput: {fileID: 410648228}
+  submitLoginButton: {fileID: 438375413}

@@ -152,9 +152,10 @@ After defining the event let's invoke it in our connection callback if the conne
 Now go back to the LoginManager and subscribe to the event. It is considered good practice to always unsubscribe from an event as well so let's add both:
 
 ```csharp
-    void Awake()
+    void Start()
     {
         ConnectionManager.Instance.OnConnected += StartLoginProcess;
+        loginWindow.SetActive(false);
     }
 
     void OnDestroy()
@@ -271,7 +272,7 @@ So lets add a function to the LoginManager to send a message:
 ```
 This function will deactivate the login window and then send a message to the server with the tag LoginRequest (= 0) and data in the form of a LoginRequestData which contains the name entered in the input field. The (ushort) in front of Tags.LoginRequest tells C# to convert LoginRequest back into an actual number.\
 
-Finally lets subscribe our login button to that function. To do that add the following in the Awake() function:
+Finally lets subscribe our login button to that function. To do that add the following in the Start() function:
 
 ```csharp
 SubmitLoginButton.onClick.AddListener(OnSubmitLogin);

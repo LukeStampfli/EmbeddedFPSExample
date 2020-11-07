@@ -15,7 +15,7 @@ public class LoginManager : MonoBehaviour
     [SerializeField]
     private Button submitLoginButton;
 
-    void Awake()
+    void Start()
     {
         ConnectionManager.Instance.OnConnected += StartLoginProcess;
         submitLoginButton.onClick.AddListener(OnSubmitLogin);
