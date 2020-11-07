@@ -5,15 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class Room : MonoBehaviour
 {
+    private Scene scene;
+    private PhysicsScene physicsScene;
+
     [Header("Public Fields")]
     public string Name;
     public List<ServerPlayer> ServerPlayers = new List<ServerPlayer>();
     public List<ClientConnection> ClientConnections = new List<ClientConnection>();
     public byte MaxSlots;
     public uint ServerTick;
-
-    private Scene scene;
-    private PhysicsScene physicsScene;
 
     [Header("Prefabs")]
     public GameObject PlayerPrefab;
