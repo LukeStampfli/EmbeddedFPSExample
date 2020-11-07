@@ -8,7 +8,7 @@ using UnityEngine;
 internal class BlockCharacter : MonoBehaviour
 {
     /// <summary>
-    ///     The DarkRift client to send data though.
+    ///     The DarkRift Client to send data though.
     /// </summary>
     UnityClient client;
 
@@ -36,7 +36,7 @@ internal class BlockCharacter : MonoBehaviour
     {
         if (client == null)
         {
-            Debug.LogError("No client assigned to BlockCharacter component!");
+            Debug.LogError("No Client assigned to BlockCharacter component!");
             return;
         }
 
@@ -69,7 +69,7 @@ internal class BlockCharacter : MonoBehaviour
     /// <summary>
     ///     Sets up the character with necessary references.
     /// </summary>
-    /// <param name="client">The client to send data using.</param>
+    /// <param name="client">The Client to send data using.</param>
     /// <param name="blockWorld">The block world reference.</param>
     public void Setup(UnityClient client, BlockWorld blockWorld)
     {

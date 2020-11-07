@@ -6,7 +6,7 @@
     <members>
         <member name="T:DarkRift.Client.DarkRiftClient">
             <summary>
-                The client for DarkRift connections.
+                The Client for DarkRift connections.
             </summary>
         </member>
         <member name="E:DarkRift.Client.DarkRiftClient.MessageReceived">
@@ -16,17 +16,17 @@
         </member>
         <member name="E:DarkRift.Client.DarkRiftClient.Disconnected">
             <summary>
-                Event fired when the client becomes disconnected.
+                Event fired when the Client becomes disconnected.
             </summary>
         </member>
         <member name="P:DarkRift.Client.DarkRiftClient.ID">
             <summary>
-                The ID the client has been assigned.
+                The ID the Client has been assigned.
             </summary>
         </member>
         <member name="P:DarkRift.Client.DarkRiftClient.Connected">
             <summary>
-                Returns whether or not this client is connected to the server.
+                Returns whether or not this Client is connected to the server.
             </summary>
         </member>
         <member name="P:DarkRift.Client.DarkRiftClient.RemoteEndPoint">
@@ -52,7 +52,7 @@
         </member>
         <member name="M:DarkRift.Client.DarkRiftClient.#ctor(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
-                Creates a new DarkRift client object with specified cache settings.
+                Creates a new DarkRift Client object with specified cache settings.
             </summary>
             <param name="maxCachedWriters">The maximum number of DarkRiftWriters to cache per thread.</param>
             <param name="maxCachedReaders">The maximum number of DarkRiftReaders to cache per thread.</param>
@@ -87,7 +87,7 @@
         </member>
         <member name="M:DarkRift.Client.DarkRiftClient.Disconnect">
             <summary>
-                Disconnects this client from the server.
+                Disconnects this Client from the server.
             </summary>
             <returns>Whether the disconnect was successful.</returns>
         </member>
@@ -119,12 +119,12 @@
         </member>
         <member name="M:DarkRift.Client.DarkRiftClient.Dispose">
             <summary>
-                Disposes of the DarkRift client object.
+                Disposes of the DarkRift Client object.
             </summary>
         </member>
         <member name="M:DarkRift.Client.DarkRiftClient.Dispose(System.Boolean)">
             <summary>
-                Handles disposing of the DarkRift client object.
+                Handles disposing of the DarkRift Client object.
             </summary>
             <param name="disposing"></param>
         </member>
@@ -219,12 +219,12 @@
         </member>
         <member name="P:DarkRift.NetworkClientConnection.IsConnected">
             <summary>
-                Is this client connected or not.
+                Is this Client connected or not.
             </summary>
         </member>
         <member name="P:DarkRift.NetworkClientConnection.RemoteEndPoint">
             <summary>
-                The IP address of the remote client.
+                The IP address of the remote Client.
             </summary>
         </member>
         <member name="F:DarkRift.NetworkClientConnection.tcpSocket">
@@ -274,7 +274,7 @@
         </member>
         <member name="M:DarkRift.NetworkClientConnection.Disconnect">
             <summary>
-                Disconnects this client from the remote host.
+                Disconnects this Client from the remote host.
             </summary>
             <returns>Whether the disconnect was successful.</returns>
         </member>

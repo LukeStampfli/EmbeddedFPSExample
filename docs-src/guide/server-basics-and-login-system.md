@@ -1,19 +1,18 @@
 # Server Basics and Login System
 On the server we need to:
-- Create a GameObject called Server in the Main scene.
+- Create a GameObject called ServerManager in the Main scene.
 - Create a ServerManager script in Scripts.
-- Add a XmlUnityServer component to the Server gameobject.
-- Add the ServerManager to the server gameobject.
+- Add a XmlUnityServer component to the ServerManager gameobject.
+- In the Configuration field of the XmlUnityServer link the ExampleConfiguration in the Darkrift folder.
+- Add the ServerManager script to the ServerManager gameobject.
 
 In the ServerManager script add the following code:
 
 ```csharp
- public static ServerManager Instance;
+    public static ServerManager Instance;
 
-    [Header("References")]
-    public XmlUnityServer XmlServer;
-
-    public DarkRiftServer Server;
+    private XmlUnityServer xmlServer;
+    private DarkRiftServer server;
 
     void Awake()
     {
@@ -26,7 +25,7 @@ In the ServerManager script add the following code:
         DontDestroyOnLoad(this);
     }
 ```
-pretty similar to the GlobalManager of the client.
+pretty similar to the ConnectionManager of the client. The ServerManager is a singleton as well.
 
 (and you will need the following directives at the top of the file)
 ```csharp
@@ -38,30 +37,31 @@ using UnityEngine;
 ```
 
 Your scene should look now like this:\
-![](https://i.imgur.com/5qcXtSz.png)
+![](../img/login2-server-scene.png)
 
 
 As a next step will add functionality to the ServerManager to receive messages from clients. To do that we have to subscribe to events of the Darkrift Server.
 ```csharp
-void Start()
+    void Start()
     {
-        Server = XmlServer.Server;
-        Server.ClientManager.ClientConnected += OnClientConnect;
-        Server.ClientManager.ClientDisconnected += OnClientDisconnect;
+        xmlServer = GetComponent<XmlUnityServer>();
+        server = xmlServer.Server;
+        server.ClientManager.ClientConnected += OnClientConnected;
+        server.ClientManager.ClientDisconnected += OnClientDisconnected;
     }
 
     void OnDestroy()
     {
-        Server.ClientManager.ClientConnected -= OnClientConnect;
-        Server.ClientManager.ClientDisconnected -= OnClientDisconnect;
+        server.ClientManager.ClientConnected -= OnClientConnected;
+        server.ClientManager.ClientDisconnected -= OnClientDisconnected;
     }
 
-    private void OnClientDisconnect(object sender, ClientDisconnectedEventArgs e)
+    private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
     {
         e.Client.MessageReceived -= OnMessage;
     }
 
-    private void OnClientConnect(object sender, ClientConnectedEventArgs e)
+    private void OnClientConnected(object sender, ClientConnectedEventArgs e)
     {
         e.Client.MessageReceived += OnMessage;
     }
@@ -74,15 +74,15 @@ void Start()
 The code first subscribes to the ClientConnected and ClientDisconnected events. These events get called when clients connect and disconnect. We also subscribe to the IClient.MessageRecieved event when a client connects so that we receive messages from all clients in OnMessage(). This lets us process our LoginRequests from the clients by adding code in the OnMessage function:
 
 ```csharp
-  private void OnMessage(object sender, MessageReceivedEventArgs e)
+    private void OnMessage(object sender, MessageReceivedEventArgs e)
     {
         IClient client = (IClient) sender;
-        using (Message m = e.GetMessage())
+        using (Message message = e.GetMessage())
         {
-            switch ((Tags) m.Tag)
+            switch ((Tags) message.Tag)
             {
                 case Tags.LoginRequest:
-                    OnclientLogin(client, m.Deserialize<LoginRequestData>());
+                    OnclientLogin(client, message.Deserialize<LoginRequestData>());
                     break;
             }
         }
@@ -95,7 +95,7 @@ We also have to create the function that gets called:
 ```csharp
     private void OnclientLogin(IClient client, LoginRequestData data)
     {
-        //check if player is already logged in (name already chosen in our case) and if not create a new object to represent a logged in client.
+        // Check if player is already logged in (name already chosen in our case) and if not create a new object to represent a logged in client.
     }
 ```
 
@@ -103,18 +103,15 @@ We also have to create the function that gets called:
 Usually you would create a LoginManager on the server which talks to a backend to verify the login request and then you would generate a session token, but we will keep it simple here and just check that no duplicate users are logged in(Each player has a unique name).
 :::
 
-Now we have to create an object to represent a logged in player, so create a new script "ClientConnection" in the Scripts folder. And change its code to this:
+Now we have to create an object to represent a logged in player, so create a new "ClientConnection" script in the Scripts folder. And change its code to this:
 ```csharp
 using DarkRift;
 using DarkRift.Server;
 
-[System.Serializable]
 public class ClientConnection
 {
-
-    [Header("Public Fields")]
-    public string Name;
-    public IClient Client;
+    public string Name { get; }
+    public IClient Client { get; }
 
     public ClientConnection(IClient client , LoginRequestData data)
     {
@@ -123,30 +120,29 @@ public class ClientConnection
 
         ServerManager.Instance.Players.Add(client.ID, this);
         ServerManager.Instance.PlayersByName.Add(Name, this);
-     
     }
 ```
 
-And add Dictionaries in the ServerManager to store the logged in players:
+And add Dictionaries in the ServerManager to store the authenticated players:
 ```csharp
     public Dictionary<ushort, ClientConnection> Players = new Dictionary<ushort, ClientConnection>();
     public Dictionary<string, ClientConnection> PlayersByName = new Dictionary<string, ClientConnection>();
 ```
 
-Now we can also fill in the OnclientLogin function in the ServerManager:
+Now we can also fill in the OnClientLogin function in the ServerManager:
 ```csharp
- private void OnclientLogin(IClient client, LoginRequestData data)
+    private void OnclientLogin(IClient client, LoginRequestData data)
     {
         if (PlayersByName.ContainsKey(data.Name))
         {
-            using (Message m = Message.CreateEmpty((ushort)Tags.LoginRequestDenied))
+            using (Message message = Message.CreateEmpty((ushort)Tags.LoginRequestDenied))
             {
-                client.SendMessage(m, SendMode.Reliable);
+                client.SendMessage(message, SendMode.Reliable);
             }
             return;
         }
 
-        //In the future the ClientConnection will handle its messages
+        // In the future the ClientConnection will handle its messages
         client.MessageReceived -= OnMessage;
 
         new ClientConnection(client, data);
@@ -157,7 +153,7 @@ If the name hasn't been used yet we create a new ClientConnection and unsubscrib
 
 Finally we have to send an LoginRequestAccepted message when the client has logged in successfully. This message should also contain additional information. In our case we want to let the client know his personal id on the server and information about the lobby and game rooms. (We will create a room system in the next section)
 
-So open the Networking Data **in the Client Project (Remember the junction only works in 1 direction)** and add:
+So open the NetworkingData script **in the Client Project (Remember the junction only works in 1 direction)** and add:
 ```csharp
 public struct LoginInfoData : IDarkRiftSerializable
 {
@@ -207,8 +203,7 @@ now let's send that message at the end of the constructor of the ClientConnectio
         ServerManager.Instance.Players.Add(client.ID, this);
         ServerManager.Instance.PlayersByName.Add(Name, this);
 
-       
-        using (Message m = Message.Create((ushort)Tags.LoginRequestAccepted, new LoginInfoData(client.ID, new LobbyInfoData())))
+        using (Message m = Message.Create((ushort)Tags.LoginRequestAccepted, new LoginInfoData(client.ID, new LobbyInfoData(RoomManager.Instance.GetRoomDataList()))))
         {
             client.SendMessage(m, SendMode.Reliable);
         }
@@ -216,8 +211,8 @@ now let's send that message at the end of the constructor of the ClientConnectio
 ```
 
 The scripts should now look like this:
-- [ServerManager](https://pastebin.com/V4eKfd3Q)
-- [ClientConnection](https://pastebin.com/yRxZ49u4)
-- [Networking Data](https://pastebin.com/2vvSRGVB)
+- [ServerManager](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login2-ServerManager.cs)
+- [ClientConnection](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login2-ClientConnection.cs)
+- [NetworkingData](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login2-NetworkingData.cs)
 
 In the next section we will create a room system and add information about rooms to the LobbyInfoData.

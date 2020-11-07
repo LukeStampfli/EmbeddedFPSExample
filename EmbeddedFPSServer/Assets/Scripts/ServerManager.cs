@@ -4,14 +4,14 @@ using DarkRift.Server;
 using DarkRift.Server.Unity;
 using UnityEngine;
 
+[RequireComponent(typeof(XmlUnityServer))]
 public class ServerManager : MonoBehaviour
 {
     public static ServerManager Instance;
 
-    [Header("References")]
-    public XmlUnityServer XmlServer;
+    private XmlUnityServer xmlServer;
+    private DarkRiftServer server;
 
-    public DarkRiftServer Server;
     public Dictionary<ushort, ClientConnection> Players = new Dictionary<ushort, ClientConnection>();
     public Dictionary<string, ClientConnection> PlayersByName = new Dictionary<string, ClientConnection>();
 
@@ -28,18 +28,19 @@ public class ServerManager : MonoBehaviour
 
     void Start()
     {
-        Server = XmlServer.Server;
-        Server.ClientManager.ClientConnected += OnClientConnect;
-        Server.ClientManager.ClientDisconnected += OnClientDisconnect;
+        xmlServer = GetComponent<XmlUnityServer>();
+        server = xmlServer.Server;
+        server.ClientManager.ClientConnected += OnClientConnected;
+        server.ClientManager.ClientDisconnected += OnClientDisconnected;
     }
 
     void OnDestroy()
     {
-        Server.ClientManager.ClientConnected -= OnClientConnect;
-        Server.ClientManager.ClientDisconnected -= OnClientDisconnect;
+        server.ClientManager.ClientConnected -= OnClientConnected;
+        server.ClientManager.ClientDisconnected -= OnClientDisconnected;
     }
 
-    private void OnClientDisconnect(object sender, ClientDisconnectedEventArgs e)
+    private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
     {
         IClient client = e.Client;
         ClientConnection p;
@@ -50,7 +51,7 @@ public class ServerManager : MonoBehaviour
         e.Client.MessageReceived -= OnMessage;
     }
 
-    private void OnClientConnect(object sender, ClientConnectedEventArgs e)
+    private void OnClientConnected(object sender, ClientConnectedEventArgs e)
     {
         e.Client.MessageReceived += OnMessage;
     }
@@ -58,12 +59,12 @@ public class ServerManager : MonoBehaviour
     private void OnMessage(object sender, MessageReceivedEventArgs e)
     {
         IClient client = (IClient) sender;
-        using (Message m = e.GetMessage())
+        using (Message message = e.GetMessage())
         {
-            switch ((Tags) m.Tag)
+            switch ((Tags) message.Tag)
             {
                 case Tags.LoginRequest:
-                    OnclientLogin(client, m.Deserialize<LoginRequestData>());
+                    OnclientLogin(client, message.Deserialize<LoginRequestData>());
                     break;
             }
         }
@@ -73,14 +74,14 @@ public class ServerManager : MonoBehaviour
     {
         if (PlayersByName.ContainsKey(data.Name))
         {
-            using (Message m = Message.CreateEmpty((ushort)Tags.LoginRequestDenied))
+            using (Message message = Message.CreateEmpty((ushort)Tags.LoginRequestDenied))
             {
-                client.SendMessage(m, SendMode.Reliable);
+                client.SendMessage(message, SendMode.Reliable);
             }
             return;
         }
 
-        //In the future the ClientConnection will handle its messages
+        // In the future the ClientConnection will handle its messages
         client.MessageReceived -= OnMessage;
 
         new ClientConnection(client, data);

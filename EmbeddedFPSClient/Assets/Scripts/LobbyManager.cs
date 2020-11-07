@@ -24,14 +24,14 @@ public class LobbyManager : MonoBehaviour
 
     void Start()
     {
-        GlobalManager.Instance.Client.MessageReceived += OnMessage;
-        RefreshRooms(GlobalManager.Instance.LastRecievedLobbyInfoData);
+        ConnectionManager.Instance.Client.MessageReceived += OnMessage;
+        RefreshRooms(ConnectionManager.Instance.LastRecievedLobbyInfoData);
     }
 
 
     void OnDestroy()
     {
-        GlobalManager.Instance.Client.MessageReceived -= OnMessage;
+        ConnectionManager.Instance.Client.MessageReceived -= OnMessage;
     }
 
 
@@ -55,7 +55,7 @@ public class LobbyManager : MonoBehaviour
     {
         using (Message m = Message.Create((ushort)Tags.LobbyJoinRoomRequest, new JoinRoomRequest(roomName)))
         {
-            GlobalManager.Instance.Client.SendMessage(m, SendMode.Reliable);
+            ConnectionManager.Instance.Client.SendMessage(m, SendMode.Reliable);
         }
     }
 

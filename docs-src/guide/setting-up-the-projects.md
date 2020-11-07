@@ -1,4 +1,3 @@
-
 # Setting up the projects
 
 
@@ -15,12 +14,12 @@ The client will be a unity game with a normal unity project. For the server we h
  If you use an embedded server you can also create the server and the client in the same project. But you will have to make sure that the client build includes no server code and vice versa which makes it a bit complicated.
 :::
 
-### Reasons to go for an embedded server
+### Reasons for an Embedded Server
 - You can use a similar project structure on your client and server (Monobehaviors) 
 - Access to Unity features like Physics, Navmesh or Collision detection.
 - You can use graphical outputs for debugging or testing on your server.
 
-### Reasons to go for a standalone server
+### Reasons for a Standalone Server
 - Less overhead then an embedded server (slightly increased performance)
 - Easier to manage references and use external libraries (NuGet packages, C# 7 support...)
 - Easier to containerize and deploy for production
@@ -31,7 +30,7 @@ In the end standalone and embedded servers are pretty similar. We will go for an
 ## Setup
 - Create a repository or folder for the unity projects, name it something like EmbeddedFPSExample
 
-## Setup the client
+## Setup the Client
 ::: danger
 This project uses new physics features which were introduced in Unity 2018.3 so you have to use 2018.3 or a newer version of Unity.
 :::
@@ -41,28 +40,27 @@ This project uses new physics features which were introduced in Unity 2018.3 so 
 - Head to the Asset Store and download the newest version of Darkrift 2.
 - Create a basic folder structure (create a "Prefabs", "Scenes" and "Scripts" folder)
 - Create a Scene "Main" in the scenes folder
-## Setup the server
+## Setup the Server
 Repeat the setup from the client but name the project something like EmbeddedFPSServer
 
-## Creating a folder Junction to share scripts
+## Creating a Folder Junction to Share Scripts
 
 ::: warning
-I usually use a shared .dll file in a seperate project and not folder junction. Both are viable options to do, but if you plan to work on the project with a bigger team you should go for the .dll approach or use git submodules.
+Creating a folder junction to share script is an outdated way of doing this. Since the introduction of the Unity Package Manager I'd recommend using a local package. You can learn more about the Unity Package Manager [here.](https://docs.unity3d.com/Manual/Packages.html)
+
+Another option could be to use a separate standalone c# library project and create a dll which is shared between the two projects.
 :::
 
 Some scripts will be used by the client and the server, having a way to synchronize them saves time. There are many good ways to do that. For the sake of simplicity we will use a folder junction. A folder junction synchronizes all files inside a folder to another folder. 
-- Create a "shared" folder inside the Scripts folder of the client project.
+- Create a "Shared" folder inside the Scripts folder of the client project.
 
 ### Windows:
 - open the cmd.exe
-- type: ```mklink /J "Client shared folder" "server shared folder"```\
-(Replace "Client/Server shared folder" with just the path, don't write the "")
+- type: ```mklink /J "<client-shared-folder>" "<server-shared-folder>"```<br/>The paths must be absolute for mklink to work e. g. ```mklink /J "C:\Users\<user>\Documents\EmbeddedFPSExample\EmbeddedFPSServer\Assets\Scripts\Shared" "C:\Users\<user>\Documents\EmbeddedFPSExample\EmbeddedFPSClient\Assets\Scripts\Shared"```
 
 ### Mac OS X
 - open the terminal
-- type: ```ln -s "Client shared folder" "server shared folder"```\
-
-
+- type: ```ln -s "<client-shared-folder>" "<server-shared-folder>"```\
 
 This junction will share all changes that we make on the client **But not the other way around so we will edit scripts in the shared folders always in the clients folder.**
 

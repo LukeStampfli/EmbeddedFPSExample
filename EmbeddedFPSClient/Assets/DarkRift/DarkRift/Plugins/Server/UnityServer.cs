@@ -56,7 +56,7 @@ namespace DarkRift.Server.Unity
         IPVersion ipVersion = IPVersion.IPv4;
 
         /// <summary>
-        ///     The number of strikes that can be received before the client is automatically kicked.
+        ///     The number of strikes that can be received before the Client is automatically kicked.
         /// </summary>
         public byte MaxStrikes
         {
@@ -65,7 +65,7 @@ namespace DarkRift.Server.Unity
         }
 
         [SerializeField]
-        [Tooltip("The number of strikes that can be received before the client is automatically kicked.")]
+        [Tooltip("The number of strikes that can be received before the Client is automatically kicked.")]
         byte maxStrikes = 3;
 
         #endregion

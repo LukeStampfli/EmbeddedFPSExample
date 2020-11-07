@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 /// <summary>
-///     The tags used for messages between the server and client.
+///     The tags used for messages between the server and Client.
 /// </summary>
 static class BlockTags
 {

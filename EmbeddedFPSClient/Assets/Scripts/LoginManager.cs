@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Client;
 using UnityEngine;
@@ -9,34 +7,32 @@ using UnityEngine.UI;
 
 public class LoginManager : MonoBehaviour
 {
-
-    public static LoginManager Instance;
-
     [Header("References")]
-    public GameObject LoginWindow;
-    public InputField NameInput;
-    public Button SubmitLoginButton;
+    [SerializeField]
+    private GameObject loginWindow;
+    [SerializeField]
+    private InputField nameInput;
+    [SerializeField] 
+    private Button submitLoginButton;
 
     void Awake()
     {
-        Instance = this;
-    }
+        ConnectionManager.Instance.OnConnected += StartLoginProcess;
+        submitLoginButton.onClick.AddListener(OnSubmitLogin);
+        ConnectionManager.Instance.Client.MessageReceived += OnMessage;
 
-    void Start()
-    {
-        LoginWindow.SetActive(false);
-        SubmitLoginButton.onClick.AddListener(OnSubmitLogin);
-        GlobalManager.Instance.Client.MessageReceived += OnMessage;
+        loginWindow.SetActive(false);
     }
 
     void OnDestroy()
     {
-        GlobalManager.Instance.Client.MessageReceived -= OnMessage;
+        ConnectionManager.Instance.OnConnected -= StartLoginProcess;
+        ConnectionManager.Instance.Client.MessageReceived -= OnMessage;
     }
 
     public void StartLoginProcess()
     {
-        LoginWindow.SetActive(true);
+        loginWindow.SetActive(true);
     }
 
     private void OnMessage(object sender, MessageReceivedEventArgs e)
@@ -56,29 +52,28 @@ public class LoginManager : MonoBehaviour
 
     }
 
-
     public void OnSubmitLogin()
     {
-        if (NameInput.text != "")
+        if (!String.IsNullOrEmpty(nameInput.text))
         {
-            LoginWindow.SetActive(false);
+            loginWindow.SetActive(false);
 
-            using (Message m = Message.Create((ushort)Tags.LoginRequest, new LoginRequestData(NameInput.text)))
+            using (Message message = Message.Create((ushort)Tags.LoginRequest, new LoginRequestData(nameInput.text)))
             {
-                GlobalManager.Instance.Client.SendMessage(m, SendMode.Reliable);
+                ConnectionManager.Instance.Client.SendMessage(message, SendMode.Reliable);
             }
         }
     }
 
     public void OnLoginDecline()
     {
-        LoginWindow.SetActive(true);
+        loginWindow.SetActive(true);
     }
 
     public void OnLoginAccept(LoginInfoData data)
     {
-        GlobalManager.Instance.PlayerId = data.Id;
-        GlobalManager.Instance.LastRecievedLobbyInfoData = data.Data;
+        ConnectionManager.Instance.PlayerId = data.Id;
+        ConnectionManager.Instance.LastRecievedLobbyInfoData = data.Data;
         SceneManager.LoadScene("Lobby");
     }
 

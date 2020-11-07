@@ -39,7 +39,7 @@
         </member>
         <member name="F:DarkRift.Server.Client.connection">
             <summary>
-                The connection to the client.
+                The connection to the Client.
             </summary>
         </member>
         <member name="F:DarkRift.Server.Client.server">
@@ -49,15 +49,15 @@
         </member>
         <member name="M:DarkRift.Server.Client.#ctor(DarkRift.Server.NetworkServerConnection,System.UInt16,DarkRift.Server.DarkRiftServer)">
             <summary>
-                Creates a new client connection with a given global identifier and the client they are connected through.
+                Creates a new Client connection with a given global identifier and the Client they are connected through.
             </summary>
             <param name="connection">The connection we handle.</param>
-            <param name="id">The ID assigned to this client.</param>
+            <param name="id">The ID assigned to this Client.</param>
             <param name="server">The server we belong to.</param>
         </member>
         <member name="M:DarkRift.Server.Client.SendID">
             <summary>
-                Sends the client their ID.
+                Sends the Client their ID.
             </summary>
         </member>
         <member name="M:DarkRift.Server.Client.SendMessage(DarkRift.Message,DarkRift.SendMode)">
@@ -74,21 +74,21 @@
         </member>
         <member name="M:DarkRift.Server.Client.HandleIncomingDataBuffer(System.Byte[],DarkRift.SendMode)">
             <summary>
-                Handles data that was sent from this client.
+                Handles data that was sent from this Client.
             </summary>
             <param name="buffer">The buffer that was received.</param>
             <param name="sendMode">The method data was sent using.</param>
         </member>
         <member name="M:DarkRift.Server.Client.HandleIncomingMessage(DarkRift.Message,DarkRift.SendMode)">
             <summary>
-                Handles messages that were sent from this client.
+                Handles messages that were sent from this Client.
             </summary>
             <param name="message">The message that was received.</param>
             <param name="sendMode">The method data was sent using.</param>
         </member>
         <member name="M:DarkRift.Server.Client.PushBuffer(System.Byte[],DarkRift.SendMode)">
             <summary>
-                Pushes a buffer to the client.
+                Pushes a buffer to the Client.
             </summary>
             <param name="buffer">The buffer to push.</param>
             <param name="sendMode">The method to send the data using.</param>
@@ -96,14 +96,14 @@
         </member>
         <member name="M:DarkRift.Server.Client.Strike(DarkRift.Server.StrikeReason,System.String)">
             <summary>
-                Informs plugins and adds a strike to this client's record.
+                Informs plugins and adds a strike to this Client's record.
             </summary>
             <param name="reason">The reason for the strike.</param>
             <param name="message">A message describing the reason for the strike.</param>
         </member>
         <member name="M:DarkRift.Server.Client.Dispose">
             <summary>
-                Disposes of this client.
+                Disposes of this Client.
             </summary>
         </member>
         <member name="T:DarkRift.Server.ClientConnectedEventArgs">
@@ -113,24 +113,24 @@
         </member>
         <member name="P:DarkRift.Server.ClientConnectedEventArgs.Client">
             <summary>
-                The <see cref="P:DarkRift.Server.ClientConnectedEventArgs.Client"/> object for the new client.
+                The <see cref="P:DarkRift.Server.ClientConnectedEventArgs.Client"/> object for the new Client.
             </summary>
         </member>
         <member name="P:DarkRift.Server.ClientConnectedEventArgs.RemoteTcpEndPoint">
             <summary>
-                The remote end point of the TCP connection to this client.
+                The remote end point of the TCP connection to this Client.
             </summary>
         </member>
         <member name="P:DarkRift.Server.ClientConnectedEventArgs.RemoteUdpEndPoint">
             <summary>
-                The remote end point of the UDP connection to this client.
+                The remote end point of the UDP connection to this Client.
             </summary>
         </member>
         <member name="M:DarkRift.Server.ClientConnectedEventArgs.#ctor(DarkRift.Server.IClient)">
             <summary>
                 Creates a new ClientConnectedEventArgs from the given data.
             </summary>
-            <param name="clientConnection">The ClientConnection of the new client.</param>
+            <param name="clientConnection">The ClientConnection of the new Client.</param>
         </member>
         <member name="T:DarkRift.Server.ClientDisconnectedEventArgs">
             <summary>
@@ -139,17 +139,17 @@
         </member>
         <member name="P:DarkRift.Server.ClientDisconnectedEventArgs.Client">
             <summary>
-                The Client of the new client.
+                The Client of the new Client.
             </summary>
         </member>
         <member name="P:DarkRift.Server.ClientDisconnectedEventArgs.RemoteTcpEndPoint">
             <summary>
-                The remote end point of the TCP connection to this client.
+                The remote end point of the TCP connection to this Client.
             </summary>
         </member>
         <member name="P:DarkRift.Server.ClientDisconnectedEventArgs.RemoteUdpEndPoint">
             <summary>
-                The remote end point of the UDP connection to this client.
+                The remote end point of the UDP connection to this Client.
             </summary>
         </member>
         <member name="P:DarkRift.Server.ClientDisconnectedEventArgs.LocalDisconnect">
@@ -169,7 +169,7 @@
             <summary>
                 Creates a new ClientDisconnectedEventArgs from the given data.
             </summary>
-            <param name="clientConnection">The ClientConnection of the client.</param>
+            <param name="clientConnection">The ClientConnection of the Client.</param>
             <param name="localDisconnect">Whether it was a local call that caused the disconnection.</param>
             <param name="error">The error that caused the disconnect.</param>
         </member>
@@ -210,12 +210,12 @@
         </member>
         <member name="E:DarkRift.Server.ClientManager.ClientConnected">
             <summary>
-                Invoked when a client connects to the server.
+                Invoked when a Client connects to the server.
             </summary>
         </member>
         <member name="E:DarkRift.Server.ClientManager.ClientDisconnected">
             <summary>
-                Invoked when a client disconnects from the server.
+                Invoked when a Client disconnects from the server.
             </summary>
         </member>
         <member name="P:DarkRift.Server.ClientManager.Count">
@@ -225,7 +225,7 @@
         </member>
         <member name="P:DarkRift.Server.ClientManager.MaxStrikes">
             <summary>
-                The number of strikes a client can get before they are kicked.
+                The number of strikes a Client can get before they are kicked.
             </summary>
         </member>
         <member name="P:DarkRift.Server.ClientManager.UseFallbackNetworking">
@@ -259,15 +259,15 @@
         </member>
         <member name="M:DarkRift.Server.ClientManager.NewConnection(DarkRift.Server.NetworkServerConnection)">
             <summary>
-                Called when a new client connects.
+                Called when a new Client connects.
             </summary>
-            <param name="connection">The new client.</param>
+            <param name="connection">The new Client.</param>
         </member>
         <member name="M:DarkRift.Server.ClientManager.HandleDisconnection(DarkRift.Server.Client,System.Boolean,System.Net.Sockets.SocketError)">
             <summary>
-                Handles a client disconnecting. 
+                Handles a Client disconnecting. 
             </summary>
-            <param name="client">The client disconnecting.</param>
+            <param name="Client">The Client disconnecting.</param>
             <param name="localDisconnect">If the disconnection was caused by a call to <see cref="M:DarkRift.Server.Client.Disconnect"/></param>
             <param name="error">The error that caused the disconnect.</param>
         </member>
@@ -637,12 +637,12 @@
         </member>
         <member name="P:DarkRift.Server.DarkRiftServer.InternalClientManager">
             <summary>
-                The client manager handling all clients on this server.
+                The Client manager handling all clients on this server.
             </summary>
         </member>
         <member name="P:DarkRift.Server.DarkRiftServer.ClientManager">
             <summary>
-                The client manager handling all clients on this server.
+                The Client manager handling all clients on this server.
             </summary>
         </member>
         <member name="P:DarkRift.Server.DarkRiftServer.PluginManager">
@@ -930,12 +930,12 @@
         </member>
         <member name="T:DarkRift.Server.IClient">
             <summary>
-                Server representation of a client.
+                Server representation of a Client.
             </summary>
         </member>
         <member name="P:DarkRift.Server.IClient.ID">
             <summary>
-                The ID of the client.
+                The ID of the Client.
             </summary>
         </member>
         <member name="P:DarkRift.Server.IClient.RemoteTcpEndPoint">
@@ -950,12 +950,12 @@
         </member>
         <member name="P:DarkRift.Server.IClient.IsConnected">
             <summary>
-                Is this client still available?
+                Is this Client still available?
             </summary>
         </member>
         <member name="P:DarkRift.Server.IClient.Strikes">
             <summary>
-                The number of illegal behaviours this client has made.
+                The number of illegal behaviours this Client has made.
             </summary>
             <remarks>
                 <legacyBold>Setter only available in Pro.</legacyBold>
@@ -963,7 +963,7 @@
         </member>
         <member name="M:DarkRift.Server.IClient.Disconnect">
             <summary>
-                Disconnects this client from the server.
+                Disconnects this Client from the server.
             </summary>
             <returns>Whether the send was successful.</returns>
         </member>
@@ -989,12 +989,12 @@
         </member>
         <member name="E:DarkRift.Server.IClientManager.ClientConnected">
             <summary>
-                Invoked when a client connects to the server.
+                Invoked when a Client connects to the server.
             </summary>
         </member>
         <member name="E:DarkRift.Server.IClientManager.ClientDisconnected">
             <summary>
-                Invoked when a client disconnects from the server.
+                Invoked when a Client disconnects from the server.
             </summary>
         </member>
         <member name="P:DarkRift.Server.IClientManager.Count">
@@ -1004,7 +1004,7 @@
         </member>
         <member name="P:DarkRift.Server.IClientManager.MaxStrikes">
             <summary>
-                The number of strikes a client can get before they are kicked.
+                The number of strikes a Client can get before they are kicked.
             </summary>
         </member>
         <member name="M:DarkRift.Server.IClientManager.GetAllClients">
@@ -1015,17 +1015,17 @@
         </member>
         <member name="P:DarkRift.Server.IClientManager.Item(System.UInt16)">
             <summary>
-                Returns the client with the given ID.
+                Returns the Client with the given ID.
             </summary>
-            <param name="id">The global ID of the client.</param>
-            <returns>The client.</returns>
+            <param name="id">The global ID of the Client.</param>
+            <returns>The Client.</returns>
         </member>
         <member name="M:DarkRift.Server.IClientManager.GetClient(System.UInt16)">
             <summary>
-                Returns the client with the given ID.
+                Returns the Client with the given ID.
             </summary>
-            <param name="id">The global ID of the client.</param>
-            <returns>The client.</returns>
+            <param name="id">The global ID of the Client.</param>
+            <returns>The Client.</returns>
         </member>
         <member name="T:DarkRift.Server.IDatabaseManager">
             <summary>
@@ -1098,7 +1098,7 @@
         </member>
         <member name="M:DarkRift.Server.IMessageSinkSource.SendMessage(DarkRift.Message,DarkRift.SendMode)">
             <summary>
-                Sends a message to the client.
+                Sends a message to the Client.
             </summary>
             <param name="message">The message to be sent.</param>
             <param name="sendMode">How the message should be sent.</param>
@@ -1250,7 +1250,7 @@
         </member>
         <member name="P:DarkRift.Server.MessageReceivedEventArgs.Client">
             <summary>
-                The client the message was received from.
+                The Client the message was received from.
             </summary>
         </member>
         <member name="P:DarkRift.Server.MessageReceivedEventArgs.Tag">
@@ -1269,7 +1269,7 @@
             </summary>
             <param name="message">The message received.</param>
             <param name="sendMode">The send mode the message was received with.</param>
-            <param name="client">The client the message was received from.</param>
+            <param name="Client">The Client the message was received from.</param>
         </member>
         <member name="M:DarkRift.Server.MessageReceivedEventArgs.GetMessage">
             <summary>
@@ -1286,11 +1286,11 @@
             <summary>
                 Delegate for handling new connections.
             </summary>
-            <param name="client">The client that connected.</param>
+            <param name="Client">The Client that connected.</param>
         </member>
         <member name="P:DarkRift.Server.NetworkListener.Connected">
             <summary>
-                Method called when a new client connects.
+                Method called when a new Client connects.
             </summary>
         </member>
         <member name="F:DarkRift.Server.NetworkListener.tcpListener">
@@ -1382,14 +1382,14 @@
         </member>
         <member name="M:DarkRift.Server.NetworkListener.TcpAcceptCompleted(System.Object,System.Net.Sockets.SocketAsyncEventArgs)">
             <summary>
-                Called when a new client has been accepted.
+                Called when a new Client has been accepted.
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
         </member>
         <member name="M:DarkRift.Server.NetworkListener.FallbackTcpAcceptCompleted(System.IAsyncResult)">
             <summary>
-                Called when a new client has been accepted through the fallback accept.
+                Called when a new Client has been accepted through the fallback accept.
             </summary>
             <param name="result">The result of the accept.</param>
         </member>
@@ -1484,22 +1484,22 @@
         </member>
         <member name="P:DarkRift.Server.NetworkServerConnection.CanSend">
             <summary>
-                Is this client able to send or not.
+                Is this Client able to send or not.
             </summary>
         </member>
         <member name="P:DarkRift.Server.NetworkServerConnection.IsListening">
             <summary>
-                Is this client currently listening for messages or not.
+                Is this Client currently listening for messages or not.
             </summary>
         </member>
         <member name="P:DarkRift.Server.NetworkServerConnection.RemoteTcpEndPoint">
             <summary>
-                The end point of the remote client on TCP.
+                The end point of the remote Client on TCP.
             </summary>
         </member>
         <member name="P:DarkRift.Server.NetworkServerConnection.RemoteUdpEndPoint">
             <summary>
-                The end point of the remote client on TCP.
+                The end point of the remote Client on TCP.
             </summary>
         </member>
         <member name="P:DarkRift.Server.NetworkServerConnection.AuthToken">
@@ -1552,7 +1552,7 @@
         </member>
         <member name="M:DarkRift.Server.NetworkServerConnection.Disconnect">
             <summary>
-                Disconnects this client from the remote host.
+                Disconnects this Client from the remote host.
             </summary>
             <returns>Whether the disconnect was successful.</returns>
         </member>
@@ -1820,7 +1820,7 @@
         </member>
         <member name="P:DarkRift.Server.PluginLoadData.ClientManager">
             <summary>
-                The client manager to pass to the server.
+                The Client manager to pass to the server.
             </summary>
         </member>
         <member name="P:DarkRift.Server.PluginLoadData.PluginManager">
@@ -2163,7 +2163,7 @@
         </member>
         <member name="P:DarkRift.Server.ServerSpawnData.ServerSettings.MaxStrikes">
             <summary>
-                The number of strikes that can be received before the client is automatically kicked.
+                The number of strikes that can be received before the Client is automatically kicked.
             </summary>
         </member>
         <member name="P:DarkRift.Server.ServerSpawnData.ServerSettings.UseFallbackNetworking">
@@ -2467,7 +2467,7 @@
         </member>
         <member name="F:DarkRift.Server.StrikeReason.InvalidCommand">
             <summary>
-                Specifies the command the client sent was not accepted by the server.
+                Specifies the command the Client sent was not accepted by the server.
             </summary>
         </member>
         <member name="F:DarkRift.Server.StrikeReason.PluginRequest">

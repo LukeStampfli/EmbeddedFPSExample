@@ -1,7 +1,7 @@
 ﻿using DarkRift;
 using UnityEngine;
 
-public enum Tags: ushort
+public enum Tags
 {
     LoginRequest = 0,
     LoginRequestAccepted = 1,

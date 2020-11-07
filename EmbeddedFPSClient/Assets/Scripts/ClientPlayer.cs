@@ -55,7 +55,7 @@ public class ClientPlayer : MonoBehaviour
         Name = name;
         NameText.text = Name;
         SetHealth(100);
-        if (GlobalManager.Instance.PlayerId == id)
+        if (ConnectionManager.Instance.PlayerId == id)
         {
             IsOwn = true;
             Camera.main.transform.SetParent(transform);
@@ -118,7 +118,7 @@ public class ClientPlayer : MonoBehaviour
 
             using (Message m = Message.Create((ushort)Tags.GamePlayerInput, inputData))
             {
-                GlobalManager.Instance.Client.SendMessage(m, SendMode.Reliable);
+                ConnectionManager.Instance.Client.SendMessage(m, SendMode.Reliable);
             }
 
             reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick,updateData, inputData));

@@ -26,16 +26,16 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        GlobalManager.Instance.Client.MessageReceived += OnMessage;
+        ConnectionManager.Instance.Client.MessageReceived += OnMessage;
         using (Message m = Message.CreateEmpty((ushort)Tags.GameJoinRequest))
         {
-            GlobalManager.Instance.Client.SendMessage(m, SendMode.Reliable);
+            ConnectionManager.Instance.Client.SendMessage(m, SendMode.Reliable);
         }
     }
 
     void OnDestroy()
     {
-        GlobalManager.Instance.Client.MessageReceived -= OnMessage;
+        ConnectionManager.Instance.Client.MessageReceived -= OnMessage;
     }
 
 
@@ -76,7 +76,7 @@ public class GameManager : MonoBehaviour
         LastRecievedServerTick = updateData.Frame;
         foreach (PlayerSpawnData data in updateData.SpawnData)
         {
-            if (data.Id != GlobalManager.Instance.PlayerId)
+            if (data.Id != ConnectionManager.Instance.PlayerId)
             {
                 SpawnPlayer(data);
             }

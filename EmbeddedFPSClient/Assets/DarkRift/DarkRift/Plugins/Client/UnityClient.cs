@@ -10,7 +10,7 @@ namespace DarkRift.Client.Unity
 	public sealed class UnityClient : MonoBehaviour
 	{
         /// <summary>
-        ///     The IP address this client connects to.
+        ///     The IP address this Client connects to.
         /// </summary>
         public IPAddress Address
         {
@@ -23,7 +23,7 @@ namespace DarkRift.Client.Unity
         string address = IPAddress.Loopback.ToString();                 //Unity requires a serializable backing field so use string
 
         /// <summary>
-        ///     The port this client connects to.
+        ///     The port this Client connects to.
         /// </summary>
         public ushort Port
         {
@@ -49,7 +49,7 @@ namespace DarkRift.Client.Unity
         IPVersion ipVersion = IPVersion.IPv4;
 
         [SerializeField]
-        [Tooltip("Indicates whether the client will connect to the server in the Start method.")]
+        [Tooltip("Indicates whether the Client will connect to the server in the Start method.")]
         bool autoConnect = true;
 
         [SerializeField]
@@ -149,7 +149,7 @@ namespace DarkRift.Client.Unity
         public event EventHandler<DisconnectedEventArgs> Disconnected;
 
         /// <summary>
-        ///     The ID the client has been assigned.
+        ///     The ID the Client has been assigned.
         /// </summary>
         public ushort ID
         {
@@ -160,7 +160,7 @@ namespace DarkRift.Client.Unity
         }
 
         /// <summary>
-        ///     Returns whether or not this client is connected to the server.
+        ///     Returns whether or not this Client is connected to the server.
         /// </summary>
         public bool Connected
         {
@@ -171,9 +171,9 @@ namespace DarkRift.Client.Unity
         }
 
 		/// <summary>
-		/// 	The actual client connecting to the server.
+		/// 	The actual Client connecting to the server.
 		/// </summary>
-		/// <value>The client.</value>
+		/// <value>The Client.</value>
         public DarkRiftClient Client
         {
             get
@@ -286,7 +286,7 @@ namespace DarkRift.Client.Unity
         /// <summary>
         ///     Invoked when DarkRift receives a message from the server.
         /// </summary>
-        /// <param name="sender">THe client that received the message.</param>
+        /// <param name="sender">THe Client that received the message.</param>
         /// <param name="e">The arguments for the event.</param>
         void Client_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
@@ -353,7 +353,7 @@ namespace DarkRift.Client.Unity
         }
 
         /// <summary>
-        ///     Disconnects this client from the server.
+        ///     Disconnects this Client from the server.
         /// </summary>
         /// <returns>Whether the disconnect was successful.</returns>
         public bool Disconnect()
@@ -362,7 +362,7 @@ namespace DarkRift.Client.Unity
         }
 
         /// <summary>
-        ///     Closes this client.
+        ///     Closes this Client.
         /// </summary>
         public void Close()
         {
