@@ -63,7 +63,7 @@ public class Room : MonoBehaviour
         Name = name;
         MaxSlots = maxslots;
 
-        CreateSceneParameters csp = new CreateSceneParameters(LocalPhysicsMode.Physics2D);
+        CreateSceneParameters csp = new CreateSceneParameters(LocalPhysicsMode.Physics3D);
         scene = SceneManager.CreateScene("Room_" + name, csp);
         physicsScene = scene.GetPhysicsScene();
 
