@@ -212,9 +212,9 @@ to:
 ```
 
 Your scripts should look like this:
-- [Room](https://pastebin.com/znpzuPX4)
-- [RoomManager](https://pastebin.com/eUBeMCYz)
-- [Networking Data](https://pastebin.com/USTdSuLK)
-- [ClientConnection](https://pastebin.com/FCH3UCyu)
+- [Room](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/room1-Room.cs)
+- [RoomManager](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/room1-RoomManager.cs)
+- [NetworkingData](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/room1-NetworkingData.cs)
+- [ClientConnection](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/room1-ClientConnection.cs)
 
 To finish the room system we still have to add function to join rooms but we do that later first we will implement the client side system to display the rooms.
