@@ -14,3 +14,7 @@ This tutorial will cover the following subjects:
 - Lag compensation (shooting in an FPS game)
 
 You can follow the tutorial here: https://lukestampfli.github.io/EmbeddedFPSExample/guide/introduction.html
+
+
+## Special Thanks
+Special thanks to [KABBOUCHI](https://github.com/KABBOUCHI) for converting this sample into a website.
