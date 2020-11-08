@@ -1,4 +1,4 @@
-# Client Basics and Login System part 1
+# Client Basics and Login System Part 1
  
 We will start by implementing functionality to connect to a server and send a simple login request. Let's create a script that connects our client to a server.
 
