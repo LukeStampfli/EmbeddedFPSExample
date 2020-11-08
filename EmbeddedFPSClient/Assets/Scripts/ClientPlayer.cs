@@ -26,6 +26,8 @@ public class ClientPlayer : MonoBehaviour
 
     private PlayerInterpolation interpolation;
 
+    private Queue<ReconciliationInfo> reconciliationHistory = new Queue<ReconciliationInfo>();
+
     // Store look direction.
     private float yaw;
     private float pitch;
@@ -49,9 +51,6 @@ public class ClientPlayer : MonoBehaviour
 
     [Header("Prefabs")]
     public GameObject ShotPrefab;
-
-    private Queue<PlayerStateData> updateBuffer = new Queue<PlayerStateData>();
-    private Queue<ReconciliationInfo> reconciliationHistory = new Queue<ReconciliationInfo>();
 
     void Awake()
     {
