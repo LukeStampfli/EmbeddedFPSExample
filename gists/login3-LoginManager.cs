@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DarkRift;
 using DarkRift.Client;
 using UnityEngine;
@@ -12,7 +12,7 @@ public class LoginManager : MonoBehaviour
     private GameObject loginWindow;
     [SerializeField]
     private InputField nameInput;
-    [SerializeField] 
+    [SerializeField]
     private Button submitLoginButton;
 
     void Start()
@@ -39,7 +39,7 @@ public class LoginManager : MonoBehaviour
     {
         using (Message message = e.GetMessage())
         {
-            switch ((Tags) message.Tag)
+            switch ((Tags)message.Tag)
             {
                 case Tags.LoginRequestDenied:
                     OnLoginDecline();

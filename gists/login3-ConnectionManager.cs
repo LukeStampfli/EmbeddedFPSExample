@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using DarkRift;
 using DarkRift.Client.Unity;

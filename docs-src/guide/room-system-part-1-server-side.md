@@ -1,4 +1,4 @@
-# Room System Part 1 (Server-side)
+# Room System Part 1 (Server-Side)
 
 We will create a very basic room system for our FPS game. It will work like this:
 - Players can join and leave game rooms.

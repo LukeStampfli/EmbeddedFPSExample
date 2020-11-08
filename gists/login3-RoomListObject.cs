@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class RoomListObject : MonoBehaviour
@@ -19,4 +19,3 @@ public class RoomListObject : MonoBehaviour
         joinButton.onClick.AddListener(delegate { lobbyManager.SendJoinRoomRequest(data.Name); });
     }
 }
-

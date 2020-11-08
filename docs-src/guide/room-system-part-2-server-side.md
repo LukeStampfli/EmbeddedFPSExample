@@ -1,4 +1,4 @@
-# Room System part 2 (Server-side)
+# Room System Part 2 (Server-Side)
 
 In this section will add the functionality to join rooms.
 We start by modifying the ClientConnection script a bit:
