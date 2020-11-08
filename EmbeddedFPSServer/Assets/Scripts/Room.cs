@@ -13,6 +13,7 @@ public class Room : MonoBehaviour
     private List<PlayerStateData> playerStateData = new List<PlayerStateData>(4);
     private List<PlayerSpawnData> playerSpawnData = new List<PlayerSpawnData>(4);
     private List<PlayerDespawnData> playerDespawnData = new List<PlayerDespawnData>(4);
+    private List<PlayerHealthUpdateData> healthUpdateData = new List<PlayerHealthUpdateData>(4);
 
 
     [Header("Public Fields")]
@@ -25,16 +26,13 @@ public class Room : MonoBehaviour
     [SerializeField]
     private GameObject playerPrefab;
 
-    public List<PlayerHealthUpdateData> HealthUpdates = new List<PlayerHealthUpdateData>();
-
     void FixedUpdate()
     {
         ServerTick++;
 
-        // Perform updates for all players in the room.
         foreach (ServerPlayer player in serverPlayers)
         {
-            player.PerformuPreUpdate();
+            player.PlayerPreUpdate();
         }
 
         for (var i = 0; i < serverPlayers.Count; i++)
@@ -47,9 +45,10 @@ public class Room : MonoBehaviour
         PlayerStateData[] playerStateDataArray = playerStateData.ToArray();
         PlayerSpawnData[] playerSpawnDataArray = playerSpawnData.ToArray();
         PlayerDespawnData[] playerDespawnDataArray = playerDespawnData.ToArray();
+        PlayerHealthUpdateData[] healthUpdateDataArray = healthUpdateData.ToArray();
         foreach (ServerPlayer p in serverPlayers)
         {
-            using (Message m = Message.Create((ushort)Tags.GameUpdate, new GameUpdateData(p.InputTick, playerStateDataArray, playerSpawnDataArray, playerDespawnDataArray, HealthUpdates.ToArray())))
+            using (Message m = Message.Create((ushort)Tags.GameUpdate, new GameUpdateData(p.InputTick, playerStateDataArray, playerSpawnDataArray, playerDespawnDataArray, healthUpdateDataArray)))
             {
                 p.Client.SendMessage(m, SendMode.Reliable);
             }
@@ -57,7 +56,7 @@ public class Room : MonoBehaviour
         
         playerSpawnData.Clear();
         playerDespawnData.Clear();
-        HealthUpdates.Clear();
+        healthUpdateData.Clear();
     }
 
 
@@ -116,38 +115,35 @@ public class Room : MonoBehaviour
     {
         int dif = (int) (ServerTick - 1 - frame);
 
-        //get the position of the ray
-        Vector3 firepoint;
+        // Get the position of the ray
+        Vector3 startPosition;
         Vector3 direction;
 
-        if (shooter.UpdateDataHistory.Count > dif)
+        if (shooter.PlayerStateDataHistory.Count > dif)
         {
-            firepoint = shooter.UpdateDataHistory[dif].Position;
-            direction = shooter.UpdateDataHistory[dif].LookDirection * Vector3.forward;
+            startPosition = shooter.PlayerStateDataHistory[dif].Position;
+            direction = shooter.PlayerStateDataHistory[dif].LookDirection * Vector3.forward;
         }
         else
         {
-            firepoint = shooter.CurrentPlayerStateData.Position;
+            startPosition = shooter.CurrentPlayerStateData.Position;
             direction = shooter.CurrentPlayerStateData.LookDirection * Vector3.forward;
         }
 
-        firepoint += direction * 3f;
+        startPosition += direction * 3f;
 
         //set all players back in time
         foreach (ServerPlayer player in serverPlayers)
         {
-            if (player.UpdateDataHistory.Count > dif)
+            if (player.PlayerStateDataHistory.Count > dif)
             {
                 player.PlayerLogic.CharacterController.enabled = false;
-                player.transform.localPosition = player.UpdateDataHistory[dif].Position;
+                player.transform.localPosition = player.PlayerStateDataHistory[dif].Position;
             }
         }
 
-
-
         RaycastHit hit;
-
-        if (physicsScene.Raycast(firepoint, direction,out hit, 200f))
+        if (physicsScene.Raycast(startPosition, direction,out hit, 200f))
         {
             if (hit.transform.CompareTag("Unit"))
             {
@@ -155,8 +151,7 @@ public class Room : MonoBehaviour
             }
         }
 
-
-        //set all players back
+        // Set all players back.
         foreach (ServerPlayer player in serverPlayers)
         {
             player.transform.localPosition = player.CurrentPlayerStateData.Position;
@@ -174,5 +169,10 @@ public class Room : MonoBehaviour
         }
 
         return playerSpawnData;
+    }
+
+    public void UpdatePlayerHealth(ServerPlayer player, byte health)
+    {
+        healthUpdateData.Add(new PlayerHealthUpdateData(player.Client.ID, health));
     }
 }

@@ -6,9 +6,11 @@ using UnityEngine.SceneManagement;
 public class LobbyManager : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField]
     private Transform roomListContainerTransform;
 
     [Header("Prefabs")]
+    [SerializeField]
     private GameObject roomListPrefab;
 
     void Start()

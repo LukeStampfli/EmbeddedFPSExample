@@ -210,11 +210,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sensitivityX: 5
   sensitivityY: -5
-  Interpolation: {fileID: 114920039374967156}
-  NameText: {fileID: 114512959565655856}
-  HealthBarFill: {fileID: 114053991253118654}
-  HealthBarObject: {fileID: 1380838895579414}
-  ShotPrefab: {fileID: 1767031226293036, guid: 1146264ec8261ef4c8b65d71c527d30b, type: 3}
+  nameText: {fileID: 114512959565655856}
+  healthBarFill: {fileID: 114053991253118654}
+  healthBarObject: {fileID: 1380838895579414}
+  shotPrefab: {fileID: 1767031226293036, guid: 1146264ec8261ef4c8b65d71c527d30b, type: 3}
 --- !u!1 &1486982227905460
 GameObject:
   m_ObjectHideFlags: 0

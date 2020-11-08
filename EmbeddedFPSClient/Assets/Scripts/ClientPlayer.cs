@@ -44,13 +44,17 @@ public class ClientPlayer : MonoBehaviour
     [SerializeField]
     private float sensitivityY;
 
-    [Header("References")]
-    public Text NameText;
-    public Image HealthBarFill;
-    public GameObject HealthBarObject;
+    [Header("HealthBar")]
+    [SerializeField]
+    private Text nameText;
+    [SerializeField]
+    private Image healthBarFill;
+    [SerializeField]
+    private GameObject healthBarObject;
 
     [Header("Prefabs")]
-    public GameObject ShotPrefab;
+    [SerializeField]
+    private GameObject shotPrefab;
 
     void Awake()
     {
@@ -62,7 +66,7 @@ public class ClientPlayer : MonoBehaviour
     {
         this.id = id;
         this.playerName = playerName;
-        NameText.text = this.playerName;
+        nameText.text = this.playerName;
         SetHealth(100);
         if (ConnectionManager.Instance.PlayerId == id)
         {
@@ -77,7 +81,7 @@ public class ClientPlayer : MonoBehaviour
     public void SetHealth(int value)
     {
         health = value;
-        HealthBarFill.fillAmount = value / 100f;
+        healthBarFill.fillAmount = value / 100f;
     }
 
     void LateUpdate()
@@ -85,11 +89,11 @@ public class ClientPlayer : MonoBehaviour
         Vector3 point = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, 1, 0));
         if (point.z > 2)
         {
-            HealthBarObject.transform.position = point;
+            healthBarObject.transform.position = point;
         }
         else
         {
-            HealthBarObject.transform.position = new Vector3(10000,0,0);
+            healthBarObject.transform.position = new Vector3(10000,0,0);
         }
     }
 
@@ -107,7 +111,7 @@ public class ClientPlayer : MonoBehaviour
 
             if (inputs[5])
             {
-                GameObject go = Instantiate(ShotPrefab);
+                GameObject go = Instantiate(shotPrefab);
                 go.transform.position = interpolation.CurrentData.Position;
                 go.transform.rotation = transform.rotation;
                 Destroy(go, 1f);
