@@ -1,4 +1,4 @@
-﻿using DarkRift;
+using DarkRift;
 using UnityEngine;
 
 public enum Tags
@@ -11,9 +11,6 @@ public enum Tags
     LobbyJoinRoomDenied = 101,
     LobbyJoinRoomAccepted = 102,
 
-    GameJoinRequest = 200,
-    GameStartDataResponse = 201,
-    GameUpdate = 202,
     GamePlayerInput = 203,
 }
 
@@ -129,84 +126,6 @@ public struct JoinRoomRequest : IDarkRiftSerializable
     }
 }
 
-public struct GameStartData : IDarkRiftSerializable
-{
-    public uint OnJoinServerTick;
-    public PlayerSpawnData[] Players;
-
-    public GameStartData(PlayerSpawnData[] players, uint servertick)
-    {
-        Players = players;
-        OnJoinServerTick = servertick;
-    }
-
-    public void Deserialize(DeserializeEvent e)
-    {
-        OnJoinServerTick = e.Reader.ReadUInt32();
-        Players = e.Reader.ReadSerializables<PlayerSpawnData>();
-    }
-
-    public void Serialize(SerializeEvent e)
-    {
-        e.Writer.Write(OnJoinServerTick);
-        e.Writer.Write(Players);
-    }
-}
-
-public struct PlayerSpawnData : IDarkRiftSerializable
-{
-    public ushort Id;
-    public string Name;
-
-    public Vector3 Position;
-
-    public PlayerSpawnData(ushort id, string name, Vector3 position)
-    {
-        Id = id;
-        Name = name;
-        Position = position;
-    }
-
-    public void Deserialize(DeserializeEvent e)
-    {
-        Id = e.Reader.ReadUInt16();
-        Name = e.Reader.ReadString();
-
-        Position = new Vector3(e.Reader.ReadSingle(),e.Reader.ReadSingle(),e.Reader.ReadSingle());
-
-    }
-
-    public void Serialize(SerializeEvent e)
-    {
-        e.Writer.Write(Id);
-        e.Writer.Write(Name);
-
-        e.Writer.Write(Position.x);
-        e.Writer.Write(Position.y);
-        e.Writer.Write(Position.z);
-    }
-}
-
-public struct PlayerDespawnData : IDarkRiftSerializable
-{
-    public ushort Id;
-
-    public PlayerDespawnData(ushort id)
-    {
-        Id = id;
-    }
-
-    public void Deserialize(DeserializeEvent e)
-    {
-        Id = e.Reader.ReadUInt16();
-    }
-
-    public void Serialize(SerializeEvent e)
-    {
-        e.Writer.Write(Id);
-    }
-}
-
 public struct PlayerStateData : IDarkRiftSerializable
 {
 
@@ -236,74 +155,13 @@ public struct PlayerStateData : IDarkRiftSerializable
         e.Writer.Write(Position.x);
         e.Writer.Write(Position.y);
         e.Writer.Write(Position.z);
- 
+
         e.Writer.Write(LookDirection.x);
         e.Writer.Write(LookDirection.y);
         e.Writer.Write(LookDirection.z);
         e.Writer.Write(LookDirection.w);
         e.Writer.Write(Id);
         e.Writer.Write(Gravity);
-    }
-}
-
-
-public struct GameUpdateData : IDarkRiftSerializable
-{
-    public uint Frame;
-    public PlayerSpawnData[] SpawnData;
-    public PlayerDespawnData[] DespawnData;
-    public PlayerStateData[] UpdateData;
-    public PLayerHealthUpdateData[] HealthData;
-
-    public GameUpdateData(uint frame, PlayerStateData[] updateData, PlayerSpawnData[] spawns, PlayerDespawnData[] despawns, PLayerHealthUpdateData[] healthDatas)
-    {
-        Frame = frame;
-        UpdateData = updateData;
-        DespawnData = despawns;
-        SpawnData = spawns;
-        HealthData = healthDatas;
-    }
-    public void Deserialize(DeserializeEvent e)
-    {
-        Frame = e.Reader.ReadUInt32();
-        SpawnData = e.Reader.ReadSerializables<PlayerSpawnData>();
-        DespawnData = e.Reader.ReadSerializables<PlayerDespawnData>();
-        UpdateData = e.Reader.ReadSerializables<PlayerStateData>();
-        HealthData = e.Reader.ReadSerializables<PLayerHealthUpdateData>();
-    }
-
-    public void Serialize(SerializeEvent e)
-    {
-        e.Writer.Write(Frame);
-        e.Writer.Write(SpawnData);
-        e.Writer.Write(DespawnData);
-        e.Writer.Write(UpdateData);
-        e.Writer.Write(HealthData);
-    }
-}
-
-public struct PLayerHealthUpdateData : IDarkRiftSerializable
-{
-    public ushort PlayerId;
-    public byte Value;
-
-    public PLayerHealthUpdateData(ushort id, byte val)
-    {
-        PlayerId = id;
-        Value = val;
-    }
-
-
-    public void Deserialize(DeserializeEvent e)
-    {
-        PlayerId = e.Reader.ReadUInt16();
-        Value = e.Reader.ReadByte();
-    }
-
-    public void Serialize(SerializeEvent e)
-    {
-        e.Writer.Write(PlayerId);
-        e.Writer.Write(Value);
     }
 }
 

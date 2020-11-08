@@ -121,11 +121,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void SpawnPlayer(PlayerSpawnData ppd)
+    void SpawnPlayer(PlayerSpawnData playerSpawnData)
     {
         GameObject go = Instantiate(PlayerPrefab);
         ClientPlayer player = go.GetComponent<ClientPlayer>();
-        player.Initialize(ppd.Id, ppd.Name);
-        players.Add(player.Id, player);
+        player.Initialize(playerSpawnData.Id, playerSpawnData.Name);
+        players.Add(playerSpawnData.Id, player);
     }
 }

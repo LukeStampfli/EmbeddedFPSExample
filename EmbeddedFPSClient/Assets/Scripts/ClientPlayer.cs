@@ -22,20 +22,27 @@ struct ReconciliationInfo
 [RequireComponent(typeof(PlayerInterpolation))]
 public class ClientPlayer : MonoBehaviour
 {
+    private PlayerLogic playerLogic;
 
-    [Header("Public Fields")]
-    public ushort Id;
-    public string Name;
-    public bool IsOwn;
-    public int Health;
+    private PlayerInterpolation interpolation;
 
-    [Header("Variables")]
-    public float SensitivityX;
-    public float SensitivityY;
+    // Store look direction.
+    private float yaw;
+    private float pitch;
+
+    private ushort id;
+    private string playerName;
+    private bool isOwn;
+
+    private int health;
+
+    [Header("Settings")]
+    [SerializeField]
+    private float sensitivityX;
+    [SerializeField]
+    private float sensitivityY;
 
     [Header("References")]
-    public PlayerInterpolation Interpolation;
-    public PlayerLogic Logic;
     public Text NameText;
     public Image HealthBarFill;
     public GameObject HealthBarObject;
@@ -46,28 +53,31 @@ public class ClientPlayer : MonoBehaviour
     private Queue<PlayerStateData> updateBuffer = new Queue<PlayerStateData>();
     private Queue<ReconciliationInfo> reconciliationHistory = new Queue<ReconciliationInfo>();
 
-    private float yaw;
-    private float pitch;
+    void Awake()
+    {
+        playerLogic = GetComponent<PlayerLogic>();
+        interpolation = GetComponent<PlayerInterpolation>();
+    }
 
     public void Initialize(ushort id, string name)
     {
-        Id = id;
-        Name = name;
-        NameText.text = Name;
+        this.id = id;
+        playerName = name;
+        NameText.text = playerName;
         SetHealth(100);
         if (ConnectionManager.Instance.PlayerId == id)
         {
-            IsOwn = true;
+            isOwn = true;
             Camera.main.transform.SetParent(transform);
             Camera.main.transform.localPosition = new Vector3(0,0,0);
             Camera.main.transform.localRotation = Quaternion.identity;
-            Interpolation.CurrentData = new PlayerStateData(Id,0, Vector3.zero, Quaternion.identity);
+            interpolation.CurrentData = new PlayerStateData(this.id,0, Vector3.zero, Quaternion.identity);
         }
     }
 
     public void SetHealth(int value)
     {
-        Health = value;
+        health = value;
         HealthBarFill.fillAmount = value / 100f;
     }
 
@@ -86,10 +96,9 @@ public class ClientPlayer : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (IsOwn)
+        if (isOwn)
         {
-           
-            bool[]inputs = new bool[6];
+            bool[] inputs = new bool[6];
             inputs[0] = Input.GetKey(KeyCode.W);
             inputs[1] = Input.GetKey(KeyCode.A);
             inputs[2] = Input.GetKey(KeyCode.S);
@@ -100,34 +109,34 @@ public class ClientPlayer : MonoBehaviour
             if (inputs[5])
             {
                 GameObject go = Instantiate(ShotPrefab);
-                go.transform.position = Interpolation.CurrentData.Position;
+                go.transform.position = interpolation.CurrentData.Position;
                 go.transform.rotation = transform.rotation;
-                Destroy(go,1f);
+                Destroy(go, 1f);
             }
 
-            yaw += Input.GetAxis("Mouse X") * SensitivityX;
-            pitch += Input.GetAxis("Mouse Y") * SensitivityY;
+            yaw += Input.GetAxis("Mouse X") * sensitivityX;
+            pitch += Input.GetAxis("Mouse Y") * sensitivityY;
 
-            Quaternion rot = Quaternion.Euler(pitch, yaw,0);
+            Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
 
-            PlayerInputData inputData = new PlayerInputData(inputs,rot, GameManager.Instance.LastRecievedServerTick-1);
+            PlayerInputData inputData = new PlayerInputData(inputs, rotation, GameManager.Instance.LastRecievedServerTick - 1);
 
-            transform.position = Interpolation.CurrentData.Position;
-            PlayerStateData stateData = Logic.GetNextFrameData(inputData,Interpolation.CurrentData);
-            Interpolation.SetFramePosition(stateData);
+            transform.position = interpolation.CurrentData.Position;
+            PlayerStateData nextStateData = playerLogic.GetNextFrameData(inputData, interpolation.CurrentData);
+            interpolation.SetFramePosition(nextStateData);
 
-            using (Message m = Message.Create((ushort)Tags.GamePlayerInput, inputData))
+            using (Message message = Message.Create((ushort) Tags.GamePlayerInput, inputData))
             {
-                ConnectionManager.Instance.Client.SendMessage(m, SendMode.Reliable);
+                ConnectionManager.Instance.Client.SendMessage(message, SendMode.Reliable);
             }
 
-            reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick,stateData, inputData));
+            reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick, nextStateData, inputData));
         }
     }
 
     public void OnServerDataUpdate(PlayerStateData data)
     {
-        if (IsOwn)
+        if (isOwn)
         {
             while (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame < GameManager.Instance.LastRecievedServerTick)
             {
@@ -141,20 +150,20 @@ public class ClientPlayer : MonoBehaviour
                 {
 
                     List<ReconciliationInfo> infos = reconciliationHistory.ToList();
-                    Interpolation.CurrentData = data;
+                    interpolation.CurrentData = data;
                     transform.position = data.Position;
                     transform.rotation = data.LookDirection;
                     for (int i = 0; i < infos.Count; i++)
                     {
-                        PlayerStateData u = Logic.GetNextFrameData(infos[i].Input, Interpolation.CurrentData);
-                        Interpolation.SetFramePosition(u);
+                        PlayerStateData u = playerLogic.GetNextFrameData(infos[i].Input, interpolation.CurrentData);
+                        interpolation.SetFramePosition(u);
                     }
                 }
             }
         }
         else
         {
-            Interpolation.SetFramePosition(data);
+            interpolation.SetFramePosition(data);
         }
     }
 }

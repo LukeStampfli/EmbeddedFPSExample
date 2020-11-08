@@ -17,7 +17,6 @@ public enum Tags
     GamePlayerInput = 203,
 }
 
-
 public struct LoginRequestData : IDarkRiftSerializable
 {
     public string Name;
@@ -227,8 +226,7 @@ public struct PlayerStateData : IDarkRiftSerializable
     public void Deserialize(DeserializeEvent e)
     {
         Position = new Vector3(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
-        LookDirection = new Quaternion(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle(),
-            e.Reader.ReadSingle());
+        LookDirection = new Quaternion(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
         Id = e.Reader.ReadUInt16();
         Gravity = e.Reader.ReadSingle();
     }
