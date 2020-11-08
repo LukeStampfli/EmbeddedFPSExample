@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Client;
 using UnityEngine;
@@ -9,78 +7,73 @@ using UnityEngine.UI;
 
 public class LoginManager : MonoBehaviour
 {
-
-    public static LoginManager Instance;
-
     [Header("References")]
-    public GameObject LoginWindow;
-    public InputField NameInput;
-    public Button SubmitLoginButton;
-
-    void Awake()
-    {
-        Instance = this;
-    }
+    [SerializeField]
+    private GameObject loginWindow;
+    [SerializeField]
+    private InputField nameInput;
+    [SerializeField] 
+    private Button submitLoginButton;
 
     void Start()
     {
-        LoginWindow.SetActive(false);
-        SubmitLoginButton.onClick.AddListener(OnSubmitLogin);
-        GlobalManager.Instance.Client.MessageReceived += OnMessage;
+        ConnectionManager.Instance.OnConnected += StartLoginProcess;
+        submitLoginButton.onClick.AddListener(OnSubmitLogin);
+        ConnectionManager.Instance.Client.MessageReceived += OnMessage;
+
+        loginWindow.SetActive(false);
     }
 
     void OnDestroy()
     {
-        GlobalManager.Instance.Client.MessageReceived -= OnMessage;
+        ConnectionManager.Instance.OnConnected -= StartLoginProcess;
+        ConnectionManager.Instance.Client.MessageReceived -= OnMessage;
     }
 
     public void StartLoginProcess()
     {
-        LoginWindow.SetActive(true);
+        loginWindow.SetActive(true);
     }
 
     private void OnMessage(object sender, MessageReceivedEventArgs e)
     {
-        using (Message m = e.GetMessage())
+        using (Message message = e.GetMessage())
         {
-            switch ((Tags) m.Tag)
+            switch ((Tags) message.Tag)
             {
                 case Tags.LoginRequestDenied:
                     OnLoginDecline();
                     break;
                 case Tags.LoginRequestAccepted:
-                    OnLoginAccept(m.Deserialize<LoginInfoData>());
+                    OnLoginAccept(message.Deserialize<LoginInfoData>());
                     break;
             }
         }
-
     }
-
 
     public void OnSubmitLogin()
     {
-        if (NameInput.text != "")
+        if (!String.IsNullOrEmpty(nameInput.text))
         {
-            LoginWindow.SetActive(false);
+            loginWindow.SetActive(false);
 
-            using (Message m = Message.Create((ushort)Tags.LoginRequest, new LoginRequestData(NameInput.text)))
+            using (Message message = Message.Create((ushort)Tags.LoginRequest, new LoginRequestData(nameInput.text)))
             {
-                GlobalManager.Instance.Client.SendMessage(m, SendMode.Reliable);
+                ConnectionManager.Instance.Client.SendMessage(message, SendMode.Reliable);
             }
         }
     }
 
-    public void OnLoginDecline()
+    private void OnLoginDecline()
     {
-        LoginWindow.SetActive(true);
+        loginWindow.SetActive(true);
     }
 
-    public void OnLoginAccept(LoginInfoData data)
+    private void OnLoginAccept(LoginInfoData data)
     {
-        GlobalManager.Instance.PlayerId = data.Id;
-        GlobalManager.Instance.LastRecievedLobbyInfoData = data.Data;
+        ConnectionManager.Instance.PlayerId = data.Id;
+        ConnectionManager.Instance.LobbyInfoData = data.Data;
         SceneManager.LoadScene("Lobby");
     }
-
 }
 

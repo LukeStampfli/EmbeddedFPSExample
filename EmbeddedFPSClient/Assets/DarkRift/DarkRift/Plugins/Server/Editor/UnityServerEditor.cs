@@ -99,7 +99,7 @@ namespace DarkRift.Server.Unity
                 EditorGUI.indentLevel++;
 
                 //Display IP address
-                address = EditorGUILayout.TextField(new GUIContent("Address", "The address the client will connect to."), address);
+                address = EditorGUILayout.TextField(new GUIContent("Address", "The address the Client will connect to."), address);
 
                 try
                 {

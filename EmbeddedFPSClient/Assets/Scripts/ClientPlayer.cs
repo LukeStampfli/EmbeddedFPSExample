@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 struct ReconciliationInfo
 {
-    public ReconciliationInfo(uint frame, PlayerUpdateData data, PlayerInputData input)
+    public ReconciliationInfo(uint frame, PlayerStateData data, PlayerInputData input)
     {
         Frame = frame;
         Data = data;
@@ -14,7 +14,7 @@ struct ReconciliationInfo
     }
 
     public uint Frame;
-    public PlayerUpdateData Data;
+    public PlayerStateData Data;
     public PlayerInputData Input;
 }
 
@@ -22,53 +22,66 @@ struct ReconciliationInfo
 [RequireComponent(typeof(PlayerInterpolation))]
 public class ClientPlayer : MonoBehaviour
 {
+    private PlayerLogic playerLogic;
 
-    [Header("Public Fields")]
-    public ushort Id;
-    public string Name;
-    public bool IsOwn;
-    public int Health;
+    private PlayerInterpolation interpolation;
 
-    [Header("Variables")]
-    public float SensitivityX;
-    public float SensitivityY;
-
-    [Header("References")]
-    public PlayerInterpolation Interpolation;
-    public PlayerLogic Logic;
-    public Text NameText;
-    public Image HealthBarFill;
-    public GameObject HealthBarObject;
-
-    [Header("Prefabs")]
-    public GameObject ShotPrefab;
-
-    private Queue<PlayerUpdateData> updateBuffer = new Queue<PlayerUpdateData>();
     private Queue<ReconciliationInfo> reconciliationHistory = new Queue<ReconciliationInfo>();
 
+    // Store look direction.
     private float yaw;
     private float pitch;
 
-    public void Initialize(ushort id, string name)
+    private ushort id;
+    private string playerName;
+    private bool isOwn;
+
+    private int health;
+
+    [Header("Settings")]
+    [SerializeField]
+    private float sensitivityX;
+    [SerializeField]
+    private float sensitivityY;
+
+    [Header("HealthBar")]
+    [SerializeField]
+    private Text nameText;
+    [SerializeField]
+    private Image healthBarFill;
+    [SerializeField]
+    private GameObject healthBarObject;
+
+    [Header("Prefabs")]
+    [SerializeField]
+    private GameObject shotPrefab;
+
+    void Awake()
     {
-        Id = id;
-        Name = name;
-        NameText.text = Name;
+        playerLogic = GetComponent<PlayerLogic>();
+        interpolation = GetComponent<PlayerInterpolation>();
+    }
+
+    public void Initialize(ushort id, string playerName)
+    {
+        this.id = id;
+        this.playerName = playerName;
+        nameText.text = this.playerName;
         SetHealth(100);
-        if (GlobalManager.Instance.PlayerId == id)
+        if (ConnectionManager.Instance.PlayerId == id)
         {
-            IsOwn = true;
+            isOwn = true;
             Camera.main.transform.SetParent(transform);
             Camera.main.transform.localPosition = new Vector3(0,0,0);
             Camera.main.transform.localRotation = Quaternion.identity;
-            Interpolation.CurrentData = new PlayerUpdateData(Id,0, Vector3.zero, Quaternion.identity);
+            interpolation.CurrentData = new PlayerStateData(this.id,0, Vector3.zero, Quaternion.identity);
         }
     }
 
     public void SetHealth(int value)
     {
-        Health = value;
-        HealthBarFill.fillAmount = value / 100f;
+        health = value;
+        healthBarFill.fillAmount = value / 100f;
     }
 
     void LateUpdate()
@@ -76,20 +89,19 @@ public class ClientPlayer : MonoBehaviour
         Vector3 point = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, 1, 0));
         if (point.z > 2)
         {
-            HealthBarObject.transform.position = point;
+            healthBarObject.transform.position = point;
         }
         else
         {
-            HealthBarObject.transform.position = new Vector3(10000,0,0);
+            healthBarObject.transform.position = new Vector3(10000,0,0);
         }
     }
 
     void FixedUpdate()
     {
-        if (IsOwn)
+        if (isOwn)
         {
-           
-            bool[]inputs = new bool[6];
+            bool[] inputs = new bool[6];
             inputs[0] = Input.GetKey(KeyCode.W);
             inputs[1] = Input.GetKey(KeyCode.A);
             inputs[2] = Input.GetKey(KeyCode.S);
@@ -99,62 +111,62 @@ public class ClientPlayer : MonoBehaviour
 
             if (inputs[5])
             {
-                GameObject go = Instantiate(ShotPrefab);
-                go.transform.position = Interpolation.CurrentData.Position;
+                GameObject go = Instantiate(shotPrefab);
+                go.transform.position = interpolation.CurrentData.Position;
                 go.transform.rotation = transform.rotation;
-                Destroy(go,1f);
+                Destroy(go, 1f);
             }
 
-            yaw += Input.GetAxis("Mouse X") * SensitivityX;
-            pitch += Input.GetAxis("Mouse Y") * SensitivityY;
+            yaw += Input.GetAxis("Mouse X") * sensitivityX;
+            pitch += Input.GetAxis("Mouse Y") * sensitivityY;
 
-            Quaternion rot = Quaternion.Euler(pitch, yaw,0);
+            Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
 
-            PlayerInputData inputData = new PlayerInputData(inputs,rot, GameManager.Instance.LastRecievedServerTick-1);
+            PlayerInputData inputData = new PlayerInputData(inputs, rotation, GameManager.Instance.LastReceivedServerTick - 1);
 
-            transform.position = Interpolation.CurrentData.Position;
-            PlayerUpdateData updateData = Logic.GetNextFrameData(inputData,Interpolation.CurrentData);
-            Interpolation.SetFramePosition(updateData);
+            transform.position = interpolation.CurrentData.Position;
+            PlayerStateData nextStateData = playerLogic.GetNextFrameData(inputData, interpolation.CurrentData);
+            interpolation.SetFramePosition(nextStateData);
 
-            using (Message m = Message.Create((ushort)Tags.GamePlayerInput, inputData))
+            using (Message message = Message.Create((ushort) Tags.GamePlayerInput, inputData))
             {
-                GlobalManager.Instance.Client.SendMessage(m, SendMode.Reliable);
+                ConnectionManager.Instance.Client.SendMessage(message, SendMode.Reliable);
             }
 
-            reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick,updateData, inputData));
+            reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick, nextStateData, inputData));
         }
     }
 
-    public void OnServerDataUpdate(PlayerUpdateData data)
+    public void OnServerDataUpdate(PlayerStateData playerStateData)
     {
-        if (IsOwn)
+        if (isOwn)
         {
-            while (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame < GameManager.Instance.LastRecievedServerTick)
+            while (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame < GameManager.Instance.LastReceivedServerTick)
             {
                 reconciliationHistory.Dequeue();
             }
 
-            if (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame == GameManager.Instance.LastRecievedServerTick)
+            if (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame == GameManager.Instance.LastReceivedServerTick)
             {
                 ReconciliationInfo info = reconciliationHistory.Dequeue();
-                if (Vector3.Distance(info.Data.Position, data.Position) > 0.05f)
+                if (Vector3.Distance(info.Data.Position, playerStateData.Position) > 0.05f)
                 {
 
                     List<ReconciliationInfo> infos = reconciliationHistory.ToList();
-                    Interpolation.CurrentData = data;
-                    transform.position = data.Position;
-                    transform.rotation = data.LookDirection;
+                    interpolation.CurrentData = playerStateData;
+                    transform.position = playerStateData.Position;
+                    transform.rotation = playerStateData.LookDirection;
                     for (int i = 0; i < infos.Count; i++)
                     {
-                        PlayerUpdateData u = Logic.GetNextFrameData(infos[i].Input, Interpolation.CurrentData);
-                        Interpolation.SetFramePosition(u);
+                        PlayerStateData u = playerLogic.GetNextFrameData(infos[i].Input, interpolation.CurrentData);
+                        interpolation.SetFramePosition(u);
                     }
                 }
             }
         }
         else
         {
-            Interpolation.SetFramePosition(data);
+            interpolation.SetFramePosition(playerStateData);
         }
     }
 }

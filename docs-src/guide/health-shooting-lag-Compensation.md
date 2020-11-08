@@ -1,22 +1,26 @@
 # Health, Shooting, Lag Compensation
 
 Before we start to implement health and shooting we will add a simple health bar to our player to display it.
-Open the ClientPlayer script and add the following variables to the References:
+Open the ClientPlayer script and add the following fields:
 ```csharp
-    public Text NameText;
-    public Image HealthBarFill;
-    public GameObject HealthBarObject;
+    [Header("HealthBar")]
+    [SerializeField]
+    private Text nameText;
+    [SerializeField]
+    private Image healthBarFill;
+    [SerializeField]
+    private GameObject healthBarObject;
 ```
-and add the follwing to the Public Fields:
+and add the follwing field to track the player's health:
 ```csharp
-    public int Health;
+    private int health;
 ```
 Then add these functions:
 ```csharp
     public void SetHealth(int value)
     {
-        Health = value;
-        HealthBarFill.fillAmount = value / 100f;
+        health = value;
+        healthBarFill.fillAmount = value / 100f;
     }
 
     void LateUpdate()
@@ -24,18 +28,19 @@ Then add these functions:
         Vector3 point = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, 1, 0));
         if (point.z > 2)
         {
-            HealthBarObject.transform.position = point;
+            healthBarObject.transform.position = point;
         }
         else
         {
-            HealthBarObject.transform.position = new Vector3(10000,0,0);
+            healthBarObject.transform.position = new Vector3(10000,0,0);
         }
     }
 ```
+The LateUpdate moves the HealthBar on top of the player or hides it if the player is behind the camera.
 
-And in the Initialize function after Name = name; add:
+Next, in the Initialize function after Name = name; add:
 ```csharp
- NameText.text = Name;
+ nameText.text = Name;
  SetHealth(100);
 ```
 
@@ -55,13 +60,13 @@ Now we have a working health bar that hovers over our player and displays the cu
 Make sure to apply the changes to the Player prefab and then delete it from the scene.
 
 
-Before we start with the actual shooting let's create something to display our shots.
+Before we start with the actual shooting let's create something to have some visual feedback when shooting. For simplicity we will just use a colored ray.
 
 - Create a new GameObject in the Game scene name it "Shot"
 - Add a line renderer to the object
 - Set the material to default-line
-- And the positions to 2 positions the first being (0,0,0) and the second (0,0,100)
-- Set the color to red and the alpha to something like 120
+- And the positions to 2 positions the first being (0, 0, 0) and the second (0, 0, 100)
+- Set the color to red and the alpha to something like 120.
 - Set the width to 0.2\
 ![](https://i.imgur.com/YQsYGC9.png)
 
@@ -69,38 +74,41 @@ Drag it in the prefab folders then delete it from the Scene.
 
 Open the ClientPlayer and add:
 ```csharp
-    [Header("Prefabs")]
-    public GameObject ShotPrefab;
+[Header("Prefabs")]
+[SerializeField]
+private GameObject shotPrefab;
 ```
 
 and in FixedUpdate before:
 ```csharp
-    yaw += Input.GetAxis("Mouse X") * SensitivityX;
+yaw += Input.GetAxis("Mouse X") * sensitivityX;
 ```
 add:
 ```csharp
-            if (inputs[5])
-            {
-                GameObject go = Instantiate(ShotPrefab);
-                go.transform.position = Interpolation.CurrentData.Position;
-                go.transform.rotation = transform.rotation;
-                Destroy(go,1f);
-            }
+if (inputs[5])
+{
+    GameObject go = Instantiate(shotPrefab);
+    go.transform.position = interpolation.CurrentData.Position;
+    go.transform.rotation = transform.rotation;
+    Destroy(go, 1f);
+}
 ```
+::: warning
+Please use pooling for something like this instead of this lazy implementation.
+:::
 
 Finally we will need a way to change player health over the network so open Networking Data and add:
 ```csharp
-public struct PLayerHealthUpdateData : IDarkRiftSerializable
+public struct PlayerHealthUpdateData : IDarkRiftSerializable
 {
     public ushort PlayerId;
     public byte Value;
 
-    public PLayerHealthUpdateData(ushort id, byte val)
+    public PlayerHealthUpdateData(ushort id, byte val)
     {
         PlayerId = id;
         Value = val;
     }
-
 
     public void Deserialize(DeserializeEvent e)
     {
@@ -118,205 +126,216 @@ public struct PLayerHealthUpdateData : IDarkRiftSerializable
 
 And change the GameUpdateData a bit. Add the following below the other arrays:
 ```csharp
-    public PLayerHealthUpdateData[] HealthData;
+    public PlayerHealthUpdateData[] HealthData;
 ```
 
 Also pass a HealthUpdateDataArray into the constructor. It should look like this now:
 ```csharp
-public GameUpdateData(uint frame, PlayerUpdateData[] updateData, PlayerSpawnData[] spawns, PlayerDespawnData[] despawns, PLayerHealthUpdateData[] healthDatas)
+public GameUpdateData(uint frame, PlayerUpdateData[] updateData, PlayerSpawnData[] spawns, PlayerDespawnData[] despawns, PlayerHealthUpdateData[] healthData)
     {
         Frame = frame;
         UpdateData = updateData;
         DespawnData = despawns;
         SpawnData = spawns;
-        HealthData = healthDatas;
+        HealthData = healthData;
     }
 ```
-
 In the serialize function at the end, add this:
 ```csharp
-    e.Writer.Write(HealthData);
+e.Writer.Write(HealthData);
 ```
 Same for the deserialize method
 ```csharp
-        HealthData = e.Reader.ReadSerializables<PLayerHealthUpdateData>();
+HealthData = e.Reader.ReadSerializables<PlayerHealthUpdateData>();
 ```
 
-Finally open the GameManager and in the PerformGameUpdate function add the following below the last foreach loop:
+Finally open the GameManager and in the UpdateClientGameState function add the following below the last foreach loop:
 ```csharp
-   foreach (PLayerHealthUpdateData data in updateData.HealthData)
-        {
-            ClientPlayer p;
-            if (players.TryGetValue(data.PlayerId, out p))
-            {
-                p.SetHealth(data.Value);
-            }
-        }
+foreach (PlayerHealthUpdateData data in gameUpdateData.HealthData)
+{
+    ClientPlayer p;
+    if (players.TryGetValue(data.PlayerId, out p))
+    {
+        p.SetHealth(data.Value);
+    }
+}
 ```
 
-Switch to the server project and open the Room script and add:
+Switch to the server project and open the Room script and add to the other lists which store the room state:
 ```csharp
-    public List<PLayerHealthUpdateData> HealthUpdates = new List<PLayerHealthUpdateData>();
+private List<PlayerHealthUpdateData> healthUpdateData = new List<PlayerHealthUpdateData>(4);
 ```
 And in the FixedUpdate change the lines that send the message to:
 ```csharp
-using (Message m = Message.Create((ushort)Tags.GameUpdate, new GameUpdateData(p.InputTick, UpdateDatas, tpsd, tpdd, HealthUpdates.ToArray())))
-            {
-                p.Client.SendMessage(m, SendMode.Reliable);
-            }
+// Send update message to all players.
+PlayerStateData[] playerStateDataArray = playerStateData.ToArray();
+PlayerSpawnData[] playerSpawnDataArray = playerSpawnData.ToArray();
+PlayerDespawnData[] playerDespawnDataArray = playerDespawnData.ToArray();
+PlayerHealthUpdateData[] healthUpdateDataArray = healthUpdateData.ToArray();
+foreach (ServerPlayer p in serverPlayers)
+{
+    using (Message m = Message.Create((ushort)Tags.GameUpdate, new GameUpdateData(p.InputTick, playerStateDataArray, playerSpawnDataArray, playerDespawnDataArray, healthUpdateDataArray)))
+    {
+        p.Client.SendMessage(m, SendMode.Reliable);
+    }
+}
 ```
 and at the end of FixedUpdate call:
 ```csharp
-        HealthUpdates.Clear();
+healthUpdateData.Clear();
+```
+
+Let's also add a new function to update the health of a player:
+```csharp
+public void UpdatePlayerHealth(ServerPlayer player, byte health)
+{
+    healthUpdateData.Add(new PlayerHealthUpdateData(player.Client.ID, health));
+}
 ```
 
 Now open the ServerPlayer and add to the Public Fields:
 ```csharp
-    public int Health;
+private int health;
 ```
-and initialize add after InputTick = Room.ServerTick:
+and initialize add after InputTick = room.ServerTick;
 ```csharp
-        Health = 100;
+Health = 100;
 ```
-
-also add a function to let a player take damage and respawn him if he dies:
+Also add a function to let a player take damage and respawn him if he dies:
 ```csharp
-  public void TakeDamage(int value)
+public void TakeDamage(int value)
+{
+    health -= value;
+    if (health <= 0)
     {
-        Health -= value;
-        if (Health <= 0)
-        {
-            Health = 100;
-            CurrentUpdateData.Position = new Vector3(0,1,0)+ transform.parent.transform.localPosition;
-            CurrentUpdateData.Gravity = 0;
-            transform.localPosition = CurrentUpdateData.Position;
-        }
-        Room.HealthUpdates.Add(new PLayerHealthUpdateData(Client.ID, (byte) Health));
+        health = 100;
+        currentPlayerStateData.Position = new Vector3(0,1,0) + transform.parent.transform.localPosition;
+        currentPlayerStateData.Gravity = 0;
+        transform.localPosition = currentPlayerStateData.Position;
     }
+    room.UpdatePlayerHealth(this, (byte)health);
+}
 ```
 
 Now lets do lag compensation :grinning:
 
+As a reminder. Lag compensation is a technique which is mostly used in FPS games. Because shooting has to be very precise we need to
+compensate for the predicted position of the client player compared to the world state.
+
 To do lag compensation we will need a historyBuffer on the server too so open the ServerPlayer and add:
 ```csharp
-    public List<PlayerUpdateData> UpdateDataHistory = new List<PlayerUpdateData>();
+public List<PlayerStateData> PlayerStateDataHistory { get; } = new List<PlayerStateData>();
 ```
 
-and at the end of the PerformUpdate function add:
+and at the end of the PlayerUpdate function add:
 ```csharp
-        UpdateDataHistory.Add(CurrentUpdateData);
-        if (UpdateDataHistory.Count > 10)
-        {
-            UpdateDataHistory.RemoveAt(0);
-        }
+PlayerStateDataHistory.Add(currentPlayerStateData);
+if (PlayerStateDataHistory.Count > 10)
+{
+    PlayerStateDataHistory.RemoveAt(0);
+}
 ```
 
 We want the shots to be performed in a separate loop before the main game update because then all players are in the same frame. But this means we have to store inputs somehow so in the ServerPlayer add:
 ```csharp
-    private PlayerInputData[] inputs;
+private PlayerInputData[] inputs;
 ```
 And remove the following line from PerformUpdate:
 ```csharp
-        PlayerInputData[] inputs = inputBuffer.Get();
+PlayerInputData[] inputs = inputBuffer.Get();
 ```
 Now add a new function for inputs and shooting:
 ```csharp
-  public void PerformuPreUpdate()
+public void PlayerPreUpdate()
+{
+    inputs = inputBuffer.Get();
+    for (int i = 0; i < inputs.Length; i++)
     {
-        inputs = inputBuffer.Get();
-        for (int i = 0; i < inputs.Length; i++)
+        if (inputs[i].Keyinputs[5])
         {
-            if (inputs[i].Keyinputs[5])
-            {
-                Room.PerformShootRayCast(inputs[i].Time, this);
-                return;
-            }
+            room.PerformShootRayCast(inputs[i].Time, this);
+            return;
         }
     }
+}
 ```
 
-We will go implement the missing PerformShootRayCast in the Room:
+No lets implement the actual shooting logic as a PerformShootRayCast function in the Room:
 ```csharp
-      public void PerformShootRayCast(uint frame, ServerPlayer shooter)
+public void PerformShootRayCast(uint frame, ServerPlayer shooter)
+{
+    int dif = (int) (ServerTick - 1 - frame);
+
+    // Get the position of the ray
+    Vector3 startPosition;
+    Vector3 direction;
+
+    if (shooter.PlayerStateDataHistory.Count > dif)
     {
-        int dif = (int) (ServerTick - 1 - frame);
+        startPosition = shooter.PlayerStateDataHistory[dif].Position;
+        direction = shooter.PlayerStateDataHistory[dif].LookDirection * Vector3.forward;
+    }
+    else
+    {
+        startPosition = shooter.CurrentPlayerStateData.Position;
+        direction = shooter.CurrentPlayerStateData.LookDirection * Vector3.forward;
+    }
 
-        //get the position of the ray
-        Vector3 firepoint;
-        Vector3 direction;
+    startPosition += direction * 3f;
 
-        if (shooter.UpdateDataHistory.Count > dif)
+    //set all players back in time
+    foreach (ServerPlayer player in serverPlayers)
+    {
+        if (player.PlayerStateDataHistory.Count > dif)
         {
-            firepoint = shooter.UpdateDataHistory[dif].Position;
-            direction = shooter.UpdateDataHistory[dif].LookDirection * Vector3.forward;
-        }
-        else
-        {
-            firepoint = shooter.CurrentUpdateData.Position;
-            direction = shooter.CurrentUpdateData.LookDirection * Vector3.forward;
-        }
-
-        firepoint += direction * 3f;
-
-        //set all players back in time
-        foreach (ServerPlayer player in ServerPlayers)
-        {
-            if (player.UpdateDataHistory.Count > dif)
-            {
-                player.Logic.CharacterController.enabled = false;
-                player.transform.localPosition = player.UpdateDataHistory[dif].Position;
-            }
-        }
-
-
-
-        RaycastHit hit;
-
-        if (physicsScene.Raycast(firepoint, direction,out hit, 200f))
-        {
-            if (hit.transform.CompareTag("Unit"))
-            {
-                hit.transform.GetComponent<ServerPlayer>().TakeDamage(5);
-            }
-        }
-
-
-        //set all players back
-        foreach (ServerPlayer player in ServerPlayers)
-        {
-            player.transform.localPosition = player.CurrentUpdateData.Position;
-            player.Logic.CharacterController.enabled = true;
+            player.PlayerLogic.CharacterController.enabled = false;
+            player.transform.localPosition = player.PlayerStateDataHistory[dif].Position;
         }
     }
+
+    RaycastHit hit;
+    if (physicsScene.Raycast(startPosition, direction,out hit, 200f))
+    {
+        if (hit.transform.CompareTag("Unit"))
+        {
+            hit.transform.GetComponent<ServerPlayer>().TakeDamage(5);
+        }
+    }
+
+    // Set all players back.
+    foreach (ServerPlayer player in serverPlayers)
+    {
+        player.transform.localPosition = player.CurrentPlayerStateData.Position;
+        player.PlayerLogic.CharacterController.enabled = true;
+    }
+}
 ```
 This looks complicated at first glance but it isn't. First we calculate for how many frames we have to lag compensate( the -1 because we ticked up already in this tick). Then we set all players back to that point of time by using the history buffers, next we create a ray and check if he hit a "Unit" and if we do we deal damage to that player. Finally we set all players back. Note that we use physicsScene.Raycast(). We do so because our room has its own physicsScene and using just Physics.Raycast() would cast that ray on the default scene.
 
 In the Room class we have to change the Fixedupdate so that it performs the pre update forst for every player. So in FixedUpdate replace
-```
-    ServerTick++;
+```csharp
+ServerTick++;
 
-    int i = 0;
-    foreach (ServerPlayer player in ServerPlayers)
-    {
-        player.PerformUpdate(i);
-        i++;
-    }
+for (var i = 0; i < serverPlayers.Count; i++)
+{
+    ServerPlayer player = serverPlayers[i];
+    playerStateData[i] = player.PlayerUpdate();
+}
 ```
 with
-```
-    ServerTick++;
+```csharp
+ServerTick++;
 
-    foreach (ServerPlayer player in ServerPlayers)
-    {
-        player.PerformuPreUpdate();
-    }
+foreach (ServerPlayer player in serverPlayers)
+{
+    player.PlayerPreUpdate();
+}
 
-    int i = 0;
-    foreach (ServerPlayer player in ServerPlayers)
-    {
-        player.PerformUpdate(i);
-        i++;
-    }
+for (var i = 0; i < serverPlayers.Count; i++)
+{
+    ServerPlayer player = serverPlayers[i];
+    playerStateData[i] = player.PlayerUpdate();
+}
 ```
 
 The only thing left to do now is to create the "Unit" tag and add it to the player prefab and also to add a capsule collider to the player prefab.

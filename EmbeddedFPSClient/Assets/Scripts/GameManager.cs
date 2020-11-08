@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Client;
 using UnityEngine;
@@ -8,81 +7,103 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [Header("References")]
-    public GameObject PlayerPrefab;
-
-    [Header("Public Fields")]
-    public uint ClientTick;
-    public uint LastRecievedServerTick;
-
     private Dictionary<ushort, ClientPlayer> players = new Dictionary<ushort, ClientPlayer>();
 
-    private Buffer<GameUpdateData> gameUpdateBuffer = new Buffer<GameUpdateData>(1, 1);
+    private Buffer<GameUpdateData> gameUpdateDataBuffer = new Buffer<GameUpdateData>(1, 1);
+
+    [Header("Prefabs")]
+    public GameObject PlayerPrefab;
+
+    public uint ClientTick { get; private set; }
+    public uint LastReceivedServerTick { get; private set; }
 
     void Awake()
     {
-        Instance = this;
-    }
-
-    void Start()
-    {
-        GlobalManager.Instance.Client.MessageReceived += OnMessage;
-        using (Message m = Message.CreateEmpty((ushort)Tags.GameJoinRequest))
+        if (Instance != null)
         {
-            GlobalManager.Instance.Client.SendMessage(m, SendMode.Reliable);
+            Destroy(gameObject);
+            return;
         }
+        Instance = this;
+        DontDestroyOnLoad(this);
     }
 
     void OnDestroy()
     {
-        GlobalManager.Instance.Client.MessageReceived -= OnMessage;
+        Instance = null;
+        ConnectionManager.Instance.Client.MessageReceived -= OnMessage;
     }
 
+    void Start()
+    {
+        ConnectionManager.Instance.Client.MessageReceived += OnMessage;
+        using (Message message = Message.CreateEmpty((ushort)Tags.GameJoinRequest))
+        {
+            ConnectionManager.Instance.Client.SendMessage(message, SendMode.Reliable);
+        }
+    }
 
     void OnMessage(object sender, MessageReceivedEventArgs e)
     {
-        using (Message m = e.GetMessage())
+        using (Message message = e.GetMessage())
         {
-            switch ((Tags)m.Tag)
+            switch ((Tags)message.Tag)
             {
                 case Tags.GameStartDataResponse:
-                    OnGameJoinAccept(m.Deserialize<GameStartData>());
+                    OnGameJoinAccept(message.Deserialize<GameStartData>());
                     break;
                 case Tags.GameUpdate:
-                    OnGameUpdate(m.Deserialize<GameUpdateData>());
+                    OnGameUpdate(message.Deserialize<GameUpdateData>());
                     break;
             }
         }
-
     }
 
-    void OnGameUpdate(GameUpdateData updateData)
+    void OnGameJoinAccept(GameStartData gameStartData)
     {
-        gameUpdateBuffer.Add(updateData);
+        LastReceivedServerTick = gameStartData.OnJoinServerTick;
+        ClientTick = gameStartData.OnJoinServerTick;
+        foreach (PlayerSpawnData playerSpawnData in gameStartData.Players)
+        {
+            SpawnPlayer(playerSpawnData);
+        }
+    }
+
+    void OnGameUpdate(GameUpdateData gameUpdateData)
+    {
+        gameUpdateDataBuffer.Add(gameUpdateData);
+    }
+
+    void SpawnPlayer(PlayerSpawnData playerSpawnData)
+    {
+        GameObject go = Instantiate(PlayerPrefab);
+        ClientPlayer player = go.GetComponent<ClientPlayer>();
+        player.Initialize(playerSpawnData.Id, playerSpawnData.Name);
+        players.Add(playerSpawnData.Id, player);
     }
 
     void FixedUpdate()
     {
         ClientTick++;
-        GameUpdateData[] datas = gameUpdateBuffer.Get();
-        foreach (GameUpdateData data in datas)
+        GameUpdateData[] receivedGameUpdateData = gameUpdateDataBuffer.Get();
+        foreach (GameUpdateData data in receivedGameUpdateData)
         {
-            PerformGameUpdate(data);
+            UpdateClientGameState(data);
         }
     }
 
-    void PerformGameUpdate(GameUpdateData updateData)
+    void UpdateClientGameState(GameUpdateData gameUpdateData)
     {
-        LastRecievedServerTick = updateData.Frame;
-        foreach (PlayerSpawnData data in updateData.SpawnData)
+        LastReceivedServerTick = gameUpdateData.Frame;
+        foreach (PlayerSpawnData data in gameUpdateData.SpawnDataData)
         {
-            if (data.Id != GlobalManager.Instance.PlayerId)
+            if (data.Id != ConnectionManager.Instance.PlayerId)
             {
                 SpawnPlayer(data);
             }
         }
 
-        foreach (PlayerDespawnData data in updateData.DespawnData)
+        foreach (PlayerDespawnData data in gameUpdateData.DespawnDataData)
         {
             if (players.ContainsKey(data.Id))
             {
@@ -91,7 +112,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        foreach (PlayerUpdateData data in updateData.UpdateData)
+        foreach (PlayerStateData data in gameUpdateData.UpdateData)
         {
             ClientPlayer p;
             if (players.TryGetValue(data.Id, out p))
@@ -100,7 +121,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        foreach (PLayerHealthUpdateData data in updateData.HealthData)
+        foreach (PlayerHealthUpdateData data in gameUpdateData.HealthData)
         {
             ClientPlayer p;
             if (players.TryGetValue(data.PlayerId, out p))
@@ -108,24 +129,5 @@ public class GameManager : MonoBehaviour
                 p.SetHealth(data.Value);
             }
         }
-    }
-
-
-    void OnGameJoinAccept(GameStartData data)
-    {
-        LastRecievedServerTick = data.OnJoinServerTick;
-        ClientTick = data.OnJoinServerTick;
-        foreach (PlayerSpawnData ppd in data.Players)
-        {
-            SpawnPlayer(ppd);
-        }
-    }
-
-    void SpawnPlayer(PlayerSpawnData ppd)
-    {
-        GameObject go = Instantiate(PlayerPrefab);
-        ClientPlayer player = go.GetComponent<ClientPlayer>();
-        player.Initialize(ppd.Id, ppd.Name);
-        players.Add(player.Id, player);
     }
 }

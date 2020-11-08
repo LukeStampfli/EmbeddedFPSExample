@@ -11,10 +11,10 @@ using System;
 internal class BlockCharacterManager : MonoBehaviour
 {
     /// <summary>
-    ///     The unit client we communicate via.
+    ///     The unit Client we communicate via.
     /// </summary>
     [SerializeField]
-    [Tooltip("The client to communicate with the server via.")]
+    [Tooltip("The Client to communicate with the server via.")]
     UnityClient client;
 
     /// <summary>
@@ -26,7 +26,7 @@ internal class BlockCharacterManager : MonoBehaviour
     {
         if (client == null)
         {
-            Debug.LogError("No client assigned to BlockPlayerSpawner component!");
+            Debug.LogError("No Client assigned to BlockPlayerSpawner component!");
             return;
         }
 

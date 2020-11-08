@@ -28,47 +28,47 @@ struct ReconciliationInfo
 }
 ```
 
-Then in the ClientPlayer class create the history:
+Then in the ClientPlayer class create a history to store our predicted information:
 ```csharp
-    private Queue<ReconciliationInfo> reconciliationHistory = new Queue<ReconciliationInfo>();
+private Queue<ReconciliationInfo> reconciliationHistory = new Queue<ReconciliationInfo>();
 ```
 
 in FixedUpdate after:
 ```csharp
-  using (Message m = Message.Create((ushort)Tags.GamePlayerInput, inputData))
-            {
-                GlobalManager.Instance.Client.SendMessage(m, SendMode.Reliable);
-            }
+using (Message message = Message.Create((ushort) Tags.GamePlayerInput, inputData))
+{
+    ConnectionManager.Instance.Client.SendMessage(message, SendMode.Reliable);
+}
 ```
 add the input and position to the history:
 ```csharp
-     reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick,updateData, inputData));
+    reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick, nextStateData, inputData));
 ```
 
 Now let's implement the reconciliation. We will do that in the if(IsOwn) brackets of the OnServerUpdate function of the ClientPlayer. Fill it with the following lines:
 ```csharp
-  while (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame < GameManager.Instance.LastRecievedServerTick)
-            {
-                reconciliationHistory.Dequeue();
-            }
+while (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame < GameManager.Instance.LastReceivedServerTick)
+{
+    reconciliationHistory.Dequeue();
+}
 
-            if (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame == GameManager.Instance.LastRecievedServerTick)
-            {
-                ReconciliationInfo info = reconciliationHistory.Dequeue();
-                if (Vector3.Distance(info.Data.Position, data.Position) > 0.05f)
-                {
+if (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame == GameManager.Instance.LastReceivedServerTick)
+{
+    ReconciliationInfo info = reconciliationHistory.Dequeue();
+    if (Vector3.Distance(info.Data.Position, playerStateData.Position) > 0.05f)
+    {
 
-                    List<ReconciliationInfo> infos = reconciliationHistory.ToList();
-                    Interpolation.CurrentData = data;
-                    transform.position = data.Position;
-                    transform.rotation = data.LookDirection;
-                    for (int i = 0; i < infos.Count; i++)
-                    {
-                        PlayerUpdateData u = Logic.GetNextFrameData(infos[i].Input, Interpolation.CurrentData);
-                        Interpolation.SetFramePosition(u);
-                    }
-                }
-            }
+        List<ReconciliationInfo> infos = reconciliationHistory.ToList();
+        interpolation.CurrentData = playerStateData;
+        transform.position = playerStateData.Position;
+        transform.rotation = playerStateData.LookDirection;
+        for (int i = 0; i < infos.Count; i++)
+        {
+            PlayerStateData u = playerLogic.GetNextFrameData(infos[i].Input, interpolation.CurrentData);
+            interpolation.SetFramePosition(u);
+        }
+    }
+}
 ```
 
 This is just basic reconciliation as explained at the beginning of this section. We correct the player if his position is off more then 0.05f. It's possible to choose a much bigger value for that something like 1f or 2f to allow players with bad connections to play with less corrections but that will cause rubber banding which is also terrible to play with. The best way to support players with bad connections is still to use bigger buffers.

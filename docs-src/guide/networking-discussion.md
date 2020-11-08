@@ -1,6 +1,6 @@
 # Networking Discussion
 
-In this chapter I present general networking concepts and discuss them.
+This chapter contains general information about game networking.
 
 ## Networking Architectures
 
@@ -56,12 +56,3 @@ There are a lot of ways to optimize when it comes to game networking but it's al
 - Optimize base data types like quaternions, bool arrays, angles, vectors [Example](https://github.com/LestaAllmaron/DarkriftSerializationExtensions/blob/master/DarkriftSerializationExtensions/DarkriftSerializationExtensions/SerializationExtensions.cs) 
 - Only use strings for names or text messages almost everything else can be serialized far more efficiently. Strings also include JSON strings don’t use JSON for real time games.
 - Send as much has possible in one message and combine message information into one big message (Most games collect all information for a game tick and send it in 1 message). Sending a message is very expensive.
-
-### Databases and Cache
-TBD
-
-### Optimizing Movement
-TBD
-
-### Area of Interest Systems
-TBD

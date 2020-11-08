@@ -1,15 +1,12 @@
 ﻿using DarkRift;
 using DarkRift.Server;
-using UnityEngine;
 
-[System.Serializable]
 public class ClientConnection
 {
-    [Header("Public Fields")]
-    public string Name;
-    public IClient Client;
-    public Room Room;
-    public ServerPlayer Player;
+    public string Name { get; }
+    public IClient Client { get; }
+    public Room Room { get; set; }
+    public ServerPlayer Player { get; set; }
 
     public ClientConnection(IClient client , LoginRequestData data)
     {
@@ -21,7 +18,6 @@ public class ClientConnection
 
         Client.MessageReceived += OnMessage;
         
-
         using (Message m = Message.Create((ushort)Tags.LoginRequestAccepted, new LoginInfoData(client.ID, new LobbyInfoData(RoomManager.Instance.GetRoomDataList()))))
         {
             client.SendMessage(m, SendMode.Reliable);
@@ -31,23 +27,22 @@ public class ClientConnection
     private void OnMessage(object sender, MessageReceivedEventArgs e)
     {
         IClient client = (IClient)sender;
-        using (Message m = e.GetMessage())
+        using (Message message = e.GetMessage())
         {
-            switch ((Tags)m.Tag)
+            switch ((Tags)message.Tag)
             {
                 case Tags.LobbyJoinRoomRequest:
-                    RoomManager.Instance.TryJoinRoom(client, m.Deserialize<JoinRoomRequest>());
+                    RoomManager.Instance.TryJoinRoom(client, message.Deserialize<JoinRoomRequest>());
                     break;
                 case Tags.GameJoinRequest:
                     Room.JoinPlayerToGame(this);
                     break;
                 case Tags.GamePlayerInput:
-                    Player.RecieveInput(m.Deserialize<PlayerInputData>());
+                    Player.RecieveInput(message.Deserialize<PlayerInputData>());
                     break;
             }
         }
     }
-
 
     public void OnClientDisconnect(object sender, ClientDisconnectedEventArgs e)
     {

@@ -112,12 +112,12 @@
         </member>
         <member name="F:DarkRift.CommandCode.Configure">
             <summary>
-                A configuration packet to a client.
+                A configuration packet to a Client.
             </summary>
         </member>
         <member name="F:DarkRift.CommandCode.ClientAssign">
             <summary>
-                A new client was assigned to the server.
+                A new Client was assigned to the server.
             </summary>
         </member>
         <member name="T:DarkRift.DarkRiftReader">

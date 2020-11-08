@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class ChatDemo : MonoBehaviour
 {
     [SerializeField]
-    [Tooltip("The client to communicate with the server via.")]
+    [Tooltip("The Client to communicate with the server via.")]
     UnityClient client;
 
     [SerializeField]
@@ -28,10 +28,10 @@ public class ChatDemo : MonoBehaviour
 
     void Awake()
     {
-        //Check we have a client to send/receive from
+        //Check we have a Client to send/receive from
         if (client == null)
         {
-            Debug.LogError("No client assigned to Chat component!");
+            Debug.LogError("No Client assigned to Chat component!");
             return;
         }
 
@@ -87,10 +87,10 @@ public class ChatDemo : MonoBehaviour
     //This will be called when the user presses enter in the input field
     public void MessageEntered()
     {
-        //Check we have a client to send from
+        //Check we have a Client to send from
         if (client == null)
         {
-            Debug.LogError("No client assigned to Chat component!");
+            Debug.LogError("No Client assigned to Chat component!");
             return;
         }
 

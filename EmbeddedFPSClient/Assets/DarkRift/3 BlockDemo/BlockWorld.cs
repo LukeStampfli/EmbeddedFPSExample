@@ -12,10 +12,10 @@ using System;
 internal class BlockWorld : MonoBehaviour
 {
     /// <summary>
-    ///     The client to communicate with the server via.
+    ///     The Client to communicate with the server via.
     /// </summary>
     [SerializeField]
-    [Tooltip("The client to communicate with the server via.")]
+    [Tooltip("The Client to communicate with the server via.")]
     UnityClient client;
 
     /// <summary>
@@ -34,7 +34,7 @@ internal class BlockWorld : MonoBehaviour
     {
         if (client == null)
         {
-            Debug.LogError("No client assigned to BlockWorld component!");
+            Debug.LogError("No Client assigned to BlockWorld component!");
             return;
         }
 
@@ -94,7 +94,7 @@ internal class BlockWorld : MonoBehaviour
     {
         if (client == null)
         {
-            Debug.LogError("No client assigned to BlockWorld component!");
+            Debug.LogError("No Client assigned to BlockWorld component!");
             return;
         }
 
@@ -114,7 +114,7 @@ internal class BlockWorld : MonoBehaviour
     {
         if (client == null)
         {
-            Debug.LogError("No client assigned to BlockWorld component!");
+            Debug.LogError("No Client assigned to BlockWorld component!");
             return;
         }
 

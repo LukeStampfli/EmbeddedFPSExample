@@ -9,10 +9,10 @@ using UnityEngine;
 internal class BlockPlayerSpawner : MonoBehaviour
 {
     /// <summary>
-    ///     The client to communicate with the server via.
+    ///     The Client to communicate with the server via.
     /// </summary>
     [SerializeField]
-    [Tooltip("The client to communicate with the server via.")]
+    [Tooltip("The Client to communicate with the server via.")]
     UnityClient client;
 
     /// <summary>
@@ -47,7 +47,7 @@ internal class BlockPlayerSpawner : MonoBehaviour
     {
         if (client == null)
         {
-            Debug.LogError("No client assigned to BlockPlayerSpawner component!");
+            Debug.LogError("No Client assigned to BlockPlayerSpawner component!");
             return;
         }
 

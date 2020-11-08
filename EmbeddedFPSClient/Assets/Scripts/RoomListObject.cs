@@ -3,18 +3,20 @@ using UnityEngine.UI;
 
 public class RoomListObject : MonoBehaviour
 {
-
     [Header("References")]
-    public Text NameText;
-    public Text SlotText;
-    public Button JoinButton;
+    [SerializeField]
+    private Text nameText;
+    [SerializeField]
+    private Text slotsText;
+    [SerializeField]
+    private Button joinButton;
 
-    public void Set(RoomData data)
+    public void Set(LobbyManager lobbyManager, RoomData data)
     {
-        NameText.text = data.Name;
-        SlotText.text = data.Slots + "/" + data.MaxSlots;
-        JoinButton.onClick.RemoveAllListeners();
-        JoinButton.onClick.AddListener(delegate { LobbyManager.Instance.SendJoinRoomRequest(data.Name); });
+        nameText.text = data.Name;
+        slotsText.text = data.Slots + "/" + data.MaxSlots;
+        joinButton.onClick.RemoveAllListeners();
+        joinButton.onClick.AddListener(delegate { lobbyManager.SendJoinRoomRequest(data.Name); });
     }
 }
 

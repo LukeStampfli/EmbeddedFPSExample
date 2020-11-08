@@ -11,7 +11,7 @@ public class DragObject : MonoBehaviour
     const ushort MOVE_TAG = 0;
 
     [SerializeField]
-    [Tooltip("The client to communicate with the server via.")]
+    [Tooltip("The Client to communicate with the server via.")]
     UnityClient client;
 
     [SerializeField]
@@ -29,10 +29,10 @@ public class DragObject : MonoBehaviour
 
     void Awake ()
     {
-        //Check we have a client to send/receive from
+        //Check we have a Client to send/receive from
         if (client == null)
         {
-            Debug.LogError("No client assigned to DragObject!");
+            Debug.LogError("No Client assigned to DragObject!");
             return;
         }
 
@@ -73,10 +73,10 @@ public class DragObject : MonoBehaviour
     //Called when the object is dragged by the mouse
 	void OnMouseDrag ()
     {
-        //Check we have a client to send from
+        //Check we have a Client to send from
         if (client == null)
         {
-            Debug.LogError("No client assigned to DragObject!");
+            Debug.LogError("No Client assigned to DragObject!");
             return;
         }
 
