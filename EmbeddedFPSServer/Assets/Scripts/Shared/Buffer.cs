@@ -1,17 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public class Buffer<T>
 {
-
-    public int Size { get { return elements.Count; } }
-
     private Queue<T> elements;
     private int bufferSize;
     private int counter;
     private int correctionTollerance;
-
 
     public Buffer(int bufferSize, int correctionTollerance)
     {
@@ -20,6 +15,7 @@ public class Buffer<T>
         elements = new Queue<T>();
     }
 
+    public int Count => elements.Count;
 
     public void Add(T element)
     {

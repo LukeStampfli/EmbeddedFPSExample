@@ -134,10 +134,10 @@ public struct GameStartData : IDarkRiftSerializable
     public uint OnJoinServerTick;
     public PlayerSpawnData[] Players;
 
-    public GameStartData(PlayerSpawnData[] players, uint servertick)
+    public GameStartData(PlayerSpawnData[] players, uint serverTick)
     {
         Players = players;
-        OnJoinServerTick = servertick;
+        OnJoinServerTick = serverTick;
     }
 
     public void Deserialize(DeserializeEvent e)
@@ -157,7 +157,6 @@ public struct PlayerSpawnData : IDarkRiftSerializable
 {
     public ushort Id;
     public string Name;
-
     public Vector3 Position;
 
     public PlayerSpawnData(ushort id, string name, Vector3 position)
@@ -172,8 +171,7 @@ public struct PlayerSpawnData : IDarkRiftSerializable
         Id = e.Reader.ReadUInt16();
         Name = e.Reader.ReadString();
 
-        Position = new Vector3(e.Reader.ReadSingle(),e.Reader.ReadSingle(),e.Reader.ReadSingle());
-
+        Position = new Vector3(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
     }
 
     public void Serialize(SerializeEvent e)
@@ -250,44 +248,44 @@ public struct PlayerStateData : IDarkRiftSerializable
 public struct GameUpdateData : IDarkRiftSerializable
 {
     public uint Frame;
-    public PlayerSpawnData[] SpawnData;
-    public PlayerDespawnData[] DespawnData;
+    public PlayerSpawnData[] SpawnDataData;
+    public PlayerDespawnData[] DespawnDataData;
     public PlayerStateData[] UpdateData;
-    public PLayerHealthUpdateData[] HealthData;
+    public PlayerHealthUpdateData[] HealthData;
 
-    public GameUpdateData(uint frame, PlayerStateData[] updateData, PlayerSpawnData[] spawns, PlayerDespawnData[] despawns, PLayerHealthUpdateData[] healthDatas)
+    public GameUpdateData(uint frame, PlayerStateData[] updateData, PlayerSpawnData[] spawnData, PlayerDespawnData[] despawnData, PlayerHealthUpdateData[] healthData)
     {
         Frame = frame;
         UpdateData = updateData;
-        DespawnData = despawns;
-        SpawnData = spawns;
-        HealthData = healthDatas;
+        DespawnDataData = despawnData;
+        SpawnDataData = spawnData;
+        HealthData = healthData;
     }
     public void Deserialize(DeserializeEvent e)
     {
         Frame = e.Reader.ReadUInt32();
-        SpawnData = e.Reader.ReadSerializables<PlayerSpawnData>();
-        DespawnData = e.Reader.ReadSerializables<PlayerDespawnData>();
+        SpawnDataData = e.Reader.ReadSerializables<PlayerSpawnData>();
+        DespawnDataData = e.Reader.ReadSerializables<PlayerDespawnData>();
         UpdateData = e.Reader.ReadSerializables<PlayerStateData>();
-        HealthData = e.Reader.ReadSerializables<PLayerHealthUpdateData>();
+        HealthData = e.Reader.ReadSerializables<PlayerHealthUpdateData>();
     }
 
     public void Serialize(SerializeEvent e)
     {
         e.Writer.Write(Frame);
-        e.Writer.Write(SpawnData);
-        e.Writer.Write(DespawnData);
+        e.Writer.Write(SpawnDataData);
+        e.Writer.Write(DespawnDataData);
         e.Writer.Write(UpdateData);
         e.Writer.Write(HealthData);
     }
 }
 
-public struct PLayerHealthUpdateData : IDarkRiftSerializable
+public struct PlayerHealthUpdateData : IDarkRiftSerializable
 {
     public ushort PlayerId;
     public byte Value;
 
-    public PLayerHealthUpdateData(ushort id, byte val)
+    public PlayerHealthUpdateData(ushort id, byte val)
     {
         PlayerId = id;
         Value = val;

@@ -8,52 +8,55 @@ public class Room : MonoBehaviour
     private Scene scene;
     private PhysicsScene physicsScene;
 
+    private List<ServerPlayer> serverPlayers = new List<ServerPlayer>();
+
+    private List<PlayerStateData> playerStateData = new List<PlayerStateData>(4);
+    private List<PlayerSpawnData> playerSpawnData = new List<PlayerSpawnData>(4);
+    private List<PlayerDespawnData> playerDespawnData = new List<PlayerDespawnData>(4);
+
+
     [Header("Public Fields")]
     public string Name;
-    public List<ServerPlayer> ServerPlayers = new List<ServerPlayer>();
     public List<ClientConnection> ClientConnections = new List<ClientConnection>();
     public byte MaxSlots;
     public uint ServerTick;
 
     [Header("Prefabs")]
-    public GameObject PlayerPrefab;
+    [SerializeField]
+    private GameObject playerPrefab;
 
-    public PlayerStateData[] UpdateDatas = new PlayerStateData[0];
-    public List<PLayerHealthUpdateData> HealthUpdates = new List<PLayerHealthUpdateData>();
-    private List<PlayerSpawnData> spawnDatas = new List<PlayerSpawnData>(4);
-    private List<PlayerDespawnData> despawnDatas = new List<PlayerDespawnData>(4);
+    public List<PlayerHealthUpdateData> HealthUpdates = new List<PlayerHealthUpdateData>();
 
     void FixedUpdate()
     {
         ServerTick++;
-        //perform updates for all players in the room
-        foreach (ServerPlayer player in ServerPlayers)
+
+        // Perform updates for all players in the room.
+        foreach (ServerPlayer player in serverPlayers)
         {
             player.PerformuPreUpdate();
         }
 
-        int i = 0;
-        foreach (ServerPlayer player in ServerPlayers)
+        for (var i = 0; i < serverPlayers.Count; i++)
         {
-            player.PerformUpdate(i);
-            i++;
+            ServerPlayer player = serverPlayers[i];
+            playerStateData[i] = player.PlayerUpdate();
         }
 
-        //send update message to all players
-
-        PlayerSpawnData[] tpsd = spawnDatas.ToArray();
-        PlayerDespawnData[] tpdd = despawnDatas.ToArray();
-        foreach (ServerPlayer p in ServerPlayers)
+        // Send update message to all players.
+        PlayerStateData[] playerStateDataArray = playerStateData.ToArray();
+        PlayerSpawnData[] playerSpawnDataArray = playerSpawnData.ToArray();
+        PlayerDespawnData[] playerDespawnDataArray = playerDespawnData.ToArray();
+        foreach (ServerPlayer p in serverPlayers)
         {
-            using (Message m = Message.Create((ushort)Tags.GameUpdate, new GameUpdateData(p.InputTick, UpdateDatas, tpsd, tpdd, HealthUpdates.ToArray())))
+            using (Message m = Message.Create((ushort)Tags.GameUpdate, new GameUpdateData(p.InputTick, playerStateDataArray, playerSpawnDataArray, playerDespawnDataArray, HealthUpdates.ToArray())))
             {
                 p.Client.SendMessage(m, SendMode.Reliable);
             }
         }
-     
-        //clear values
-        spawnDatas.Clear();
-        despawnDatas.Clear();
+        
+        playerSpawnData.Clear();
+        playerDespawnData.Clear();
         HealthUpdates.Clear();
     }
 
@@ -83,19 +86,21 @@ public class Room : MonoBehaviour
     public void RemovePlayerFromRoom(ClientConnection clientConnection)
     {
         Destroy(clientConnection.Player.gameObject);
-        despawnDatas.Add(new PlayerDespawnData(clientConnection.Client.ID));
+        playerDespawnData.Add(new PlayerDespawnData(clientConnection.Client.ID));
         ClientConnections.Remove(clientConnection);
-        ServerPlayers.Remove(clientConnection.Player);
+        serverPlayers.Remove(clientConnection.Player);
         clientConnection.Room = null;
     }
 
     public void JoinPlayerToGame(ClientConnection clientConnection)
     {
-        GameObject go = Instantiate(PlayerPrefab, transform);
+        GameObject go = Instantiate(playerPrefab, transform);
         ServerPlayer player = go.GetComponent<ServerPlayer>();
+        serverPlayers.Add(player);
+        playerStateData.Add(default);
         player.Initialize(Vector3.zero, clientConnection);
 
-        spawnDatas.Add(player.GetPlayerSpawnData());
+        playerSpawnData.Add(player.GetPlayerSpawnData());
     }
 
     public void Close()
@@ -122,18 +127,18 @@ public class Room : MonoBehaviour
         }
         else
         {
-            firepoint = shooter.CurrentUpdateData.Position;
-            direction = shooter.CurrentUpdateData.LookDirection * Vector3.forward;
+            firepoint = shooter.CurrentPlayerStateData.Position;
+            direction = shooter.CurrentPlayerStateData.LookDirection * Vector3.forward;
         }
 
         firepoint += direction * 3f;
 
         //set all players back in time
-        foreach (ServerPlayer player in ServerPlayers)
+        foreach (ServerPlayer player in serverPlayers)
         {
             if (player.UpdateDataHistory.Count > dif)
             {
-                player.Logic.CharacterController.enabled = false;
+                player.PlayerLogic.CharacterController.enabled = false;
                 player.transform.localPosition = player.UpdateDataHistory[dif].Position;
             }
         }
@@ -152,10 +157,22 @@ public class Room : MonoBehaviour
 
 
         //set all players back
-        foreach (ServerPlayer player in ServerPlayers)
+        foreach (ServerPlayer player in serverPlayers)
         {
-            player.transform.localPosition = player.CurrentUpdateData.Position;
-            player.Logic.CharacterController.enabled = true;
+            player.transform.localPosition = player.CurrentPlayerStateData.Position;
+            player.PlayerLogic.CharacterController.enabled = true;
         }
+    }
+
+    public PlayerSpawnData[] GetSpawnDataForAllPlayers()
+    {
+        PlayerSpawnData[] playerSpawnData = new PlayerSpawnData[serverPlayers.Count];
+        for (int i = 0; i < serverPlayers.Count; i++)
+        {
+            ServerPlayer p = serverPlayers[i];
+            playerSpawnData[i] = p.GetPlayerSpawnData();
+        }
+
+        return playerSpawnData;
     }
 }

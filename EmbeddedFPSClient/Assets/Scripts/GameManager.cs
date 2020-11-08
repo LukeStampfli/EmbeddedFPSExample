@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Client;
 using UnityEngine;
@@ -8,117 +7,71 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [Header("References")]
-    public GameObject PlayerPrefab;
-
-    [Header("Public Fields")]
-    public uint ClientTick;
-    public uint LastRecievedServerTick;
-
     private Dictionary<ushort, ClientPlayer> players = new Dictionary<ushort, ClientPlayer>();
 
-    private Buffer<GameUpdateData> gameUpdateBuffer = new Buffer<GameUpdateData>(1, 1);
+    private Buffer<GameUpdateData> gameUpdateDataBuffer = new Buffer<GameUpdateData>(1, 1);
+
+    [Header("Prefabs")]
+    public GameObject PlayerPrefab;
+
+    public uint ClientTick { get; private set; }
+    public uint LastReceivedServerTick { get; private set; }
 
     void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
+        DontDestroyOnLoad(this);
+    }
+
+    void OnDestroy()
+    {
+        Instance = null;
+        ConnectionManager.Instance.Client.MessageReceived -= OnMessage;
     }
 
     void Start()
     {
         ConnectionManager.Instance.Client.MessageReceived += OnMessage;
-        using (Message m = Message.CreateEmpty((ushort)Tags.GameJoinRequest))
+        using (Message message = Message.CreateEmpty((ushort)Tags.GameJoinRequest))
         {
-            ConnectionManager.Instance.Client.SendMessage(m, SendMode.Reliable);
+            ConnectionManager.Instance.Client.SendMessage(message, SendMode.Reliable);
         }
     }
-
-    void OnDestroy()
-    {
-        ConnectionManager.Instance.Client.MessageReceived -= OnMessage;
-    }
-
 
     void OnMessage(object sender, MessageReceivedEventArgs e)
     {
-        using (Message m = e.GetMessage())
+        using (Message message = e.GetMessage())
         {
-            switch ((Tags)m.Tag)
+            switch ((Tags)message.Tag)
             {
                 case Tags.GameStartDataResponse:
-                    OnGameJoinAccept(m.Deserialize<GameStartData>());
+                    OnGameJoinAccept(message.Deserialize<GameStartData>());
                     break;
                 case Tags.GameUpdate:
-                    OnGameUpdate(m.Deserialize<GameUpdateData>());
+                    OnGameUpdate(message.Deserialize<GameUpdateData>());
                     break;
             }
         }
-
     }
 
-    void OnGameUpdate(GameUpdateData updateData)
+    void OnGameJoinAccept(GameStartData gameStartData)
     {
-        gameUpdateBuffer.Add(updateData);
-    }
-
-    void FixedUpdate()
-    {
-        ClientTick++;
-        GameUpdateData[] datas = gameUpdateBuffer.Get();
-        foreach (GameUpdateData data in datas)
+        LastReceivedServerTick = gameStartData.OnJoinServerTick;
+        ClientTick = gameStartData.OnJoinServerTick;
+        foreach (PlayerSpawnData playerSpawnData in gameStartData.Players)
         {
-            PerformGameUpdate(data);
+            SpawnPlayer(playerSpawnData);
         }
     }
 
-    void PerformGameUpdate(GameUpdateData updateData)
+    void OnGameUpdate(GameUpdateData gameUpdateData)
     {
-        LastRecievedServerTick = updateData.Frame;
-        foreach (PlayerSpawnData data in updateData.SpawnData)
-        {
-            if (data.Id != ConnectionManager.Instance.PlayerId)
-            {
-                SpawnPlayer(data);
-            }
-        }
-
-        foreach (PlayerDespawnData data in updateData.DespawnData)
-        {
-            if (players.ContainsKey(data.Id))
-            {
-                Destroy(players[data.Id].gameObject);
-                players.Remove(data.Id);
-            }
-        }
-
-        foreach (PlayerStateData data in updateData.UpdateData)
-        {
-            ClientPlayer p;
-            if (players.TryGetValue(data.Id, out p))
-            {
-                p.OnServerDataUpdate(data);
-            }
-        }
-
-        foreach (PLayerHealthUpdateData data in updateData.HealthData)
-        {
-            ClientPlayer p;
-            if (players.TryGetValue(data.PlayerId, out p))
-            {
-                p.SetHealth(data.Value);
-            }
-        }
-    }
-
-
-    void OnGameJoinAccept(GameStartData data)
-    {
-        LastRecievedServerTick = data.OnJoinServerTick;
-        ClientTick = data.OnJoinServerTick;
-        foreach (PlayerSpawnData ppd in data.Players)
-        {
-            SpawnPlayer(ppd);
-        }
+        gameUpdateDataBuffer.Add(gameUpdateData);
     }
 
     void SpawnPlayer(PlayerSpawnData playerSpawnData)
@@ -127,5 +80,54 @@ public class GameManager : MonoBehaviour
         ClientPlayer player = go.GetComponent<ClientPlayer>();
         player.Initialize(playerSpawnData.Id, playerSpawnData.Name);
         players.Add(playerSpawnData.Id, player);
+    }
+
+    void FixedUpdate()
+    {
+        ClientTick++;
+        GameUpdateData[] receivedGameUpdateData = gameUpdateDataBuffer.Get();
+        foreach (GameUpdateData data in receivedGameUpdateData)
+        {
+            UpdateClientGameState(data);
+        }
+    }
+
+    void UpdateClientGameState(GameUpdateData gameUpdateData)
+    {
+        LastReceivedServerTick = gameUpdateData.Frame;
+        foreach (PlayerSpawnData data in gameUpdateData.SpawnDataData)
+        {
+            if (data.Id != ConnectionManager.Instance.PlayerId)
+            {
+                SpawnPlayer(data);
+            }
+        }
+
+        foreach (PlayerDespawnData data in gameUpdateData.DespawnDataData)
+        {
+            if (players.ContainsKey(data.Id))
+            {
+                Destroy(players[data.Id].gameObject);
+                players.Remove(data.Id);
+            }
+        }
+
+        foreach (PlayerStateData data in gameUpdateData.UpdateData)
+        {
+            ClientPlayer p;
+            if (players.TryGetValue(data.Id, out p))
+            {
+                p.OnServerDataUpdate(data);
+            }
+        }
+
+        foreach (PlayerHealthUpdateData data in gameUpdateData.HealthData)
+        {
+            ClientPlayer p;
+            if (players.TryGetValue(data.PlayerId, out p))
+            {
+                p.SetHealth(data.Value);
+            }
+        }
     }
 }

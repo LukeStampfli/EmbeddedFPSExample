@@ -59,11 +59,11 @@ public class ClientPlayer : MonoBehaviour
         interpolation = GetComponent<PlayerInterpolation>();
     }
 
-    public void Initialize(ushort id, string name)
+    public void Initialize(ushort id, string playerName)
     {
         this.id = id;
-        playerName = name;
-        NameText.text = playerName;
+        this.playerName = playerName;
+        NameText.text = this.playerName;
         SetHealth(100);
         if (ConnectionManager.Instance.PlayerId == id)
         {
@@ -119,7 +119,7 @@ public class ClientPlayer : MonoBehaviour
 
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
 
-            PlayerInputData inputData = new PlayerInputData(inputs, rotation, GameManager.Instance.LastRecievedServerTick - 1);
+            PlayerInputData inputData = new PlayerInputData(inputs, rotation, GameManager.Instance.LastReceivedServerTick - 1);
 
             transform.position = interpolation.CurrentData.Position;
             PlayerStateData nextStateData = playerLogic.GetNextFrameData(inputData, interpolation.CurrentData);
@@ -134,25 +134,25 @@ public class ClientPlayer : MonoBehaviour
         }
     }
 
-    public void OnServerDataUpdate(PlayerStateData data)
+    public void OnServerDataUpdate(PlayerStateData playerStateData)
     {
         if (isOwn)
         {
-            while (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame < GameManager.Instance.LastRecievedServerTick)
+            while (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame < GameManager.Instance.LastReceivedServerTick)
             {
                 reconciliationHistory.Dequeue();
             }
 
-            if (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame == GameManager.Instance.LastRecievedServerTick)
+            if (reconciliationHistory.Any() && reconciliationHistory.Peek().Frame == GameManager.Instance.LastReceivedServerTick)
             {
                 ReconciliationInfo info = reconciliationHistory.Dequeue();
-                if (Vector3.Distance(info.Data.Position, data.Position) > 0.05f)
+                if (Vector3.Distance(info.Data.Position, playerStateData.Position) > 0.05f)
                 {
 
                     List<ReconciliationInfo> infos = reconciliationHistory.ToList();
-                    interpolation.CurrentData = data;
-                    transform.position = data.Position;
-                    transform.rotation = data.LookDirection;
+                    interpolation.CurrentData = playerStateData;
+                    transform.position = playerStateData.Position;
+                    transform.rotation = playerStateData.LookDirection;
                     for (int i = 0; i < infos.Count; i++)
                     {
                         PlayerStateData u = playerLogic.GetNextFrameData(infos[i].Input, interpolation.CurrentData);
@@ -163,7 +163,7 @@ public class ClientPlayer : MonoBehaviour
         }
         else
         {
-            interpolation.SetFramePosition(data);
+            interpolation.SetFramePosition(playerStateData);
         }
     }
 }
