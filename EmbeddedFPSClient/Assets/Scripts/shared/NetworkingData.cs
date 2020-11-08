@@ -208,10 +208,10 @@ public struct PlayerDespawnData : IDarkRiftSerializable
     }
 }
 
-public struct PlayerUpdateData : IDarkRiftSerializable
+public struct PlayerStateData : IDarkRiftSerializable
 {
 
-    public PlayerUpdateData(ushort id, float gravity, Vector3 position, Quaternion lookDirection)
+    public PlayerStateData(ushort id, float gravity, Vector3 position, Quaternion lookDirection)
     {
         Id = id;
         Position = position;
@@ -254,10 +254,10 @@ public struct GameUpdateData : IDarkRiftSerializable
     public uint Frame;
     public PlayerSpawnData[] SpawnData;
     public PlayerDespawnData[] DespawnData;
-    public PlayerUpdateData[] UpdateData;
+    public PlayerStateData[] UpdateData;
     public PLayerHealthUpdateData[] HealthData;
 
-    public GameUpdateData(uint frame, PlayerUpdateData[] updateData, PlayerSpawnData[] spawns, PlayerDespawnData[] despawns, PLayerHealthUpdateData[] healthDatas)
+    public GameUpdateData(uint frame, PlayerStateData[] updateData, PlayerSpawnData[] spawns, PlayerDespawnData[] despawns, PLayerHealthUpdateData[] healthDatas)
     {
         Frame = frame;
         UpdateData = updateData;
@@ -270,7 +270,7 @@ public struct GameUpdateData : IDarkRiftSerializable
         Frame = e.Reader.ReadUInt32();
         SpawnData = e.Reader.ReadSerializables<PlayerSpawnData>();
         DespawnData = e.Reader.ReadSerializables<PlayerDespawnData>();
-        UpdateData = e.Reader.ReadSerializables<PlayerUpdateData>();
+        UpdateData = e.Reader.ReadSerializables<PlayerStateData>();
         HealthData = e.Reader.ReadSerializables<PLayerHealthUpdateData>();
     }
 

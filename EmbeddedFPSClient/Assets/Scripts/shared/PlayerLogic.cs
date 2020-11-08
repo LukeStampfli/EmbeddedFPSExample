@@ -14,7 +14,7 @@ public class PlayerLogic : MonoBehaviour
 
     private Vector3 gravity;
 
-    public PlayerUpdateData GetNextFrameData(PlayerInputData input, PlayerUpdateData currentUpdateData)
+    public PlayerStateData GetNextFrameData(PlayerInputData input, PlayerStateData currentStateData)
     {
         bool w = input.Keyinputs[0];
         bool a = input.Keyinputs[1];
@@ -24,7 +24,7 @@ public class PlayerLogic : MonoBehaviour
         bool left = input.Keyinputs[5];
 
         Vector3 rotation =  input.LookDirection.eulerAngles;
-        gravity = new Vector3(0,currentUpdateData.Gravity,0);
+        gravity = new Vector3(0,currentStateData.Gravity,0);
 
         Vector3 movement = Vector3.zero;
         if (w)
@@ -67,7 +67,7 @@ public class PlayerLogic : MonoBehaviour
 
         CharacterController.Move(movement);
 
-        return new PlayerUpdateData(currentUpdateData.Id,gravity.y, transform.localPosition, input.LookDirection);
+        return new PlayerStateData(currentStateData.Id,gravity.y, transform.localPosition, input.LookDirection);
     }
 
 }

@@ -18,9 +18,9 @@ public class ServerPlayer : MonoBehaviour
     public PlayerLogic Logic;
 
     public IClient Client;
-    public PlayerUpdateData CurrentUpdateData;
+    public PlayerStateData CurrentUpdateData;
 
-    public List<PlayerUpdateData> UpdateDataHistory = new List<PlayerUpdateData>();
+    public List<PlayerStateData> UpdateDataHistory = new List<PlayerStateData>();
 
     private Buffer<PlayerInputData> inputBuffer = new Buffer<PlayerInputData>(1,2);
 
@@ -34,8 +34,8 @@ public class ServerPlayer : MonoBehaviour
         ClientConnection.Player = this;
         Room.ServerPlayers.Add(this);
 
-        Room.UpdateDatas = new PlayerUpdateData[Room.ServerPlayers.Count];
-        CurrentUpdateData = new PlayerUpdateData(Client.ID,0, Vector3.zero, Quaternion.identity);
+        Room.UpdateDatas = new PlayerStateData[Room.ServerPlayers.Count];
+        CurrentUpdateData = new PlayerStateData(Client.ID,0, Vector3.zero, Quaternion.identity);
         InputTick = Room.ServerTick;
         Health = 100;
 

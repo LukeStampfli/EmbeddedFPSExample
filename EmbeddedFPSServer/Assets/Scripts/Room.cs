@@ -18,7 +18,7 @@ public class Room : MonoBehaviour
     [Header("Prefabs")]
     public GameObject PlayerPrefab;
 
-    public PlayerUpdateData[] UpdateDatas = new PlayerUpdateData[0];
+    public PlayerStateData[] UpdateDatas = new PlayerStateData[0];
     public List<PLayerHealthUpdateData> HealthUpdates = new List<PLayerHealthUpdateData>();
     private List<PlayerSpawnData> spawnDatas = new List<PlayerSpawnData>(4);
     private List<PlayerDespawnData> despawnDatas = new List<PlayerDespawnData>(4);

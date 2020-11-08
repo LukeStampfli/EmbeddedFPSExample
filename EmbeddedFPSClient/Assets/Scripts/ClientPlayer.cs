@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 struct ReconciliationInfo
 {
-    public ReconciliationInfo(uint frame, PlayerUpdateData data, PlayerInputData input)
+    public ReconciliationInfo(uint frame, PlayerStateData data, PlayerInputData input)
     {
         Frame = frame;
         Data = data;
@@ -14,7 +14,7 @@ struct ReconciliationInfo
     }
 
     public uint Frame;
-    public PlayerUpdateData Data;
+    public PlayerStateData Data;
     public PlayerInputData Input;
 }
 
@@ -43,7 +43,7 @@ public class ClientPlayer : MonoBehaviour
     [Header("Prefabs")]
     public GameObject ShotPrefab;
 
-    private Queue<PlayerUpdateData> updateBuffer = new Queue<PlayerUpdateData>();
+    private Queue<PlayerStateData> updateBuffer = new Queue<PlayerStateData>();
     private Queue<ReconciliationInfo> reconciliationHistory = new Queue<ReconciliationInfo>();
 
     private float yaw;
@@ -61,7 +61,7 @@ public class ClientPlayer : MonoBehaviour
             Camera.main.transform.SetParent(transform);
             Camera.main.transform.localPosition = new Vector3(0,0,0);
             Camera.main.transform.localRotation = Quaternion.identity;
-            Interpolation.CurrentData = new PlayerUpdateData(Id,0, Vector3.zero, Quaternion.identity);
+            Interpolation.CurrentData = new PlayerStateData(Id,0, Vector3.zero, Quaternion.identity);
         }
     }
 
@@ -113,19 +113,19 @@ public class ClientPlayer : MonoBehaviour
             PlayerInputData inputData = new PlayerInputData(inputs,rot, GameManager.Instance.LastRecievedServerTick-1);
 
             transform.position = Interpolation.CurrentData.Position;
-            PlayerUpdateData updateData = Logic.GetNextFrameData(inputData,Interpolation.CurrentData);
-            Interpolation.SetFramePosition(updateData);
+            PlayerStateData stateData = Logic.GetNextFrameData(inputData,Interpolation.CurrentData);
+            Interpolation.SetFramePosition(stateData);
 
             using (Message m = Message.Create((ushort)Tags.GamePlayerInput, inputData))
             {
                 ConnectionManager.Instance.Client.SendMessage(m, SendMode.Reliable);
             }
 
-            reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick,updateData, inputData));
+            reconciliationHistory.Enqueue(new ReconciliationInfo(GameManager.Instance.ClientTick,stateData, inputData));
         }
     }
 
-    public void OnServerDataUpdate(PlayerUpdateData data)
+    public void OnServerDataUpdate(PlayerStateData data)
     {
         if (IsOwn)
         {
@@ -146,7 +146,7 @@ public class ClientPlayer : MonoBehaviour
                     transform.rotation = data.LookDirection;
                     for (int i = 0; i < infos.Count; i++)
                     {
-                        PlayerUpdateData u = Logic.GetNextFrameData(infos[i].Input, Interpolation.CurrentData);
+                        PlayerStateData u = Logic.GetNextFrameData(infos[i].Input, Interpolation.CurrentData);
                         Interpolation.SetFramePosition(u);
                     }
                 }

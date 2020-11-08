@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        foreach (PlayerUpdateData data in updateData.UpdateData)
+        foreach (PlayerStateData data in updateData.UpdateData)
         {
             ClientPlayer p;
             if (players.TryGetValue(data.Id, out p))

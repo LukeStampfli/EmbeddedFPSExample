@@ -6,17 +6,17 @@ using UnityEngine;
 public class PlayerInterpolation : MonoBehaviour
 {
     [Header("Public Fields")]
-    public PlayerUpdateData CurrentData;
-    public PlayerUpdateData PreviousData;
+    public PlayerStateData CurrentData;
+    public PlayerStateData PreviousData;
 
     private float lastInputTime;
 
-    public void SetFramePosition(PlayerUpdateData data)
+    public void SetFramePosition(PlayerStateData data)
     {
         RefreshToPosition(data, CurrentData);
     }
 
-    public void RefreshToPosition(PlayerUpdateData data, PlayerUpdateData prevData)
+    public void RefreshToPosition(PlayerStateData data, PlayerStateData prevData)
     {
         PreviousData = prevData;
         CurrentData = data;
