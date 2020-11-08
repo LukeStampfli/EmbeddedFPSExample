@@ -3,9 +3,9 @@
 In this section will add the functionality to join rooms.
 We start by modifying the ClientConnection script a bit:
 
-Next to the other public fields, we add:
+Next to the other properties we add:
 ```csharp
-    public Room Room;
+    public Room Room { get; set; }
 ```
 
 In addition we will let the ClientConnection handle messages:
@@ -13,9 +13,9 @@ In addition we will let the ClientConnection handle messages:
     private void OnMessage(object sender, MessageReceivedEventArgs e)
     {
         IClient client = (IClient)sender;
-        using (Message m = e.GetMessage())
+        using (Message message = e.GetMessage())
         {
-            switch ((Tags)m.Tag)
+            switch ((Tags)message.Tag)
             {
             }
         }
@@ -84,37 +84,31 @@ But we don't know which room we should add the player to, so we have to ask the 
 ```csharp
     public void TryJoinRoom(IClient client, JoinRoomRequest data)
     {
-        ClientConnection p;
-        Room r;
-        if (!ServerManager.Instance.Players.TryGetValue(client.ID, out p))
+        bool canJoin = ServerManager.Instance.Players.TryGetValue(client.ID, out var clientConnection);
+
+        if (!rooms.TryGetValue(data.RoomName, out var room))
         {
-            using (Message m = Message.Create((ushort)Tags.LobbyJoinRoomDenied, new LobbyInfoData(GetRoomDataList())))
-            {
-                client.SendMessage(m, SendMode.Reliable);
-            }
-            return;
+            canJoin = false;
+        }
+        else if (room.ClientConnections.Count >= room.MaxSlots)
+        {
+            canJoin = false;
         }
 
-        if (!rooms.TryGetValue(data.RoomName, out r))
+        if (canJoin)
         {
-            using (Message m = Message.Create((ushort)Tags.LobbyJoinRoomDenied, new LobbyInfoData(GetRoomDataList())))
-            {
-                client.SendMessage(m, SendMode.Reliable);
-            }
-            return;
+            room.AddPlayerToRoom(clientConnection);
         }
-
-        if (r.ClientConnections.Count >= r.MaxSlots)
+        else
         {
             using (Message m = Message.Create((ushort)Tags.LobbyJoinRoomDenied, new LobbyInfoData(GetRoomDataList())))
             {
                 client.SendMessage(m, SendMode.Reliable);
             }
         }
-
-        r.AddPlayerToRoom(p);
     }
 ```
+We do a few checks here to test if the player is logged in, the room exists and if the room has space. And if everything is alright, we add the player to the room. Else we send a JoinRoomDenied message back with a refreshed list of RoomDatas.
 
 We also change the RemoveRoom function because we can Close rooms now:
 ```csharp
@@ -123,41 +117,38 @@ We also change the RemoveRoom function because we can Close rooms now:
         Room r = rooms[name];
         r.Close();
         rooms.Remove(name);
-        
     }
 ```
-
-We do a few checks here to test if the player is logged in, the room exists and if the room has space. And if everything is alright, we add the player to the room. Else we send a JoinRoomDenied message back with a refreshed list of RoomDatas.
 
 Lets call TryJoinRoom from the ClientConnection script if we get a LobbyJoinRoomRequest:
 ```csharp
     private void OnMessage(object sender, MessageReceivedEventArgs e)
     {
         IClient client = (IClient)sender;
-        using (Message m = e.GetMessage())
+        using (Message message = e.GetMessage())
         {
             switch ((Tags)m.Tag)
             {
                 case Tags.LobbyJoinRoomRequest:
-                    RoomManager.Instance.TryJoinRoom(client, m.Deserialize<JoinRoomRequest>());
+                    RoomManager.Instance.TryJoinRoom(client, message.Deserialize<JoinRoomRequest>());
                     break;
             }
         }
     }
 ```
 
-and in the OnClientDisconnect function we will remove the player from the room, so add the following lines at the beginning:
+And in the OnClientDisconnect function we will remove the player from the room, so add the following lines at the beginning:
 ```csharp
-        if (Room != null)
-        {
-            Room.RemovePlayerFromRoom(this);
-        }
+    if (Room != null)
+    {
+        Room.RemovePlayerFromRoom(this);
+    }
 ```
 
 Your scripts should look like this:
 
-- [ClientConnection](https://pastebin.com/VixNs1q9)
-- [Room](https://pastebin.com/MHPGRAbj)
-- [RoomManager](https://pastebin.com/j9eXBM5h)
+- [ClientConnection](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/room2-ClientConnection.cs)
+- [Room](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/room2-Room.cs)
+- [RoomManager](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/room2-RoomManager.cs)
 
 Now we have a working room system. So we can finally work at the actual gameplay :smiley: 

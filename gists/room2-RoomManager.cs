@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Server;
 using UnityEngine;
@@ -22,7 +22,7 @@ public class RoomManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(this);
-        CreateRoom("Main",25);
+        CreateRoom("Main", 25);
         CreateRoom("Main 2", 15);
     }
 
@@ -33,7 +33,7 @@ public class RoomManager : MonoBehaviour
         foreach (KeyValuePair<string, Room> kvp in rooms)
         {
             Room r = kvp.Value;
-            data[i] = new RoomData(r.Name, (byte) r.ClientConnections.Count, r.MaxSlots);
+            data[i] = new RoomData(r.Name, (byte)r.ClientConnections.Count, r.MaxSlots);
             i++;
         }
         return data;

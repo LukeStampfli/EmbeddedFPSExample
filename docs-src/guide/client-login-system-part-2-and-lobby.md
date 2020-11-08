@@ -1,4 +1,4 @@
-# Client Login System part 2 and Lobby
+# Client Login System Part 2 and Lobby
 After creating responses to the LoginRequest on the server we can let the client handle them.
 To do that we first have to subscribe to server messages in the LoginManager script.
 Add the following in the Start() function:

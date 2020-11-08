@@ -48,7 +48,10 @@ public class ServerManager : MonoBehaviour
         {
             p.OnClientDisconnect(sender, e);
         }
-        e.Client.MessageReceived -= OnMessage;
+        else
+        {
+            e.Client.MessageReceived -= OnMessage;
+        }
     }
 
     private void OnClientConnected(object sender, ClientConnectedEventArgs e)

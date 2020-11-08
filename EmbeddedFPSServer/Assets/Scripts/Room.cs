@@ -80,7 +80,6 @@ public class Room : MonoBehaviour
         }
     }
 
-
     public void RemovePlayerFromRoom(ClientConnection clientConnection)
     {
         Destroy(clientConnection.Player.gameObject);
