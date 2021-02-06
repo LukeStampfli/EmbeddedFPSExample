@@ -64,7 +64,6 @@ And also the following connection code:
 ```csharp
     void Start()
     {
-        Client = GetComponent<UnityClient>();
         Client.ConnectInBackground(IPAddress.Parse(ipAdress), port, IPVersion.IPv4, ConnectCallback);
     }
 
@@ -80,6 +79,12 @@ And also the following connection code:
         }
     }
 ```
+
+To access the Client component in Start we need to reference the component first in Awake so add the following line to the end of the Awake function:
+```csharp
+Client = GetComponent<UnityClient>();
+```
+
 
 This code tries to connect to a server when we start unity and as soon as we are connected it will call the ConnectCallback function. The function checks if we are connected or if the connection failed.
 This is everything you need to connect to a Darkrift server.

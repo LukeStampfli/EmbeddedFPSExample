@@ -36,11 +36,11 @@ public class ConnectionManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(this);
+        Client = GetComponent<UnityClient>();
     }
 
     void Start()
     {
-        Client = GetComponent<UnityClient>();
         Client.ConnectInBackground(IPAddress.Parse(ipAdress), port, IPVersion.IPv4, ConnectCallback);
     }
 
