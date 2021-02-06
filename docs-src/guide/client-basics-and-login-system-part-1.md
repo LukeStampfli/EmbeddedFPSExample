@@ -4,7 +4,7 @@ We will start by implementing functionality to connect to a server and send a si
 
 - In the client project create a "ConnectionManager" script in the Scripts folder.
 - In the main scene create an empty Gameobject and name it "ConnectionManager"
-- Add a UnityClient component to that gameobject (you need to search for just "client" when adding the component)
+- Add a UnityClient component to that gameobject (you need to search for just "Client" when adding the component)
 - Set the values of the UnityClient like this:\
 ![](https://i.imgur.com/gxPD6tI.png)\
 **Important:** Set Auto Connect to false we will connect in the ConnectionManager!
