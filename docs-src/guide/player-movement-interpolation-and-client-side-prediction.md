@@ -188,7 +188,7 @@ The next step is movement. We want our player to move depending on his y rotatio
 
         movement = Quaternion.Euler(0, rotation.y, 0) * movement; // Move towards the look direction.
         movement.Normalize();
-        movement = movement * WalkSpeed;
+        movement = movement * walkSpeed;
 
         movement = movement * Time.fixedDeltaTime;
         movement = movement + gravity * Time.fixedDeltaTime;
@@ -296,7 +296,7 @@ Now we can create a simple logic to read inputs and perform movement in FixedUpd
 
 This is already enough to move our player. We don't have to set the position after calculating it since the character controller does that for us already.
 
-Go into Unity assign the reference to the PlayerLogic and set WalkSpeed = 8, GravityConstant = 2, JumpStrength = 11 and in the ClientPlayer script set SensivityX to 5 and SensivityY to -5. 
+Go into Unity assign the reference to the PlayerLogic and set walkSpeed = 8, GravityConstant = 2, JumpStrength = 11 and in the ClientPlayer script set SensivityX to 5 and SensivityY to -5. 
 
  You can press play now and run around with your character. But you may realize that there is something wrong. The movement might feel jittered. The reason for that is that we just sample inputs at our fixed rate (50 times per second as default), this means on certain frames we might get multiple movement updates and on other frames none. We wan't our movement to be smooth. This is done with interpolation which we will implement next.
 
