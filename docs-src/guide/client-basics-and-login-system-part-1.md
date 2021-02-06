@@ -287,8 +287,8 @@ You can also subscribe a function to a button in the Unity UI of the button itse
 :::
 
 The scripts should now look like this:
-- [ConnectionManager](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login1-ConnectionManager.cs)
-- [LoginManager](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login1-ConnectionManager.cs)
-- [NetworkingData](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login1-NetworkingData.cs)
+- [ConnectionManager](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/login1-ConnectionManager.cs)
+- [LoginManager](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/login1-ConnectionManager.cs)
+- [NetworkingData](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/login1-NetworkingData.cs)
 
 Now lets jump to the to the server side...

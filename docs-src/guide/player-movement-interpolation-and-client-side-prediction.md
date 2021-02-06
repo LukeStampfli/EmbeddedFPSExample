@@ -401,7 +401,7 @@ and add the Tag to the Tags of the Networking Data script:
 Now we are ready for the server side. In the next section we will spawn players on the server and send information about them to clients, which makes our game finally a real multiplayer game.
 
 Your scripts should look now like this:
-- [NetworkingData](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/movement1-NetworkingData.cs)
-- [PlayerLogic](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/movement1-PlayerLogic.cs)
-- [ClientPlayer](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/movement1-ClientPlayer.cs)
-- [PlayerInterpolation](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/movement1-PlayerInterpolation.cs)
+- [NetworkingData](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/movement1-NetworkingData.cs)
+- [PlayerLogic](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/movement1-PlayerLogic.cs)
+- [ClientPlayer](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/movement1-ClientPlayer.cs)
+- [PlayerInterpolation](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/movement1-PlayerInterpolation.cs)

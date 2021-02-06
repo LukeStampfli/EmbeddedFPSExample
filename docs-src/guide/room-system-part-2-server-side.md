@@ -147,8 +147,8 @@ And in the OnClientDisconnect function we will remove the player from the room, 
 
 Your scripts should look like this:
 
-- [ClientConnection](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/room2-ClientConnection.cs)
-- [Room](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/room2-Room.cs)
-- [RoomManager](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/room2-RoomManager.cs)
+- [ClientConnection](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/room2-ClientConnection.cs)
+- [Room](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/room2-Room.cs)
+- [RoomManager](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/room2-RoomManager.cs)
 
 Now we have a working room system. So we can finally work at the actual gameplay :smiley: 

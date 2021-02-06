@@ -211,8 +211,8 @@ now let's send that message at the end of the constructor of the ClientConnectio
 ```
 
 The scripts should now look like this:
-- [ServerManager](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login2-ServerManager.cs)
-- [ClientConnection](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login2-ClientConnection.cs)
-- [NetworkingData](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login2-NetworkingData.cs)
+- [ServerManager](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/login2-ServerManager.cs)
+- [ClientConnection](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/login2-ClientConnection.cs)
+- [NetworkingData](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/login2-NetworkingData.cs)
 
 In the next section we will create a room system and add information about rooms to the LobbyInfoData.

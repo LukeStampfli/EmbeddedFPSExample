@@ -264,10 +264,10 @@ We have a function SendJoinRoomRequest to ask the server to join a room with a g
 The server can respond with an Accepted or a Denied resposne. The Denied request will contain new RoomDatas so that the rooms and available slots get refreshed and the accepted will just load the "Game" scene because it means we connected successfully.
 
 Your scripts should now look like this:
-- [LoginManager](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login3-LoginManager.cs)
-- [ConnectionManager](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login3-ConnectionManager.cs)
-- [RoomListObject](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login3-RoomListObject.cs)
-- [LobbyManager](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login3-LobbyManager.cs)
-- [NetworkingData](https://github.com/LukeStampfli/EmbeddedFPSExample/gists/login3-NetworkingData.cs)
+- [LoginManager](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/login3-LoginManager.cs)
+- [ConnectionManager](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/login3-ConnectionManager.cs)
+- [RoomListObject](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/login3-RoomListObject.cs)
+- [LobbyManager](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/login3-LobbyManager.cs)
+- [NetworkingData](https://github.com/LukeStampfli/EmbeddedFPSExample/tree/master/gists/login3-NetworkingData.cs)
 
 The lobby and login system is now fully completed on the client. Now, we will swap now to the server to finish the system there too.
