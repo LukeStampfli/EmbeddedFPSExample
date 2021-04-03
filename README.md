@@ -16,5 +16,11 @@ This tutorial will cover the following subjects:
 You can follow the tutorial here: https://lukestampfli.github.io/EmbeddedFPSExample/guide/introduction.html
 
 
+## Building the Website
+- Install [Node.js](https://nodejs.org/en/).
+- Run `npm i -g vuepress` to install vuepress.
+- Run `vuepress dev` for development.
+- Run `vuepress build` to build.
+
 ## Special Thanks
 Special thanks to [KABBOUCHI](https://github.com/KABBOUCHI) for converting this sample into a website.
