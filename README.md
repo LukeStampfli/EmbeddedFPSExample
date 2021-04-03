@@ -19,8 +19,8 @@ You can follow the tutorial here: https://lukestampfli.github.io/EmbeddedFPSExam
 ## Building the Website
 - Install [Node.js](https://nodejs.org/en/).
 - Run `npm i -g vuepress` to install vuepress.
-- Run `vuepress dev` for development.
-- Run `vuepress build` to build.
+- Run `vuepress dev` for development (in the `/docs-src` folder).
+- Run `vuepress build` to build (in the `/docs-src` folder). 
 
 ## Special Thanks
 Special thanks to [KABBOUCHI](https://github.com/KABBOUCHI) for converting this sample into a website.
