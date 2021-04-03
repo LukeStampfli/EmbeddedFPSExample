@@ -36,10 +36,14 @@ This project uses new physics features which were introduced in Unity 2018.3 so 
 :::
 - Create a new Unity project (I called mine EmbeddedFPSClient).
 - In Edit -> Project Settings -> Player -> Other settings, make sure that Scripting Runtime Version is set to .Net 4.x equivalent.
-- In Edit -> Project Settings -> Time set Fixed Timestep to 0.025 and Maximum Allowed Timestep to 100
+- In Edit -> Project Settings -> Time, set Fixed Timestep to 0.025 and Maximum Allowed Timestep to 100
+- In Edit => Project Settigs => Physics, set `Auto Sync Transforms` to true.
 - Head to the Asset Store and download the newest version of Darkrift 2.
 - Create a basic folder structure (create a "Prefabs", "Scenes" and "Scripts" folder)
 - Create a Scene "Main" in the scenes folder
+::: tip
+Auto Sync Transforms is needed for the reconciliation (correction) code. It could be disabled by using `Physics.SyncTransforms` at the right places but was done so for simplicity. 
+:::
 ## Setup the Server
 Repeat the setup from the client but name the project something like EmbeddedFPSServer
 
