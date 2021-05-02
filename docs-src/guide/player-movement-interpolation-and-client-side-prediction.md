@@ -57,7 +57,7 @@ public struct PlayerInputData : IDarkRiftSerializable
 We will use the Time field in the input later for lag compensation so you can igore it for now.
 
 :::warning
-There are far better ways to write booleans or quaternions which use less bandwidth, which i'm not going to explain here. You can take a look at a [script of mine](https://github.com/LestaAllmaron/DarkriftSerializationExtensions/blob/master/DarkriftSerializationExtensions/DarkriftSerializationExtensions/SerializationExtensions.cs) to see examples on how to write bools or quaternions.
+There are far better ways to write booleans or quaternions which use less bandwidth, which i'm not going to explain here. You can take a look at a [script of mine](https://github.com/LukeStampfli/DarkriftSerializationExtensions/blob/master/SerializationExtensions.cs) to see examples on how to write bools or quaternions.
 :::
 
 We will also need a struct to represent a player state (his position and rotation) we will also use this struct to sync player data in general so it will also contain the id of the player:
@@ -140,7 +140,7 @@ public class PlayerLogic : MonoBehaviour
         CharacterController = GetComponent<CharacterController>();
     }
 }
-
+```
 Now we want a function to get the next PlayerStateData depending on a InputData. Something like this:
 
 ```csharp
