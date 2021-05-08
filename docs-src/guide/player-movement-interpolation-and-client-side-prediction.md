@@ -298,7 +298,7 @@ This is already enough to move our player. We don't have to set the position aft
 
 Go into Unity assign the reference to the PlayerLogic and set walkSpeed = 8, GravityConstant = 2, JumpStrength = 11 and in the ClientPlayer script set SensivityX to 5 and SensivityY to -5. 
 
- You can press play now and run around with your character. But you may realize that there is something wrong. The movement might feel jittered. The reason for that is that we just sample inputs at our fixed rate (50 times per second as default), this means on certain frames we might get multiple movement updates and on other frames none. We wan't our movement to be smooth. This is done with interpolation which we will implement next.
+ You can press play now and run around with your character. But you may realize that there is something wrong. The movement might feel jittered. The reason for that is that we just sample inputs at our fixed rate (50 times per second as default), this means on certain frames we might get multiple movement updates and on other frames none. We want our movement to be smooth. This is done with interpolation which we will implement next.
 
 Create a new PlayerInterpolation script in the Scripts folder and open it.
 
