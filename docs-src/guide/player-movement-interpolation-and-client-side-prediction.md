@@ -57,7 +57,7 @@ public struct PlayerInputData : IDarkRiftSerializable
 We will use the Time field in the input later for lag compensation so you can igore it for now.
 
 :::warning
-There are far better ways to write booleans or quaternions which use less bandwidth, which i'm not going to explain here. You can take a look at a [script of mine](https://github.com/LestaAllmaron/DarkriftSerializationExtensions/blob/master/DarkriftSerializationExtensions/DarkriftSerializationExtensions/SerializationExtensions.cs) to see examples on how to write bools or quaternions.
+There are far better ways to write booleans or quaternions which use less bandwidth, which i'm not going to explain here. You can take a look at a [script of mine](https://github.com/LukeStampfli/DarkriftSerializationExtensions/blob/master/SerializationExtensions.cs) to see examples on how to write bools or quaternions.
 :::
 
 We will also need a struct to represent a player state (his position and rotation) we will also use this struct to sync player data in general so it will also contain the id of the player:
@@ -140,7 +140,7 @@ public class PlayerLogic : MonoBehaviour
         CharacterController = GetComponent<CharacterController>();
     }
 }
-
+```
 Now we want a function to get the next PlayerStateData depending on a InputData. Something like this:
 
 ```csharp
@@ -298,7 +298,7 @@ This is already enough to move our player. We don't have to set the position aft
 
 Go into Unity assign the reference to the PlayerLogic and set walkSpeed = 8, GravityConstant = 2, JumpStrength = 11 and in the ClientPlayer script set SensivityX to 5 and SensivityY to -5. 
 
- You can press play now and run around with your character. But you may realize that there is something wrong. The movement might feel jittered. The reason for that is that we just sample inputs at our fixed rate (50 times per second as default), this means on certain frames we might get multiple movement updates and on other frames none. We wan't our movement to be smooth. This is done with interpolation which we will implement next.
+ You can press play now and run around with your character. But you may realize that there is something wrong. The movement might feel jittered. The reason for that is that we just sample inputs at our fixed rate (50 times per second as default), this means on certain frames we might get multiple movement updates and on other frames none. We want our movement to be smooth. This is done with interpolation which we will implement next.
 
 Create a new PlayerInterpolation script in the Scripts folder and open it.
 
