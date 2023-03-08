@@ -240,7 +240,7 @@ We want the shots to be performed in a separate loop before the main game update
 ```csharp
 private PlayerInputData[] inputs;
 ```
-And remove the following line from PerformUpdate:
+And remove the following line from PlayerUpdate:
 ```csharp
 PlayerInputData[] inputs = inputBuffer.Get();
 ```
