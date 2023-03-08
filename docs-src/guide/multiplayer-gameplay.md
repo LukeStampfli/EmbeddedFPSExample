@@ -606,6 +606,7 @@ So let's add a bit of logic to the ServerPlayer:
 
     public PlayerStateData PlayerUpdate()
     {
+        PlayerInputData[] inputs = inputBuffer.Get();
         if (inputs.Length > 0)
         {
             PlayerInputData input = inputs.First();
